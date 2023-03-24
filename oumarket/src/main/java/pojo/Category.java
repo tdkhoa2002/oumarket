@@ -11,14 +11,15 @@ import java.util.UUID;
  * @author Khoa Tran
  */
 public class Category {
-    private String id;
+    private int id;
     private String name;
     
-    {
-        setId(UUID.randomUUID().toString());
+    public Category (String name) {
+        this.name = name;
     }
     
-    public Category (String name) {
+    public Category (int id, String name) {
+        this.id = id;
         this.name = name;
     }
     
@@ -43,14 +44,14 @@ public class Category {
     /**
      * @return the id
      */
-    public String getId() {
+    public int getId() {
         return id;
     }
 
     /**
      * @param id the id to set
      */
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 }

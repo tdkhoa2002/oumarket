@@ -28,6 +28,10 @@ public class Product {
         this.quantity = quantity;
     }
     
+    public Product(String id, String name, int categoryId, double price, int quantity) {
+        
+    }
+    
     public Product() {
         
     }
