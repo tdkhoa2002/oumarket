@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import javafx.scene.control.Button;
+import javafx.scene.layout.StackPane;
 
 /**
  * JavaFX App
@@ -14,11 +16,17 @@ import java.io.IOException;
 public class App extends Application {
 
     private static Scene scene;
+    private Stage Stage;
 
     @Override
     public void start(Stage stage) throws IOException {
+        this.Stage = stage;
         scene = new Scene(loadFXML("primary"), 640, 480);
         stage.setScene(scene);
+        
+        Button button = new Button("Show New Scene");
+        button.setOnAction(event -> showSceneAddProduct());
+        
         stage.show();
     }
 
@@ -29,6 +37,12 @@ public class App extends Application {
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
+    }
+    
+    private void showSceneAddProduct() {
+        StackPane newRoot = new StackPane();
+        Scene newScene = new Scene(newRoot, 400, 300);
+        Stage.setScene(newScene);
     }
 
     public static void main(String[] args) {

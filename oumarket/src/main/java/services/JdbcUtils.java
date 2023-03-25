@@ -19,13 +19,15 @@ import java.util.logging.Logger;
 public class JdbcUtils {
     static {
         try {
+            // B1 Nap driver
             Class.forName("com.mysql.cj.jdbc.Driver");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(JdbcUtils.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public static Connection getConn() throws SQLException {
+        // B2 Mo ket noi
         return DriverManager.getConnection("jdbc:mysql://localhost/oumarket", "root", "123456789");
     }
 }

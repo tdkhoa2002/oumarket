@@ -15,21 +15,28 @@ public class Product {
     private String name;
     private int categoryId;
     private double price;
+    private String unit;
     private int quantity;
     
     {
         setId(UUID.randomUUID().toString());
     }
     
-    public Product (String name, int categoryId, double price, int quantity) {
+    public Product (String name, int categoryId, double price, int quantity, String unit) {
         this.name = name;
         this.categoryId = categoryId;
         this.price = price;
         this.quantity = quantity;
+        this.unit = unit;
     }
     
-    public Product(String id, String name, int categoryId, double price, int quantity) {
-        
+    public Product(String id, String name, int categoryId, double price, int quantity, String unit) {
+        this.id = id;
+        this.name = name;
+        this.categoryId = categoryId;
+        this.price = price;
+        this.quantity = quantity;
+        this.unit = unit;
     }
     
     public Product() {
@@ -105,5 +112,19 @@ public class Product {
      */
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    /**
+     * @return the unit
+     */
+    public String getUnit() {
+        return unit;
+    }
+
+    /**
+     * @param unit the unit to set
+     */
+    public void setUnit(String unit) {
+        this.unit = unit;
     }
 }

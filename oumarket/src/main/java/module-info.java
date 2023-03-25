@@ -5,4 +5,7 @@ module com.tdkhoa.oumarket {
 
     opens com.tdkhoa.oumarket to javafx.fxml;
     exports com.tdkhoa.oumarket;
+    exports pojo;
+    exports services;
+    exports utils;
 }
