@@ -18,8 +18,15 @@ VBox {
 
 
 Text.Subject {
-    -fx-font-size: 30;
+    -fx-font-size: 20;
     -fx-fill: red;
+    -fx-stroke: gold;
+    -fx-stroke-width: 3;
+}
+
+Text.OU {
+    -fx-font-size: 30;
+    -fx-fill: #FF4500;
     -fx-stroke: gold;
     -fx-stroke-width: 3;
 }
@@ -29,12 +36,7 @@ HBox {
     -fx-spacing: 5;
 }
 
-Text.Subject {
-    -fx-font-size: 30;
-    -fx-fill: red;
-    -fx-stroke: gold;
-    -fx-stroke-width: 3;
-}
+ 
 
 Button {
     -fx-background-color: #4682B4;
