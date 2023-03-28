@@ -1,6 +1,5 @@
 com\tdkhoa\oumarket\SecondaryController.class
 com\tdkhoa\oumarket\App.class
-com\tdkhoa\oumarket\PrimaryController.class
 pojo\Product.class
 pojo\Employee.class
 module-info.class

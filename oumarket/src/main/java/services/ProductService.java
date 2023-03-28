@@ -20,7 +20,7 @@ import pojo.Category;
  * @author Khoa Tran
  */
 public class ProductService {
-    public boolean addProduct(Product p, List<Category> categories) throws SQLException {
+    public boolean addProduct(Product p) throws SQLException {
         try ( Connection conn = JdbcUtils.getConn()) {
             conn.setAutoCommit(false);
             String sql = "INSERT INTO products(id, name, category_id, price, unit, quantity) VALUES(?, ?, ?, ?, ?, ?)"; // SQL injection
@@ -32,8 +32,7 @@ public class ProductService {
             stm.setString(5, p.getUnit());
             stm.setInt(6, p.getQuantity());
 
-
-            int r = stm.executeUpdate();
+            stm.executeUpdate();
 
             try {
                 conn.commit();
@@ -62,5 +61,25 @@ public class ProductService {
              }
         }
           return results;
+    }
+    
+    public boolean deleteProduct(String id) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "DELETE FROM products WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, id);
+            
+            return stm.executeUpdate() > 0;
+        }
+    }
+    
+    public boolean editProduct(String id) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "UPDATE FROM products WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, id);
+            
+            return stm.executeUpdate() > 0;
+        }
     }
 }
