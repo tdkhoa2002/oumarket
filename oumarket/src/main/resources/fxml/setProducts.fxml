@@ -83,7 +83,7 @@
       </HBox>
       <HBox prefHeight="35.0" prefWidth="600.0">
          <children>
-            <Text fx:id="txtUnit" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị: " />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị: " />
             <TextField fx:id="txtUnit" prefHeight="25.0" prefWidth="281.0">
                <HBox.margin>
                   <Insets left="31.0" />

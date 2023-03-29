@@ -36,7 +36,7 @@ public class AddProductController implements Initializable {
     @FXML private TextField txtName;
     @FXML private TextField txtPrice;
     @FXML private TextField txtQuantity;
-//    @FXML private TextField txtUnit;
+    @FXML private TextField txtUnit;
     @FXML private ComboBox<Category> cbCategories;
     @FXML private VBox sceneVBox;
      Stage stageOut;
@@ -55,12 +55,9 @@ public class AddProductController implements Initializable {
     }
     
     public void addProductHandler (ActionEvent evt) {
-//        Double price = Double.parseDouble(txtPrice.getText());
-//        Integer quantity = Integer.parseInt(this.txtQuantity.getText());
-//        String unit = txtUnit.getText();
         Product p = new Product(this.txtName.getText(),
                 this.cbCategories.getSelectionModel().getSelectedItem().getId(), Double.parseDouble(this.txtPrice.getText()),
-                Integer.parseInt(this.txtQuantity.getText()), "cai");
+                Integer.parseInt(this.txtQuantity.getText()), this.txtUnit.getText());
         try {
             if (pS.addProduct(p)) {
                 Alert a = MessageBox.getBox("Sản phẩm", "Thêm sản phẩm thành công ", Alert.AlertType.INFORMATION);
