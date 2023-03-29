@@ -36,6 +36,7 @@ public class PrimaryController implements Initializable {
 
     static ProductService pS = new ProductService();
     static CategoryService cS  = new CategoryService();
+    static Product pRow = new Product ();
     @FXML TableView<Product> tbProducts;
     @FXML TableView<Category> tbCategories;
     @FXML TableView<Employee> tbEmployees;
@@ -163,7 +164,11 @@ public class PrimaryController implements Initializable {
             Button btnEdit = new Button("Edit");
 
             btnEdit.setOnAction(event -> {
+            Button b = (Button) event.getSource();
+            TableCell cell = (TableCell) b.getParent();
+            pRow = (Product) cell.getTableRow().getItem();
             try {
+                pS.editProduct(pRow);
                 Stage stage = new Stage();
                 // Tạo Scene mới
                 Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixProducts.fxml"));
@@ -173,7 +178,9 @@ public class PrimaryController implements Initializable {
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            }   catch (SQLException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
         });
             
             TableCell c = new TableCell();

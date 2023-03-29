@@ -38,15 +38,16 @@ public class ProductService {
 
             try {
                 conn.commit();
-//                sql = "SELECT name from categories WHERE id = 1";
-//                
-//                stm = conn.prepareCall(sql);
-//                
+                
+                sql = "SELECT name from categories WHERE id =1";
+                
+                stm = conn.prepareCall(sql);
+                
 //                stm.setInt(1, p.getCategoryId());
-//                stm.executeQuery();
-//                
-//                 ResultSet rs = stm.executeQuery();
-//                
+                
+                 ResultSet rs = stm.executeQuery();
+                 System.out.println(rs.getString("name"));
+                
 //                 while(rs.next()) {
 //                     p.setCategoryName(rs.getString("name"));
 //                 }
@@ -70,6 +71,7 @@ public class ProductService {
 //            if (kw != null && !kw.isEmpty())
 //                    stm.setString(1, kw);
             ResultSet rs = stm.executeQuery();
+            System.out.println(rs.next());
             while (rs.next()) {
                  Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getInt("category_id"), rs.getDouble("price"), rs.getInt("quantity"), rs.getString("unit"));
                  results.add(p);
@@ -88,11 +90,16 @@ public class ProductService {
         }
     }
     
-    public boolean editProduct(String id) throws SQLException {
+    public boolean editProduct(Product p) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "UPDATE FROM products WHERE id=?";
+            String sql = "UPDATE products SET name =?, category_id =?, price =?, unit =?, quantity=? WHERE id=?";
             PreparedStatement stm = conn.prepareCall(sql);
-            stm.setString(1, id);
+            stm.setString(1, p.getName());
+            stm.setInt(2, p.getCategoryId());
+            stm.setDouble(3, p.getPrice());
+            stm.setString(4, p.getUnit());
+            stm.setInt(5, p.getQuantity());
+            stm.setString(6, p.getId());
             
             return stm.executeUpdate() > 0;
         }
