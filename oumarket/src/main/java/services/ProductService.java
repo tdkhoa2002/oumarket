@@ -10,8 +10,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.control.Alert;
 import pojo.Product;
 import pojo.Category;
+import utils.MessageBox;
 
 
 
@@ -36,6 +38,19 @@ public class ProductService {
 
             try {
                 conn.commit();
+//                sql = "SELECT name from categories WHERE id = 1";
+//                
+//                stm = conn.prepareCall(sql);
+//                
+//                stm.setInt(1, p.getCategoryId());
+//                stm.executeQuery();
+//                
+//                 ResultSet rs = stm.executeQuery();
+//                
+//                 while(rs.next()) {
+//                     p.setCategoryName(rs.getString("name"));
+//                 }
+                
                 return true;
             } catch (SQLException ex) {
                 System.err.println(ex.getMessage());

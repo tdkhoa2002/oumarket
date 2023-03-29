@@ -2,12 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="600.0" stylesheets="@setProducts.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tdkhoa.oumarket.AddProductController">
+<VBox fx:id="sceneVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="436.0" prefWidth="600.0" stylesheets="@setProducts.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tdkhoa.oumarket.AddProductController">
    <children>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="OU" text="OU MARKET ">
          <VBox.margin>
@@ -26,7 +27,7 @@
                   <Insets />
                </HBox.margin>
             </Text>
-            <TextField prefHeight="25.0" prefWidth="274.0" />
+            <TextField fx:id="txtName" prefHeight="25.0" prefWidth="274.0" />
          </children>
          <VBox.margin>
             <Insets left="30.0" />
@@ -47,8 +48,8 @@
       </HBox>
       <HBox prefHeight="35.0" prefWidth="600.0" stylesheets="@setProducts.css">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Giá nhập vào: " />
-            <TextField prefHeight="25.0" prefWidth="283.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số lượng: " />
+            <TextField fx:id="txtQuantity" prefHeight="25.0" prefWidth="283.0" />
          </children>
          <VBox.margin>
             <Insets left="30.0" />
@@ -56,8 +57,8 @@
       </HBox>
       <HBox prefHeight="35.0" prefWidth="600.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Giá bán ra: " />
-            <TextField prefHeight="25.0" prefWidth="284.0">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Giá: " />
+            <TextField fx:id="txtPrice" prefHeight="25.0" prefWidth="284.0">
                <HBox.margin>
                   <Insets left="15.0" />
                </HBox.margin>
@@ -82,8 +83,8 @@
       </HBox>
       <HBox prefHeight="35.0" prefWidth="600.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Xuất xứ: " />
-            <TextField prefHeight="25.0" prefWidth="281.0">
+            <Text fx:id="txtUnit" strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị: " />
+            <TextField fx:id="txtUnit" prefHeight="25.0" prefWidth="281.0">
                <HBox.margin>
                   <Insets left="31.0" />
                </HBox.margin>
@@ -93,6 +94,7 @@
             <Insets left="30.0" />
          </VBox.margin>
       </HBox>
+      <ComboBox fx:id="cbCategories" prefWidth="150.0" />
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
             <Button mnemonicParsing="false" prefHeight="58.0" prefWidth="94.0" styleClass="h3" text="HỦY ">
@@ -100,7 +102,7 @@
                   <Insets />
                </HBox.margin>
             </Button>
-            <Button mnemonicParsing="false" prefHeight="57.0" prefWidth="135.0" styleClass="h4" text="XÁC NHẬN " />
+            <Button mnemonicParsing="false" onAction="#addProductHandler" prefHeight="57.0" prefWidth="135.0" styleClass="h4" text="XÁC NHẬN " />
          </children>
          <VBox.margin>
             <Insets left="340.0" top="20.0" />

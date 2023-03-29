@@ -14,6 +14,7 @@ public class Product {
     private String id;
     private String name;
     private int categoryId;
+    private String categoryName;
     private double price;
     private String unit;
     private int quantity;
@@ -126,5 +127,19 @@ public class Product {
      */
     public void setUnit(String unit) {
         this.unit = unit;
+    }
+
+    /**
+     * @return the categoryName
+     */
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    /**
+     * @param categoryName the categoryName to set
+     */
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
     }
 }

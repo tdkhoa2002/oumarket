@@ -67,6 +67,13 @@ public class PrimaryController implements Initializable {
                 Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
                 stage.setScene(scene);
                 stage.setTitle("Tạo sản phẩm");
+                stage.setOnHidden(e -> {                       //xử lý khi sự kiện stage đóng lại
+                    try {
+                        loadProductsData(null);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                  });
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
@@ -90,8 +97,7 @@ public class PrimaryController implements Initializable {
                     } catch (SQLException ex) {
                         Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                            }
-                        );
+                  });
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
@@ -107,7 +113,7 @@ public class PrimaryController implements Initializable {
         colName.setCellValueFactory(new PropertyValueFactory("name"));
 
         TableColumn colCate = new TableColumn("Danh mục");
-        colCate.setCellValueFactory(new PropertyValueFactory("categoryId"));
+        colCate.setCellValueFactory(new PropertyValueFactory("categoryName"));
 
         TableColumn colPrice = new TableColumn("Giá tiền");
         colPrice.setCellValueFactory(new PropertyValueFactory("price"));
@@ -239,7 +245,31 @@ public class PrimaryController implements Initializable {
             c.setGraphic(btn);
             return c;
         });
-         this.tbCategories.getColumns ().addAll(colId, colName, colDel);
+        
+        TableColumn colEdit = new TableColumn("Edit");
+        colEdit.setCellFactory(r -> {
+            Button btnEdit = new Button("Edit");
+
+            btnEdit.setOnAction(event -> {
+            try {
+                Stage stage = new Stage();
+                // Tạo Scene mới
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixProducts.fxml"));
+                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                stage.setScene(scene);
+                stage.setTitle("Chỉnh sửa sản phẩm");
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+            
+            TableCell c = new TableCell();
+            c.setGraphic(btnEdit);
+            return c;
+         });
+        
+         this.tbCategories.getColumns ().addAll(colId, colName, colDel, colEdit);
     }
     
     public void closeView(ActionEvent evt) {
