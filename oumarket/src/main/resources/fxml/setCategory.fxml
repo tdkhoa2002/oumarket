@@ -17,7 +17,7 @@
                   <Insets top="10.0" />
                </VBox.margin>
             </Text>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Subject" text="THÊM SẢN PHẨM ">
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="Subject" text="THÊM DANH MỤC  ">
                <VBox.margin>
                   <Insets bottom="40.0" top="15.0" />
                </VBox.margin>
@@ -37,10 +37,10 @@
             </HBox>
             <HBox prefHeight="35.0" prefWidth="600.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mã danh mục: " />
-                  <TextField prefHeight="25.0" prefWidth="280.0">
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mô tả: " />
+                  <TextField prefHeight="25.0" prefWidth="274.0">
                      <HBox.margin>
-                        <Insets />
+                        <Insets left="45.0" />
                      </HBox.margin>
                   </TextField>
                </children>
@@ -49,14 +49,6 @@
                </VBox.margin>
             </HBox>
             <HBox prefHeight="35.0" prefWidth="600.0">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text=" Mô tả: " />
-                  <TextField prefHeight="25.0" prefWidth="283.0">
-                     <HBox.margin>
-                        <Insets left="35.0" />
-                     </HBox.margin>
-                  </TextField>
-               </children>
                <VBox.margin>
                   <Insets left="30.0" />
                </VBox.margin>

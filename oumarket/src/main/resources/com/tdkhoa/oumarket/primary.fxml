@@ -11,13 +11,13 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="sceneVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="502.0" prefWidth="917.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tdkhoa.oumarket.PrimaryController">
+<VBox fx:id="sceneVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="584.0" prefWidth="1168.0" stylesheets="@Style.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tdkhoa.oumarket.PrimaryController">
    <children>
-      <TabPane prefHeight="470.0" prefWidth="751.0" tabClosingPolicy="UNAVAILABLE">
+      <TabPane prefHeight="670.0" prefWidth="1135.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
           <Tab text="Thanh toán">
             <content>
-              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="412.0" prefWidth="692.0">
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="489.0" prefWidth="1098.0">
                      <children>
                         <HBox prefHeight="58.0" prefWidth="917.0">
                            <children>
@@ -28,7 +28,7 @@
                               </Text>
                            </children>
                         </HBox>
-                        <HBox id="h1" layoutX="-1.0" layoutY="42.0" prefHeight="30.0" prefWidth="691.0" styleClass="v1">
+                        <HBox id="h1" layoutX="-1.0" layoutY="42.0" prefHeight="35.0" prefWidth="1137.0" styleClass="v1">
                            <children>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Search: ">
                                  <HBox.margin>
@@ -46,28 +46,32 @@
                                  </HBox.margin>
                               </Text>
                               <TextField prefHeight="23.0" prefWidth="57.0" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chi nhánh: " />
+                              <TextField />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tên NV: " />
+                              <TextField />
                            </children>
                            <padding>
                               <Insets top="10.0" />
                            </padding>
                         </HBox>
-                        <Button layoutX="454.0" layoutY="143.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="81.0" styleClass="h2" text="Mã KH" />
-                        <Button layoutX="457.0" layoutY="79.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="76.0" styleClass="h2" text=" Ghi chú" />
-                        <TableView fx:id="tbShowProducts" layoutY="78.0" prefHeight="286.0" prefWidth="354.0" />
-                        <Button layoutX="366.0" layoutY="78.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="80.0" styleClass="h2" text="Thống kê" />
-                        <Button layoutX="366.0" layoutY="143.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="80.0" styleClass="h2" stylesheets="@Style.css" text="Sale" />
-                        <Button layoutX="549.0" layoutY="76.0" mnemonicParsing="false" prefHeight="117.0" prefWidth="136.0" styleClass="h2" text="Đổi User" />
-                        <Text layoutX="14.0" layoutY="387.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số Lượng:" />
-                        <TextField layoutX="131.0" layoutY="371.0" />
-                        <Text layoutX="295.0" layoutY="381.0" strokeType="OUTSIDE" strokeWidth="0.0" text="VAT(%): " wrappingWidth="50.26171875" />
-                        <TextField layoutX="360.0" layoutY="371.0" />
-                        <Text layoutX="14.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền hàng: " />
-                        <TextField layoutX="131.0" layoutY="400.0" />
-                        <Text layoutX="295.0" layoutY="416.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng: " />
-                        <TextField layoutX="360.0" layoutY="400.0" />
-                        <Button layoutX="762.0" layoutY="372.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="139.0" styleClass="h4" text="Thanh Toán" />
-                        <Button layoutX="664.0" layoutY="371.0" mnemonicParsing="false" onAction="#closeView" prefHeight="57.0" prefWidth="82.0" styleClass="h3" text="HỦY" />
-                        <TableView fx:id="tbShowOrdersDetail" layoutX="367.0" layoutY="201.0" prefHeight="164.0" prefWidth="543.0" />
+                        <Button layoutX="116.0" layoutY="434.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="81.0" styleClass="h2" text="Mã KH" />
+                        <Button layoutX="119.0" layoutY="374.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="76.0" styleClass="h2" text=" Ghi chú" />
+                        <TableView fx:id="tbShowProducts" layoutY="78.0" prefHeight="199.0" prefWidth="563.0" />
+                        <Button layoutX="22.0" layoutY="373.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="80.0" styleClass="h2" text="Thống kê" />
+                        <Button layoutX="22.0" layoutY="434.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="80.0" styleClass="h2" stylesheets="@Style.css" text="Sale" />
+                        <Button layoutX="223.0" layoutY="375.0" mnemonicParsing="false" prefHeight="117.0" prefWidth="136.0" styleClass="h2" text="Đổi User" />
+                        <Text layoutX="16.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số Lượng:" />
+                        <TextField layoutX="81.0" layoutY="292.0" />
+                        <Text layoutX="248.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="VAT(%): " wrappingWidth="50.26171875" />
+                        <TextField layoutX="313.0" layoutY="292.0" />
+                        <Text layoutX="13.0" layoutY="354.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền hàng: " />
+                        <TextField layoutX="81.0" layoutY="336.0" />
+                        <Text layoutX="254.0" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng: " />
+                        <TextField layoutX="313.0" layoutY="335.0" />
+                        <Button layoutX="1027.0" layoutY="464.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="139.0" styleClass="h4" text="Thanh Toán" />
+                        <Button layoutX="910.0" layoutY="466.0" mnemonicParsing="false" onAction="#closeView" prefHeight="57.0" prefWidth="82.0" styleClass="h3" text="HỦY" />
+                        <TableView fx:id="tbShowOrdersDetail" layoutX="616.0" layoutY="78.0" prefHeight="369.0" prefWidth="551.0" />
                      </children>
                   </AnchorPane>
             </content>
@@ -101,6 +105,9 @@
               </content>
             </Tab>
         </tabs>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
       </TabPane>
    </children>
 </VBox>
