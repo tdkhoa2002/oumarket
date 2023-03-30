@@ -39,18 +39,18 @@ public class ProductService {
             try {
                 conn.commit();
                 
-                sql = "SELECT name from categories WHERE id =1";
-                
-                stm = conn.prepareCall(sql);
-                
+//                sql = "SELECT * from categories WHERE id =?";
+//                
+//                stm = conn.prepareCall(sql);
+//                
 //                stm.setInt(1, p.getCategoryId());
-                
-                 ResultSet rs = stm.executeQuery();
-                 System.out.println(rs.getString("name"));
-                
+//                
+//                 ResultSet rs = stm.executeQuery();
+//                
 //                 while(rs.next()) {
 //                     p.setCategoryName(rs.getString("name"));
 //                 }
+                 System.out.println(p.getCategoryName());
                 
                 return true;
             } catch (SQLException ex) {
@@ -74,6 +74,17 @@ public class ProductService {
             System.out.println(rs.next());
             while (rs.next()) {
                  Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getInt("category_id"), rs.getDouble("price"), rs.getInt("quantity"), rs.getString("unit"));
+                 sql = "SELECT * from categories WHERE id =?";
+                
+                stm = conn.prepareCall(sql);
+                
+                stm.setInt(1, p.getCategoryId());
+                
+                 ResultSet rs1 = stm.executeQuery();
+                
+                 while(rs1.next()) {
+                     p.setCategoryName(rs1.getString("name"));
+                 }
                  results.add(p);
              }
         }

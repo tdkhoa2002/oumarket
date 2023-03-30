@@ -29,6 +29,7 @@ public class Product {
         this.price = price;
         this.quantity = quantity;
         this.unit = unit;
+        
     }
     
     public Product(String id, String name, int categoryId, double price, int quantity, String unit) {

@@ -18,6 +18,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -38,11 +40,14 @@ public class PrimaryController implements Initializable {
     static CategoryService cS  = new CategoryService();
     static Product pRow = new Product ();
     @FXML TableView<Product> tbProducts;
+    @FXML TableView<Product> tbShowProducts;
+    @FXML TableView<Product> tbShowOrdersDetail;
     @FXML TableView<Category> tbCategories;
     @FXML TableView<Employee> tbEmployees;
     @FXML ComboBox<Category> cbCategories;
     @FXML private Button btnAddSP;
     @FXML private Button btnAddCate;
+    @FXML private Spinner spinner;
 //    @FXML private TextField txtSearch;
     @FXML private VBox sceneVBox;
     Stage stageOut;
@@ -52,6 +57,8 @@ public class PrimaryController implements Initializable {
             this.loadTableProductsColumns();
             this.loadTableCategoriesColumns();
             this.loadTableEmployeesColumns();
+            this.loadTableShowProductsColumns();
+            this.loadTableShowOrdersDetailColumns();
             this.loadProductsData(null);
             this.loadCategoriesData(null);
         } catch (SQLException ex) {
@@ -104,6 +111,85 @@ public class PrimaryController implements Initializable {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+    }
+    
+    private void loadTableShowOrdersDetailColumns() {
+        TableColumn colId = new TableColumn("Mã SP");
+        colId.setCellValueFactory(new PropertyValueFactory("id"));
+
+        TableColumn colName = new TableColumn("Tên SP");
+        colName.setCellValueFactory(new PropertyValueFactory("name"));
+
+        TableColumn colCate = new TableColumn("Danh mục");
+        colCate.setCellValueFactory(new PropertyValueFactory("categoryName"));
+
+        TableColumn colPrice = new TableColumn("Giá tiền");
+        colPrice.setCellValueFactory(new PropertyValueFactory("price"));
+
+        TableColumn colUnit = new TableColumn("Đơn vị");
+        colUnit.setCellValueFactory(new PropertyValueFactory("unit"));
+
+        TableColumn colQuantity = new TableColumn("Số lượng");
+        colQuantity.setCellValueFactory(new PropertyValueFactory("quantity"));
+        
+        TableColumn colDel = new TableColumn("Xóa");
+        colDel.setCellFactory(r -> {
+            Button btn = new Button("Xóa");
+
+            btn.setOnAction(evt -> {
+                Button b = (Button) evt.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                Product p = (Product) cell.getTableRow().getItem();
+                
+//                this.tbShowOrdersDetail.getItems().clear();
+                
+                System.out.println(this.tbShowOrdersDetail.getItems().remove(p));
+            });
+            TableCell c = new TableCell();
+            c.setGraphic(btn);
+            return c;
+        });
+        
+        this.tbShowOrdersDetail.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colDel);
+    }
+    
+    private void loadTableShowProductsColumns() {
+        TableColumn colId = new TableColumn("Mã SP");
+        colId.setCellValueFactory(new PropertyValueFactory("id"));
+
+        TableColumn colName = new TableColumn("Tên SP");
+        colName.setCellValueFactory(new PropertyValueFactory("name"));
+
+        TableColumn colCate = new TableColumn("Danh mục");
+        colCate.setCellValueFactory(new PropertyValueFactory("categoryName"));
+
+        TableColumn colPrice = new TableColumn("Giá tiền");
+        colPrice.setCellValueFactory(new PropertyValueFactory("price"));
+
+        TableColumn colUnit = new TableColumn("Đơn vị");
+        colUnit.setCellValueFactory(new PropertyValueFactory("unit"));
+
+        TableColumn colQuantity = new TableColumn("Số lượng");
+        colQuantity.setCellValueFactory(new PropertyValueFactory("quantity"));
+        
+        TableColumn colAdd = new TableColumn("Thêm");
+        colAdd.setCellFactory(r -> {
+            Button btn = new Button("Thêm");
+
+            btn.setOnAction(evt -> {
+                Button b = (Button) evt.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                Product p = (Product) cell.getTableRow().getItem();
+                
+                tbShowOrdersDetail.getItems().add(p);
+                
+            });
+            TableCell c = new TableCell();
+            c.setGraphic(btn);
+            return c;
+        });
+        
+        this.tbShowProducts.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colAdd);
     }
 
     private void loadTableProductsColumns() {
@@ -197,6 +283,9 @@ public class PrimaryController implements Initializable {
         
         this.tbProducts.getItems().clear();
         this.tbProducts.setItems(FXCollections.observableList(pros));
+        
+        this.tbShowProducts.getItems().clear();
+        this.tbShowProducts.setItems(FXCollections.observableList(pros));
     }
     
     private void loadCategoriesData(String kw) throws SQLException {
