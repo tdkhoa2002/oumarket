@@ -18,6 +18,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableCell;
@@ -26,7 +27,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.util.Callback;
 import pojo.Category;
 import pojo.Employee;
 import pojo.Product;
@@ -181,8 +184,30 @@ public class PrimaryController implements Initializable {
                 TableCell cell = (TableCell) b.getParent();
                 Product p = (Product) cell.getTableRow().getItem();
                 
+                Popup popup = new Popup();
+                VBox popupContent = new VBox();
+                Label quantityLabel = new Label("Số lượng: :");
+                TextField quantityTextField = new TextField();
+                Button saveButton = new Button("Save");
+                saveButton.setOnAction(event -> {
+                // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
+                int quantity = Integer.parseInt(quantityTextField.getText());
+                // Đóng Popup
+                popup.hide();
                 tbShowOrdersDetail.getItems().add(p);
-                
+                 });
+
+                // Thêm các thành phần vào VBox
+                popupContent.getChildren().addAll(quantityLabel, quantityTextField, saveButton);
+
+                // Thiết lập nội dung cho Popup
+                popup.getContent().addAll(popupContent);
+
+                // Thiết lập sự kiện cho button
+                btn.setOnAction(event -> {
+                    // Hiển thị Popup tại vị trí của button
+                    popup.show(btn.getScene().getWindow());
+                });
             });
             TableCell c = new TableCell();
             c.setGraphic(btn);
