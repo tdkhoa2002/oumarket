@@ -8,6 +8,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -32,6 +33,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import pojo.Category;
 import pojo.Employee;
+import pojo.OrderDetails;
 import pojo.Product;
 import services.CategoryService;
 import services.ProductService;
@@ -42,9 +44,11 @@ public class PrimaryController implements Initializable {
     static ProductService pS = new ProductService();
     static CategoryService cS  = new CategoryService();
     static Product pRow = new Product ();
+//    ObservableList<OrderDetails> orderDetailsList = FXCollections.observableArrayList();
+    private ObservableList<OrderDetails> orderDetailsList;
     @FXML TableView<Product> tbProducts;
     @FXML TableView<Product> tbShowProducts;
-    @FXML TableView<Product> tbShowOrdersDetail;
+    @FXML TableView<OrderDetails> tbShowOrdersDetail = new TableView<>(orderDetailsList);;
     @FXML TableView<Category> tbCategories;
     @FXML TableView<Employee> tbEmployees;
     @FXML ComboBox<Category> cbCategories;
@@ -117,22 +121,13 @@ public class PrimaryController implements Initializable {
     }
     
     private void loadTableShowOrdersDetailColumns() {
-        TableColumn colId = new TableColumn("Mã SP");
-        colId.setCellValueFactory(new PropertyValueFactory("id"));
+        TableColumn<OrderDetails, String> colName = new TableColumn<>("Tên SP");
+        colName.setCellValueFactory(new PropertyValueFactory<>("product.name"));
 
-        TableColumn colName = new TableColumn("Tên SP");
-        colName.setCellValueFactory(new PropertyValueFactory("name"));
+//        TableColumn<OrderDetails, Double> colPrice = new TableColumn("Giá tiền");
+//        colPrice.setCellValueFactory(new PropertyValueFactory("OrderDetails.product.price"));
 
-        TableColumn colCate = new TableColumn("Danh mục");
-        colCate.setCellValueFactory(new PropertyValueFactory("categoryName"));
-
-        TableColumn colPrice = new TableColumn("Giá tiền");
-        colPrice.setCellValueFactory(new PropertyValueFactory("price"));
-
-        TableColumn colUnit = new TableColumn("Đơn vị");
-        colUnit.setCellValueFactory(new PropertyValueFactory("unit"));
-
-        TableColumn colQuantity = new TableColumn("Số lượng");
+        TableColumn<OrderDetails, Integer> colQuantity = new TableColumn("Số lượng");
         colQuantity.setCellValueFactory(new PropertyValueFactory("quantity"));
         
         TableColumn colDel = new TableColumn("Xóa");
@@ -140,23 +135,24 @@ public class PrimaryController implements Initializable {
             Button btn = new Button("Xóa");
 
             btn.setOnAction(evt -> {
-                Button b = (Button) evt.getSource();
-                TableCell cell = (TableCell) b.getParent();
-                Product p = (Product) cell.getTableRow().getItem();
-                
+//                Button b = (Button) evt.getSource();
+//                TableCell cell = (TableCell) b.getParent();
+//                Product p = (Product) cell.getTableRow().getItem();
+//                
 //                this.tbShowOrdersDetail.getItems().clear();
-                
-                System.out.println(this.tbShowOrdersDetail.getItems().remove(p));
+//                
+//                System.out.println(this.tbShowOrdersDetail.getItems().remove(p));
             });
             TableCell c = new TableCell();
             c.setGraphic(btn);
             return c;
         });
         
-        this.tbShowOrdersDetail.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colDel);
+        this.tbShowOrdersDetail.getColumns().addAll(colName, colQuantity, colDel);
     }
     
     private void loadTableShowProductsColumns() {
+//        ObservableList<OrderDetails> orderDetailsList = FXCollections.observableArrayList();
         TableColumn colId = new TableColumn("Mã SP");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
 
@@ -183,20 +179,24 @@ public class PrimaryController implements Initializable {
                 Button b = (Button) evt.getSource();
                 TableCell cell = (TableCell) b.getParent();
                 Product p = (Product) cell.getTableRow().getItem();
-                
+                System.out.println("Day la p1: ");
+                System.out.println(p);
                 Popup popup = new Popup();
                 VBox popupContent = new VBox();
                 Label quantityLabel = new Label("Số lượng: :");
                 TextField quantityTextField = new TextField();
                 Button saveButton = new Button("Save");
                 saveButton.setOnAction(event -> {
-                // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
-                int quantity = Integer.parseInt(quantityTextField.getText());
-                // Đóng Popup
-                popup.hide();
-                tbShowOrdersDetail.getItems().add(p);
+                    // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
+                    int quantity = Integer.parseInt(quantityTextField.getText());
+                    OrderDetails oD = new OrderDetails(p, quantity);
+                    orderDetailsList.add(oD);
+                    // Đóng Popup
+                    popup.hide();
+                    System.out.println(oD.getProduct().getName());
+                    this.loadOrderDetailsData();
+//                    this.tbShowOrdersDetail.setItems(FXCollections.observableList(orderDetailsList));
                  });
-
                 // Thêm các thành phần vào VBox
                 popupContent.getChildren().addAll(quantityLabel, quantityTextField, saveButton);
 
@@ -213,7 +213,6 @@ public class PrimaryController implements Initializable {
             c.setGraphic(btn);
             return c;
         });
-        
         this.tbShowProducts.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colAdd);
     }
 
@@ -311,6 +310,11 @@ public class PrimaryController implements Initializable {
         
         this.tbShowProducts.getItems().clear();
         this.tbShowProducts.setItems(FXCollections.observableList(pros));
+    }
+    
+    private void loadOrderDetailsData() {
+        this.tbShowOrdersDetail.getItems().clear();
+        this.tbShowOrdersDetail.setItems(FXCollections.observableList(orderDetailsList));
     }
     
     private void loadCategoriesData(String kw) throws SQLException {
