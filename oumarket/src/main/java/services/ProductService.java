@@ -63,4 +63,31 @@ public class ProductService {
         }
           return results;
     }
+    public List<Product> searchProducts(String keyword) throws SQLException {
+    List<Product> results = new ArrayList<>();
+
+    try (Connection conn = JdbcUtils.getConn()) {
+        String sql = "SELECT * FROM products WHERE name LIKE ?";
+        String pattern = "%" + keyword + "%";
+        PreparedStatement stmt = conn.prepareStatement(sql);
+        stmt.setString(1, pattern);
+
+        ResultSet rs = stmt.executeQuery();
+
+        while (rs.next()) {
+            String id = rs.getString("id");
+            String name = rs.getString("name");
+            int categoryId = rs.getInt("category_id");
+            double price = rs.getDouble("price");
+            int quantity = rs.getInt("quantity");
+            String unit = rs.getString("unit");
+            Product p = new Product(id, name, categoryId, price, quantity, unit);
+            results.add(p);
+        }
+    }
+
+    return results;
 }
+
+}
+ 
