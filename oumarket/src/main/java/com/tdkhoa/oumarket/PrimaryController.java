@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -44,14 +47,18 @@ public class PrimaryController implements Initializable {
     static ProductService pS = new ProductService();
     static CategoryService cS  = new CategoryService();
     static Product pRow = new Product ();
-//    ObservableList<OrderDetails> orderDetailsList = FXCollections.observableArrayList();
-    private ObservableList<OrderDetails> orderDetailsList;
+    
     @FXML TableView<Product> tbProducts;
     @FXML TableView<Product> tbShowProducts;
-    @FXML TableView<OrderDetails> tbShowOrdersDetail = new TableView<>(orderDetailsList);;
+    
+    @FXML TableView<OrderDetails> tbShowOrdersDetail;
+    ObservableList<OrderDetails> cartItems = FXCollections.observableArrayList();
+    double total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
+    
     @FXML TableView<Category> tbCategories;
     @FXML TableView<Employee> tbEmployees;
     @FXML ComboBox<Category> cbCategories;
+    @FXML TextField txtTotal;
     @FXML private Button btnAddSP;
     @FXML private Button btnAddCate;
     @FXML private Spinner spinner;
@@ -122,13 +129,16 @@ public class PrimaryController implements Initializable {
     
     private void loadTableShowOrdersDetailColumns() {
         TableColumn<OrderDetails, String> colName = new TableColumn<>("Tên SP");
-        colName.setCellValueFactory(new PropertyValueFactory<>("product.name"));
+        colName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getName()));
 
-//        TableColumn<OrderDetails, Double> colPrice = new TableColumn("Giá tiền");
-//        colPrice.setCellValueFactory(new PropertyValueFactory("OrderDetails.product.price"));
+        TableColumn<OrderDetails, Integer> colQuantity = new TableColumn<>("Số lượng");
+        colQuantity.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getQuantity()).asObject());
+        
+        TableColumn<OrderDetails, Double> priceCol = new TableColumn<>("Price");
+        priceCol.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getPrice()).asObject());
 
-        TableColumn<OrderDetails, Integer> colQuantity = new TableColumn("Số lượng");
-        colQuantity.setCellValueFactory(new PropertyValueFactory("quantity"));
+        TableColumn<OrderDetails, Double> totalCol = new TableColumn<>("Total");
+        totalCol.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTotal()).asObject());
         
         TableColumn colDel = new TableColumn("Xóa");
         colDel.setCellFactory(r -> {
@@ -148,11 +158,10 @@ public class PrimaryController implements Initializable {
             return c;
         });
         
-        this.tbShowOrdersDetail.getColumns().addAll(colName, colQuantity, colDel);
+        this.tbShowOrdersDetail.getColumns().addAll(colName, colQuantity, priceCol,totalCol,colDel);
     }
     
     private void loadTableShowProductsColumns() {
-//        ObservableList<OrderDetails> orderDetailsList = FXCollections.observableArrayList();
         TableColumn colId = new TableColumn("Mã SP");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
 
@@ -179,8 +188,7 @@ public class PrimaryController implements Initializable {
                 Button b = (Button) evt.getSource();
                 TableCell cell = (TableCell) b.getParent();
                 Product p = (Product) cell.getTableRow().getItem();
-                System.out.println("Day la p1: ");
-                System.out.println(p);
+                
                 Popup popup = new Popup();
                 VBox popupContent = new VBox();
                 Label quantityLabel = new Label("Số lượng: :");
@@ -189,13 +197,15 @@ public class PrimaryController implements Initializable {
                 saveButton.setOnAction(event -> {
                     // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
                     int quantity = Integer.parseInt(quantityTextField.getText());
-                    OrderDetails oD = new OrderDetails(p, quantity);
-                    orderDetailsList.add(oD);
+                    OrderDetails cartItem = new OrderDetails(p, quantity);
+                    cartItems.add(cartItem);
+                    
+                    total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
+                    txtTotal.setText(Double.toString(total));
+                    
+                    this.tbShowOrdersDetail.setItems(cartItems);
                     // Đóng Popup
                     popup.hide();
-                    System.out.println(oD.getProduct().getName());
-                    this.loadOrderDetailsData();
-//                    this.tbShowOrdersDetail.setItems(FXCollections.observableList(orderDetailsList));
                  });
                 // Thêm các thành phần vào VBox
                 popupContent.getChildren().addAll(quantityLabel, quantityTextField, saveButton);
@@ -310,11 +320,6 @@ public class PrimaryController implements Initializable {
         
         this.tbShowProducts.getItems().clear();
         this.tbShowProducts.setItems(FXCollections.observableList(pros));
-    }
-    
-    private void loadOrderDetailsData() {
-        this.tbShowOrdersDetail.getItems().clear();
-        this.tbShowOrdersDetail.setItems(FXCollections.observableList(orderDetailsList));
     }
     
     private void loadCategoriesData(String kw) throws SQLException {

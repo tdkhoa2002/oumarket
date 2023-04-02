@@ -68,7 +68,7 @@
                         <Text layoutX="13.0" layoutY="354.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền hàng: " />
                         <TextField layoutX="81.0" layoutY="336.0" />
                         <Text layoutX="254.0" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng: " />
-                        <TextField layoutX="313.0" layoutY="335.0" />
+                        <TextField fx:id="txtTotal" disable="true" layoutX="313.0" layoutY="335.0" />
                         <Button layoutX="1027.0" layoutY="464.0" mnemonicParsing="false" prefHeight="56.0" prefWidth="139.0" styleClass="h4" text="Thanh Toán" />
                         <Button layoutX="910.0" layoutY="466.0" mnemonicParsing="false" onAction="#closeView" prefHeight="57.0" prefWidth="82.0" styleClass="h3" text="HỦY" />
                         <TableView fx:id="tbShowOrdersDetail" layoutX="616.0" layoutY="78.0" prefHeight="369.0" prefWidth="551.0" />

@@ -4,6 +4,8 @@
  */
 package pojo;
 
+import javafx.collections.ObservableList;
+
 /**
  *
  * @author Khoa Tran
@@ -11,9 +13,32 @@ package pojo;
 public class OrderDetails {
     private Product product;
     private int quantity;
+
+    public OrderDetails(Product product, int quantity) {
+        this.product = product;
+        this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return getProduct().getPrice();
+    }
+
+    public double getTotal() {
+        return getPrice() * quantity;
+    }
     
-    public OrderDetails(Product p, int quantity) {
-        this.product = p;
+    
+    /**
+     * @return the quantity
+     */
+    public int getQuantity() {
+        return quantity;
+    }
+
+    /**
+     * @param quantity the quantity to set
+     */
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
@@ -30,18 +55,5 @@ public class OrderDetails {
     public void setProduct(Product product) {
         this.product = product;
     }
-
-    /**
-     * @return the quantity
-     */
-    public int getQuantity() {
-        return quantity;
-    }
-
-    /**
-     * @param quantity the quantity to set
-     */
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
 }
+
