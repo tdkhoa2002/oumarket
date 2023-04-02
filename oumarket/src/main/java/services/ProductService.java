@@ -10,8 +10,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.control.Alert;
 import pojo.Product;
 import pojo.Category;
+import utils.MessageBox;
 
 
 
@@ -20,7 +22,7 @@ import pojo.Category;
  * @author Khoa Tran
  */
 public class ProductService {
-    public boolean addProduct(Product p, List<Category> categories) throws SQLException {
+    public boolean addProduct(Product p) throws SQLException {
         try ( Connection conn = JdbcUtils.getConn()) {
             conn.setAutoCommit(false);
             String sql = "INSERT INTO products(id, name, category_id, price, unit, quantity) VALUES(?, ?, ?, ?, ?, ?)"; // SQL injection
@@ -32,11 +34,24 @@ public class ProductService {
             stm.setString(5, p.getUnit());
             stm.setInt(6, p.getQuantity());
 
-
-            int r = stm.executeUpdate();
+            stm.executeUpdate();
 
             try {
                 conn.commit();
+                
+//                sql = "SELECT * from categories WHERE id =?";
+//                
+//                stm = conn.prepareCall(sql);
+//                
+//                stm.setInt(1, p.getCategoryId());
+//                
+//                 ResultSet rs = stm.executeQuery();
+//                
+//                 while(rs.next()) {
+//                     p.setCategoryName(rs.getString("name"));
+//                 }
+                 System.out.println(p.getCategoryName());
+                
                 return true;
             } catch (SQLException ex) {
                 System.err.println(ex.getMessage());
@@ -56,38 +71,49 @@ public class ProductService {
 //            if (kw != null && !kw.isEmpty())
 //                    stm.setString(1, kw);
             ResultSet rs = stm.executeQuery();
+            System.out.println(rs.next());
             while (rs.next()) {
                  Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getInt("category_id"), rs.getDouble("price"), rs.getInt("quantity"), rs.getString("unit"));
+                 sql = "SELECT * from categories WHERE id =?";
+                
+                stm = conn.prepareCall(sql);
+                
+                stm.setInt(1, p.getCategoryId());
+                
+                 ResultSet rs1 = stm.executeQuery();
+                
+                 while(rs1.next()) {
+                     p.setCategoryName(rs1.getString("name"));
+                 }
                  results.add(p);
              }
         }
           return results;
     }
-    public List<Product> searchProducts(String keyword) throws SQLException {
-    List<Product> results = new ArrayList<>();
-
-    try (Connection conn = JdbcUtils.getConn()) {
-        String sql = "SELECT * FROM products WHERE name LIKE ?";
-        String pattern = "%" + keyword + "%";
-        PreparedStatement stmt = conn.prepareStatement(sql);
-        stmt.setString(1, pattern);
-
-        ResultSet rs = stmt.executeQuery();
-
-        while (rs.next()) {
-            String id = rs.getString("id");
-            String name = rs.getString("name");
-            int categoryId = rs.getInt("category_id");
-            double price = rs.getDouble("price");
-            int quantity = rs.getInt("quantity");
-            String unit = rs.getString("unit");
-            Product p = new Product(id, name, categoryId, price, quantity, unit);
-            results.add(p);
+    
+    public boolean deleteProduct(String id) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "DELETE FROM products WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, id);
+            
+            return stm.executeUpdate() > 0;
         }
     }
-
-    return results;
-}
-
+    
+    public boolean editProduct(Product p) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "UPDATE products SET name =?, category_id =?, price =?, unit =?, quantity=? WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, p.getName());
+            stm.setInt(2, p.getCategoryId());
+            stm.setDouble(3, p.getPrice());
+            stm.setString(4, p.getUnit());
+            stm.setInt(5, p.getQuantity());
+            stm.setString(6, p.getId());
+            
+            return stm.executeUpdate() > 0;
+        }
+    }
 }
  

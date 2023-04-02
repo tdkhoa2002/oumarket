@@ -14,6 +14,7 @@ public class Category {
     private int id;
     private String name;
     
+    
     public Category (String name) {
         this.name = name;
     }
@@ -54,4 +55,11 @@ public class Category {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return this.name;
+    }
+    
+    
 }
