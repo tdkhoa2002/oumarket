@@ -1,6 +1,5 @@
 package com.tdkhoa.oumarket;
 
-import static com.tdkhoa.oumarket.AddProductController.pS;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -25,7 +24,6 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -34,7 +32,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import pojo.Category;
 import pojo.Employee;
 import pojo.Order;
@@ -180,7 +177,29 @@ public class PrimaryController implements Initializable {
         TableColumn colTotal = new TableColumn("Tổng");
         colTotal.setCellValueFactory(new PropertyValueFactory("total"));
         
-        this.tbOrders.getColumns().addAll(colId, colOrderDate, colTotal);
+        TableColumn colSelect = new TableColumn("Xem");
+        colSelect.setCellFactory(r -> {
+                Button btnView = new Button("View");
+
+                btnView.setOnAction(event -> {
+                    try {
+                        Stage stage = new Stage();
+                        // Tạo Scene mới
+                        Parent root = FXMLLoader.load(getClass().getResource("/fxml/viewOrderDetails.fxml"));
+                        Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                        stage.setScene(scene);
+                        stage.setTitle("Xem chi tiết hóa đơn");
+                        stage.show();
+                    } catch (IOException ex) {
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+            TableCell c = new TableCell();
+            c.setGraphic(btnView);
+            return c;
+        });
+        
+        this.tbOrders.getColumns().addAll(colId, colOrderDate, colTotal, colSelect);
     }
     
     private void loadTableShowProductsColumns() {
