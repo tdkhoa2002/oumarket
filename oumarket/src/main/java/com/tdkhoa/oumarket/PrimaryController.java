@@ -1,5 +1,6 @@
 package com.tdkhoa.oumarket;
 
+import static com.tdkhoa.oumarket.AddProductController.pS;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -36,9 +37,12 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import pojo.Category;
 import pojo.Employee;
+import pojo.Order;
 import pojo.OrderDetails;
 import pojo.Product;
 import services.CategoryService;
+import services.OrderDetailsService;
+import services.OrderService;
 import services.ProductService;
 import utils.MessageBox;
 
@@ -47,6 +51,8 @@ public class PrimaryController implements Initializable {
     static ProductService pS = new ProductService();
     static CategoryService cS  = new CategoryService();
     static Product pRow = new Product ();
+    static OrderDetailsService oDS = new OrderDetailsService();
+    static OrderService oS = new OrderService();
     
     @FXML TableView<Product> tbProducts;
     @FXML TableView<Product> tbShowProducts;
@@ -57,6 +63,7 @@ public class PrimaryController implements Initializable {
     
     @FXML TableView<Category> tbCategories;
     @FXML TableView<Employee> tbEmployees;
+    @FXML TableView<Order> tbOrders;
     @FXML ComboBox<Category> cbCategories;
     @FXML TextField txtTotal;
     @FXML private Button btnAddSP;
@@ -73,8 +80,10 @@ public class PrimaryController implements Initializable {
             this.loadTableEmployeesColumns();
             this.loadTableShowProductsColumns();
             this.loadTableShowOrdersDetailColumns();
+            this.loadTableOrdersColumns();
             this.loadProductsData(null);
             this.loadCategoriesData(null);
+            this.loadOrdersData();
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -159,6 +168,19 @@ public class PrimaryController implements Initializable {
         });
         
         this.tbShowOrdersDetail.getColumns().addAll(colName, colQuantity, priceCol,totalCol,colDel);
+    }
+    
+    private void loadTableOrdersColumns() {
+        TableColumn colId = new TableColumn("Mã HĐ");
+        colId.setCellValueFactory(new PropertyValueFactory("id"));
+        
+        TableColumn colOrderDate = new TableColumn("Ngày tạo");
+        colOrderDate.setCellValueFactory(new PropertyValueFactory("orderDate"));
+        
+        TableColumn colTotal = new TableColumn("Tổng");
+        colTotal.setCellValueFactory(new PropertyValueFactory("total"));
+        
+        this.tbOrders.getColumns().addAll(colId, colOrderDate, colTotal);
     }
     
     private void loadTableShowProductsColumns() {
@@ -328,6 +350,13 @@ public class PrimaryController implements Initializable {
         this.tbCategories.getItems().clear();
         this.tbCategories.setItems(FXCollections.observableList(cates));
     }
+    
+    private void loadOrdersData() throws SQLException {
+        List<Order> orders = oS.getOrders();
+        
+        this.tbOrders.getItems().clear();
+        this.tbOrders.setItems(FXCollections.observableList(orders));
+    }
 
     private void loadTableEmployeesColumns() {
         TableColumn colId = new TableColumn("Mã nhân viên");
@@ -405,5 +434,24 @@ public class PrimaryController implements Initializable {
     public void closeView(ActionEvent evt) {
         stageOut = (Stage) sceneVBox.getScene().getWindow();
         stageOut.close();
+    }
+    
+    public void savePay() throws SQLException {
+        Order o = new Order();
+        o.setTotal(Double.parseDouble(txtTotal.getText()));
+        oS.addOrder(o);
+        ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
+        for (OrderDetails oD : orderDetailsList) {
+            try {
+                if (oDS.saveOderDetails(oD, o)) {
+                    MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
+                }
+            }
+            catch (SQLException ex) {
+                MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        this.tbShowOrdersDetail.getItems().clear();
     }
 }
