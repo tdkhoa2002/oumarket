@@ -1,5 +1,7 @@
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\com\tdkhoa\oumarket\EditProductController.java
+C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\pojo\Customer.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\pojo\OrderDetails.java
+C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\services\CustomerService.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\services\OrderDetailsService.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\services\OrderService.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\com\tdkhoa\oumarket\PrimaryController.java
@@ -8,7 +10,6 @@ C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\mo
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\pojo\Category.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\com\tdkhoa\oumarket\App.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\services\EmployeeService.java
-C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\pojo\Cart.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\pojo\Product.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\utils\MessageBox.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\services\CategoryService.java
@@ -16,6 +17,7 @@ C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\se
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\pojo\Order.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\com\tdkhoa\oumarket\SecondaryController.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\pojo\Receipt.java
+C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\pojo\Code.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\com\tdkhoa\oumarket\AddProductController.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\pojo\Employee.java
 C:\Users\Khoa Tran\Documents\NetBeansProjects\oumarket\oumarket\src\main\java\services\ProductService.java

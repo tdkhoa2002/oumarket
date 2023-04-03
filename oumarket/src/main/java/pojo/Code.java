@@ -4,13 +4,10 @@
  */
 package pojo;
 
-import javafx.collections.ObservableList;
-
 /**
  *
  * @author Khoa Tran
  */
-public class Cart {
-        private ObservableList<OrderDetails> orderDetailsList;
-
+public class Code {
+    
 }

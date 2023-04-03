@@ -113,6 +113,16 @@
                   </AnchorPane>
                </content>
             </Tab>
+            <Tab text="Khách hàng">
+               <content>
+                  <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView fx:id="tbCustomers" prefHeight="371.0" prefWidth="480.0" />
+                        <Button fx:id="btnAddCustomer" layoutX="504.0" layoutY="123.0" mnemonicParsing="false" onAction="#viewAddCustomer" prefHeight="102.0" prefWidth="139.0" text="THÊM KHÁCH HÀNG" />
+                     </children>
+                  </AnchorPane>
+               </content>
+            </Tab>
         </tabs>
          <VBox.margin>
             <Insets />

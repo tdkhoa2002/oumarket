@@ -71,7 +71,6 @@ public class ProductService {
 //            if (kw != null && !kw.isEmpty())
 //                    stm.setString(1, kw);
             ResultSet rs = stm.executeQuery();
-            System.out.println(rs.next());
             while (rs.next()) {
                  Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getInt("category_id"), rs.getDouble("price"), rs.getInt("quantity"), rs.getString("unit"));
                  sql = "SELECT * from categories WHERE id =?";

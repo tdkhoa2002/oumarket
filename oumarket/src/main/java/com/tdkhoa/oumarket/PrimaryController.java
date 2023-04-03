@@ -3,6 +3,7 @@ package com.tdkhoa.oumarket;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -33,11 +34,13 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
 import pojo.Category;
+import pojo.Customer;
 import pojo.Employee;
 import pojo.Order;
 import pojo.OrderDetails;
 import pojo.Product;
 import services.CategoryService;
+import services.CustomerService;
 import services.OrderDetailsService;
 import services.OrderService;
 import services.ProductService;
@@ -50,6 +53,7 @@ public class PrimaryController implements Initializable {
     static Product pRow = new Product ();
     static OrderDetailsService oDS = new OrderDetailsService();
     static OrderService oS = new OrderService();
+    static CustomerService cusS = new CustomerService();
     
     @FXML TableView<Product> tbProducts;
     @FXML TableView<Product> tbShowProducts;
@@ -61,10 +65,13 @@ public class PrimaryController implements Initializable {
     @FXML TableView<Category> tbCategories;
     @FXML TableView<Employee> tbEmployees;
     @FXML TableView<Order> tbOrders;
+    @FXML TableView<Customer> tbCustomers;
     @FXML ComboBox<Category> cbCategories;
     @FXML TextField txtTotal;
+    @FXML TextField txtPhone;
     @FXML private Button btnAddSP;
     @FXML private Button btnAddCate;
+    @FXML private Button btnAddCustomer;
     @FXML private Spinner spinner;
 //    @FXML private TextField txtSearch;
     @FXML private VBox sceneVBox;
@@ -78,8 +85,11 @@ public class PrimaryController implements Initializable {
             this.loadTableShowProductsColumns();
             this.loadTableShowOrdersDetailColumns();
             this.loadTableOrdersColumns();
+            this.loadTableCustomersColumns();
+            
             this.loadProductsData(null);
             this.loadCategoriesData(null);
+            this.loadCustomerData(null);
             this.loadOrdersData();
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
@@ -133,6 +143,32 @@ public class PrimaryController implements Initializable {
         });
     }
     
+    public void viewAddCustomer(ActionEvent evt) throws SQLException {
+        this.btnAddCustomer.setOnAction(event -> {
+            try {
+                Stage stage = new Stage();
+                // Tạo Scene mới
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/setCustomer.fxml"));
+                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                stage.setScene(scene);
+                stage.setTitle("Thêm khách hàng");
+                
+                stage.setOnHidden(e -> {                       //xử lý khi sự kiện stage đóng lại
+                    try {
+                        loadCustomerData(null);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                  });
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+    }
+    
+    
+    //Hien thi cot trong bang
     private void loadTableShowOrdersDetailColumns() {
         TableColumn<OrderDetails, String> colName = new TableColumn<>("Tên SP");
         colName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getName()));
@@ -352,37 +388,12 @@ public class PrimaryController implements Initializable {
     this.tbProducts.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colDel, colEdit);
    }
     
-    private void loadProductsData(String kw) throws SQLException {
-        
-        List<Product> pros = pS.getProducts(kw);
-        
-        this.tbProducts.getItems().clear();
-        this.tbProducts.setItems(FXCollections.observableList(pros));
-        
-        this.tbShowProducts.getItems().clear();
-        this.tbShowProducts.setItems(FXCollections.observableList(pros));
-    }
-    
-    private void loadCategoriesData(String kw) throws SQLException {
-        List<Category> cates = cS.getCategories(kw);
-        
-        this.tbCategories.getItems().clear();
-        this.tbCategories.setItems(FXCollections.observableList(cates));
-    }
-    
-    private void loadOrdersData() throws SQLException {
-        List<Order> orders = oS.getOrders();
-        
-        this.tbOrders.getItems().clear();
-        this.tbOrders.setItems(FXCollections.observableList(orders));
-    }
-
     private void loadTableEmployeesColumns() {
         TableColumn colId = new TableColumn("Mã nhân viên");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
         
         TableColumn colName = new TableColumn("Họ tên");
-        colId.setCellValueFactory(new PropertyValueFactory("name"));
+        colName.setCellValueFactory(new PropertyValueFactory("name"));
     }
 
     private void loadTableCategoriesColumns() {
@@ -450,6 +461,60 @@ public class PrimaryController implements Initializable {
          this.tbCategories.getColumns ().addAll(colId, colName, colDel, colEdit);
     }
     
+    private void loadTableCustomersColumns() {
+        TableColumn colId = new TableColumn("Mã KH");
+        colId.setCellValueFactory(new PropertyValueFactory("id"));
+        
+        TableColumn colName = new TableColumn("Họ tên");
+        colName.setCellValueFactory(new PropertyValueFactory("name"));
+        
+        TableColumn colBirth = new TableColumn("Ngày Sinh");
+        colBirth.setCellValueFactory(new PropertyValueFactory("ngaySinh"));
+        
+        TableColumn colPhone = new TableColumn("SĐT");
+        colPhone.setCellValueFactory(new PropertyValueFactory("phone"));
+        
+        TableColumn colPoint = new TableColumn("Điểm");
+        colPoint.setCellValueFactory(new PropertyValueFactory("point"));
+        
+        this.tbCustomers.getColumns().addAll(colId, colName, colBirth, colPhone, colPoint);
+    }
+    
+    
+    //Load du lieu
+    
+    private void loadProductsData(String kw) throws SQLException {
+        
+        List<Product> pros = pS.getProducts(kw);
+        
+        this.tbProducts.getItems().clear();
+        this.tbProducts.setItems(FXCollections.observableList(pros));
+        
+        this.tbShowProducts.getItems().clear();
+        this.tbShowProducts.setItems(FXCollections.observableList(pros));
+    }
+    
+    private void loadCategoriesData(String kw) throws SQLException {
+        List<Category> cates = cS.getCategories(kw);
+        
+        this.tbCategories.getItems().clear();
+        this.tbCategories.setItems(FXCollections.observableList(cates));
+    }
+    
+    private void loadCustomerData(String kw) throws SQLException {
+        List<Customer> customers = cusS.getCustomers(kw);
+        
+        this.tbCustomers.getItems().clear();
+        this.tbCustomers.setItems(FXCollections.observableList(customers));
+    }
+    
+    private void loadOrdersData() throws SQLException {
+        List<Order> orders = oS.getOrders();
+        
+        this.tbOrders.getItems().clear();
+        this.tbOrders.setItems(FXCollections.observableList(orders));
+    }
+    
     public void closeView(ActionEvent evt) {
         stageOut = (Stage) sceneVBox.getScene().getWindow();
         stageOut.close();
@@ -457,7 +522,18 @@ public class PrimaryController implements Initializable {
     
     public void savePay() throws SQLException {
         Order o = new Order();
-        o.setTotal(Double.parseDouble(txtTotal.getText()));
+        List<Customer> customers = cusS.getCustomers(null);
+        String phone = txtPhone.getText();
+        LocalDateTime purchaseDate = LocalDateTime.now();
+        
+        Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
+        if(customer.getNgaySinh().equals(purchaseDate.toString()) && o.getTotal() >= 1000000) {
+            double discount = o.getTotal() * 0.1;
+            o.setTotal(total - discount);
+        }
+        else {
+            o.setTotal(Double.parseDouble(txtTotal.getText()));
+        }
         oS.addOrder(o);
         ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
         for (OrderDetails oD : orderDetailsList) {
