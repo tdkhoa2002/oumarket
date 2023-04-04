@@ -525,7 +525,7 @@ public class PrimaryController implements Initializable {
         List<Customer> customers = cusS.getCustomers(null);
         String phone = txtPhone.getText();
         LocalDateTime purchaseDate = LocalDateTime.now();
-        
+        System.out.println(purchaseDate.);
         Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
         if(customer.getNgaySinh().equals(purchaseDate.toString()) && o.getTotal() >= 1000000) {
             double discount = o.getTotal() * 0.1;

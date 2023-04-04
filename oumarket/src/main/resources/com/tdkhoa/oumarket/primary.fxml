@@ -61,8 +61,8 @@
                         <Button layoutX="22.0" layoutY="373.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="80.0" styleClass="h2" text="Thống kê" />
                         <Button layoutX="22.0" layoutY="434.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="80.0" styleClass="h2" stylesheets="@Style.css" text="Sale" />
                         <Button layoutX="223.0" layoutY="375.0" mnemonicParsing="false" prefHeight="117.0" prefWidth="136.0" styleClass="h2" text="Đổi User" />
-                        <Text layoutX="16.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số Lượng:" />
-                        <TextField layoutX="81.0" layoutY="292.0" />
+                        <Text layoutX="16.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số điện thoại:" />
+                        <TextField fx:id="txtPhone" layoutX="81.0" layoutY="292.0" />
                         <Text layoutX="248.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="VAT(%): " wrappingWidth="50.26171875" />
                         <TextField layoutX="313.0" layoutY="292.0" />
                         <Text layoutX="13.0" layoutY="354.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền hàng: " />
