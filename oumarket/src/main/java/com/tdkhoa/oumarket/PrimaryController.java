@@ -40,6 +40,8 @@ import pojo.Employee;
 import pojo.Order;
 import pojo.OrderDetails;
 import pojo.Product;
+import pojo.Promotion;
+import services.PromotionService;
 import services.CategoryService;
 import services.CustomerService;
 import services.OrderDetailsService;
@@ -55,6 +57,7 @@ public class PrimaryController implements Initializable {
     static OrderDetailsService oDS = new OrderDetailsService();
     static OrderService oS = new OrderService();
     static CustomerService cusS = new CustomerService();
+    static PromotionService promoService = new PromotionService();
     
     @FXML TableView<Product> tbProducts;
     @FXML TableView<Product> tbShowProducts;
@@ -73,7 +76,6 @@ public class PrimaryController implements Initializable {
     @FXML private Button btnAddSP;
     @FXML private Button btnAddCate;
     @FXML private Button btnAddCustomer;
-    @FXML private Spinner spinner;
 //    @FXML private TextField txtSearch;
     @FXML private VBox sceneVBox;
     Stage stageOut;
@@ -275,6 +277,10 @@ public class PrimaryController implements Initializable {
                 saveButton.setOnAction(event -> {
                     // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
                     int quantity = Integer.parseInt(quantityTextField.getText());
+//                    double priceDiscounted = promoService.getDiscountedPrice(p);
+//                    p.setPrice(priceDiscounted);
+//                    System.out.println(priceDiscounted);
+                    System.out.println(p.getPrice());
                     OrderDetails cartItem = new OrderDetails(p, quantity);
                     cartItems.add(cartItem);
                     
@@ -284,6 +290,7 @@ public class PrimaryController implements Initializable {
                     this.tbShowOrdersDetail.setItems(cartItems);
                     // Đóng Popup
                     popup.hide();
+                    
                  });
                 // Thêm các thành phần vào VBox
                 popupContent.getChildren().addAll(quantityLabel, quantityTextField, saveButton);
@@ -366,7 +373,6 @@ public class PrimaryController implements Initializable {
             TableCell cell = (TableCell) b.getParent();
             pRow = (Product) cell.getTableRow().getItem();
             try {
-                pS.editProduct(pRow);
                 Stage stage = new Stage();
                 // Tạo Scene mới
                 Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixProducts.fxml"));
@@ -376,9 +382,7 @@ public class PrimaryController implements Initializable {
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-            }   catch (SQLException ex) {
-                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            }
         });
             
             TableCell c = new TableCell();

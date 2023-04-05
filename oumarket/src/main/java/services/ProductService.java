@@ -72,7 +72,8 @@ public class ProductService {
 //                    stm.setString(1, kw);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                 Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getInt("category_id"), rs.getDouble("price"), rs.getInt("quantity"), rs.getString("unit"));
+                 Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getInt("category_id"), rs.getDouble("price"), 
+                         rs.getInt("quantity"), rs.getString("unit"), rs.getInt("promotion_id"));
                  sql = "SELECT * from categories WHERE id =?";
                 
                 stm = conn.prepareCall(sql);
@@ -83,6 +84,18 @@ public class ProductService {
                 
                  while(rs1.next()) {
                      p.setCategoryName(rs1.getString("name"));
+                 }
+                 
+                 sql = "SELECT * from promotion WHERE id =?";
+                
+                stm = conn.prepareCall(sql);
+                
+                stm.setInt(1, p.getPromotion_id());
+                
+                 ResultSet rs2 = stm.executeQuery();
+                
+                 while(rs2.next()) {
+                     p.setPromotion_name(rs2.getString("name"));
                  }
                  results.add(p);
              }
@@ -102,14 +115,27 @@ public class ProductService {
     
     public boolean editProduct(Product p) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "UPDATE products SET name =?, category_id =?, price =?, unit =?, quantity=? WHERE id=?";
+            String sql = "UPDATE products SET name =?, category_id =?, price =?, unit =?, quantity=?, promotion_id = ? WHERE id=?";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, p.getName());
             stm.setInt(2, p.getCategoryId());
             stm.setDouble(3, p.getPrice());
             stm.setString(4, p.getUnit());
             stm.setInt(5, p.getQuantity());
-            stm.setString(6, p.getId());
+            stm.setInt(6, p.getPromotion_id());
+            stm.setString(7, p.getId());
+            
+//            sql = "SELECT * from promotion WHERE id =?";
+//                
+//                stm = conn.prepareCall(sql);
+//                
+//                stm.setInt(1, p.getPromotion_id());
+//                
+//                 ResultSet rs1 = stm.executeQuery();
+//                
+//                 while(rs1.next()) {
+//                     p.setPromotion_name(rs1.getString("name"));
+//                 }
             
             return stm.executeUpdate() > 0;
         }

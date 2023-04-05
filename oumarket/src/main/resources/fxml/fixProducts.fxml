@@ -89,7 +89,7 @@
             </HBox>
             <HBox prefHeight="36.0" prefWidth="609.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Danh Mục" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Danh Mục:" />
                   <ComboBox fx:id="cbCategories" prefHeight="23.0" prefWidth="274.0">
                      <HBox.margin>
                         <Insets left="33.0" />
@@ -99,6 +99,16 @@
                <VBox.margin>
                   <Insets left="30.0" top="5.0" />
                </VBox.margin>
+            </HBox>
+            <HBox layoutX="41.0" layoutY="304.0" prefHeight="36.0" prefWidth="609.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Khuyến mãi: " />
+                  <ComboBox fx:id="cbPromotions" prefHeight="23.0" prefWidth="274.0">
+                     <HBox.margin>
+                        <Insets left="33.0" />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>

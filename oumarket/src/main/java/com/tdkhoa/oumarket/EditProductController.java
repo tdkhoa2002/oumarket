@@ -19,8 +19,10 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import pojo.Category;
 import pojo.Product;
+import pojo.Promotion;
 import services.CategoryService;
 import services.ProductService;
+import services.PromotionService;
 
 /**
  *
@@ -31,6 +33,7 @@ public class EditProductController implements Initializable {
     @FXML private TextField txtPrice;
     @FXML private TextField txtQuantity;
     @FXML private TextField txtUnit;
+    @FXML ComboBox<Promotion> cbPromotions;
     
     @FXML private ComboBox<Category> cbCategories;
     static ProductService pS = new ProductService();
@@ -39,12 +42,20 @@ public class EditProductController implements Initializable {
     @Override
     public void initialize (URL url, ResourceBundle rb) {
         CategoryService s = new CategoryService();
+        PromotionService promotionService = new PromotionService();
         txtName.setText(pRow.getName());
-        System.out.println(pRow.getName());
+        txtPrice.setText(Double.toString(pRow.getPrice()));
+        txtQuantity.setText(Integer.toString(pRow.getQuantity()));
+        txtUnit.setText(pRow.getUnit());
+        cbCategories.setPromptText(pRow.getCategoryName());
+        cbPromotions.setPromptText(pRow.getPromotion_name());
+        System.out.println(pRow.getPromotion_name());
         try {
 //            txtName.setText(product.getName());
             List<Category> cates = s.getCategories(null);
+            List<Promotion> promotions = promotionService.getPromotions(null);
             this.cbCategories.setItems(FXCollections.observableList(cates));
+            this.cbPromotions.setItems(FXCollections.observableList(promotions));
         } catch (SQLException ex) {
             Logger.getLogger(EditProductController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -56,6 +67,8 @@ public class EditProductController implements Initializable {
         pRow.setQuantity(Integer.parseInt(this.txtQuantity.getText()));
         pRow.setPrice(Double.parseDouble(this.txtPrice.getText()));
         pRow.setUnit(this.txtUnit.getText());
+        pRow.setPromotion_id(this.cbPromotions.getSelectionModel().getSelectedItem().getId());
+        pRow.setPromotion_name(this.cbPromotions.getSelectionModel().getSelectedItem().getName());
         pS.editProduct(pRow);
     }
 }
