@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -524,29 +525,43 @@ public class PrimaryController implements Initializable {
         Order o = new Order();
         List<Customer> customers = cusS.getCustomers(null);
         String phone = txtPhone.getText();
-        LocalDateTime purchaseDate = LocalDateTime.now();
-        System.out.println(purchaseDate.);
-        Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
-        if(customer.getNgaySinh().equals(purchaseDate.toString()) && o.getTotal() >= 1000000) {
-            double discount = o.getTotal() * 0.1;
-            o.setTotal(total - discount);
-        }
+        double tongTien = Double.parseDouble(txtTotal.getText());
+        if(!phone.isEmpty()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            LocalDateTime purchaseDate = LocalDateTime.now();
+            String formattedDateTime = purchaseDate.format(formatter);
+            String purchaseDateSS = formattedDateTime.substring(0,5);
+            System.out.println(purchaseDateSS);
+            Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
+            String customerBirthDay = customer.getNgaySinh().substring(0,5);
+            System.out.println(customerBirthDay);
+            if(customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
+                double discount = tongTien * 0.1;
+                o.setTotal(tongTien - discount);
+                System.out.println("Ngay sinh da trung");
+            }
+            else {
+                o.setTotal(Double.parseDouble(txtTotal.getText()));
+            }
+        } 
         else {
             o.setTotal(Double.parseDouble(txtTotal.getText()));
         }
         oS.addOrder(o);
         ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
+        boolean tmp = false;
         for (OrderDetails oD : orderDetailsList) {
-            try {
-                if (oDS.saveOderDetails(oD, o)) {
-                    MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
-                }
+            if(oDS.saveOderDetails(oD, o)) {
+                tmp = true;
             }
-            catch (SQLException ex) {
-                MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
-                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            else {
+                tmp = false;
             }
         }
+        if(tmp == true)
+            MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
+        else 
+            MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
         this.tbShowOrdersDetail.getItems().clear();
     }
 }
