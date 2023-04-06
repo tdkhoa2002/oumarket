@@ -92,13 +92,13 @@ public class PrimaryController implements Initializable {
             this.loadTableShowOrdersDetailColumns();
             this.loadTableOrdersColumns();
             this.loadTableCustomersColumns();
-//            this.loadTablePromotionsColumns();
+            this.loadTablePromotionsColumns();
             
             this.loadProductsData(null);
             this.loadCategoriesData(null);
             this.loadCustomerData(null);
             this.loadOrdersData();
-//            this.loadPromotionData(null);
+            this.loadPromotionData(null);
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
