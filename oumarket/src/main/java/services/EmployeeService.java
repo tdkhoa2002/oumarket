@@ -5,7 +5,6 @@
 package services;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +28,7 @@ public class EmployeeService {
         Statement statement = null;
         try {
             //lay tat ca danh sach nhan vien
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/oumarket", "root", "");
+            con = JdbcUtils.getConn();
             
             //query
             String sql = "select * from employee";
@@ -69,7 +68,7 @@ public class EmployeeService {
         Connection con = null;
         PreparedStatement statement = null;
         try {
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/oumarket", "root", "");
+            con = JdbcUtils.getConn();
             
             String sql = "insert into employee(fullname)";
             statement = con.prepareCall(sql);
@@ -104,7 +103,7 @@ public class EmployeeService {
         PreparedStatement statement = null;
         try {
             
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/oumarket", "root", "");
+            con = JdbcUtils.getConn();
             
             String sql = "update employee set fullname=? where id = ?";
             statement = con.prepareCall(sql);
@@ -140,7 +139,7 @@ public class EmployeeService {
         PreparedStatement statement = null;
         try {
           
-            con = DriverManager.getConnection("jdbc:mysql://localhost:3307/oumarket", "root", "");
+            con = JdbcUtils.getConn();
             
             String sql = "delete from employee where id = ?";
             statement = con.prepareCall(sql);
