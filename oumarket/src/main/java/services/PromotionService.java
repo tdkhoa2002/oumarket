@@ -79,12 +79,23 @@ public class PromotionService {
         return now.isAfter(promotion.getTimeStart()) && now.isBefore(promotion.getTimeEnd());
     }
 
-//    public static double getDiscountedPrice(Product product) {
-//        double price = product.getPrice();
-//        if (product.getPromotion() != null && isPromotionActive(product.getPromotion())) {
+    public static double getDiscountedPrice(Product product) throws SQLException {
+        double priceDiscount = 0;
+        double price = product.getPrice();
+        try ( Connection conn = JdbcUtils.getConn() ) {
+            String sql = "Select value from promotion where id = ?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setInt(1, product.getPromotion_id());
+            ResultSet rs = stm.executeQuery();
+            while(rs.next()) {
+                priceDiscount =  rs.getDouble("value");
+            }
+        }
+        price *= (1 - priceDiscount / 100);
+//        if (product.getPromotion_id()!= null && isPromotionActive(product.getPromotion())) {
 //            double discountPercentage = product.getPromotion().getValue();
 //            price *= (1 - discountPercentage / 100);
 //        }
-//        return price;
-//    }
+        return price;
+    }
 }

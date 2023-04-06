@@ -80,8 +80,8 @@
             <content>
               <AnchorPane prefHeight="269.0" prefWidth="528.0">
                      <children>
-                        <TableView fx:id="tbProducts" layoutX="1.0" prefHeight="371.0" prefWidth="476.0" />
-                        <Button fx:id="btnAddSP" layoutX="504.0" layoutY="123.0" mnemonicParsing="false" onAction="#viewAddProduct" prefHeight="102.0" prefWidth="139.0" text="THÊM SẢN PHẨM " />
+                        <TableView fx:id="tbProducts" layoutX="1.0" prefHeight="371.0" prefWidth="645.0" />
+                        <Button fx:id="btnAddSP" layoutX="755.0" layoutY="35.0" mnemonicParsing="false" onAction="#viewAddProduct" prefHeight="102.0" prefWidth="139.0" text="THÊM SẢN PHẨM " />
                      </children>
                   </AnchorPane>
             </content>
@@ -99,7 +99,7 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tbCategories" prefHeight="371.0" prefWidth="480.0" />
+                        <TableView fx:id="tbCategories" prefHeight="371.0" prefWidth="370.0" />
                         <Button fx:id="btnAddCate" layoutX="504.0" layoutY="123.0" mnemonicParsing="false" onAction="#viewAddCategory" prefHeight="102.0" prefWidth="139.0" text="THÊM DANH MỤC " />
                      </children></AnchorPane>
               </content>
@@ -117,8 +117,8 @@
                <content>
                   <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView fx:id="tbCustomers" prefHeight="371.0" prefWidth="480.0" />
-                        <Button fx:id="btnAddCustomer" layoutX="504.0" layoutY="123.0" mnemonicParsing="false" onAction="#viewAddCustomer" prefHeight="102.0" prefWidth="139.0" text="THÊM KHÁCH HÀNG" />
+                        <TableView fx:id="tbCustomers" prefHeight="371.0" prefWidth="562.0" />
+                        <Button fx:id="btnAddCustomer" layoutX="650.0" layoutY="134.0" mnemonicParsing="false" onAction="#viewAddCustomer" prefHeight="102.0" prefWidth="139.0" text="THÊM KHÁCH HÀNG" />
                      </children>
                   </AnchorPane>
                </content>

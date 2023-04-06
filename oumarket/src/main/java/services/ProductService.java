@@ -4,16 +4,15 @@
  */
 package services;
 
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.control.Alert;
 import pojo.Product;
-import pojo.Category;
-import utils.MessageBox;
 
 
 
@@ -61,6 +60,7 @@ public class ProductService {
     }
     
     public List<Product> getProducts(String kw) throws SQLException {
+        PromotionService promoService = new PromotionService();
         List<Product> results = new ArrayList<>();
         try ( Connection conn = JdbcUtils.getConn() ) {
             String sql = "SELECT * FROM products";
@@ -97,6 +97,14 @@ public class ProductService {
                  while(rs2.next()) {
                      p.setPromotion_name(rs2.getString("name"));
                  }
+                 
+                 double priceDiscounted = 0;
+                 priceDiscounted = promoService.getDiscountedPrice(p);
+                    DecimalFormat decimalFormat = new DecimalFormat("#.##"); // Số # thay thế cho số 0
+                    decimalFormat.setRoundingMode(RoundingMode.CEILING); // Đặt chế độ làm tròn
+                    String formattedNumber = decimalFormat.format(priceDiscounted);
+                    p.setPriceDiscount(Double.parseDouble(formattedNumber));
+                 
                  results.add(p);
              }
         }
@@ -137,6 +145,8 @@ public class ProductService {
 //                     p.setPromotion_name(rs1.getString("name"));
 //                 }
             
+            
+
             return stm.executeUpdate() > 0;
         }
     }

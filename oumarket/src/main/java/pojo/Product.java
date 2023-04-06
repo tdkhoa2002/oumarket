@@ -18,6 +18,7 @@ public class Product {
     private double price;
     private String unit;
     private int quantity;
+    private double priceDiscount = 0;
     private int promotion_id;
     private String promotion_name;
     
@@ -173,6 +174,20 @@ public class Product {
      */
     public void setPromotion_name(String promotion_name) {
         this.promotion_name = promotion_name;
+    }
+
+    /**
+     * @return the priceDiscount
+     */
+    public double getPriceDiscount() {
+        return priceDiscount;
+    }
+
+    /**
+     * @param priceDiscount the priceDiscount to set
+     */
+    public void setPriceDiscount(double priceDiscount) {
+        this.priceDiscount = priceDiscount;
     }
 
 }

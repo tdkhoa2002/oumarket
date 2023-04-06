@@ -175,12 +175,16 @@ public class PrimaryController implements Initializable {
     private void loadTableShowOrdersDetailColumns() {
         TableColumn<OrderDetails, String> colName = new TableColumn<>("Tên SP");
         colName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getName()));
+        colName.setPrefWidth(170);
 
         TableColumn<OrderDetails, Integer> colQuantity = new TableColumn<>("Số lượng");
         colQuantity.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getQuantity()).asObject());
         
         TableColumn<OrderDetails, Double> priceCol = new TableColumn<>("Price");
         priceCol.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getPrice()).asObject());
+        
+        TableColumn<OrderDetails, Double> colPriceDiscount = new TableColumn<>("Price Discounted");
+        colPriceDiscount.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getProduct().getPriceDiscount()).asObject());
 
         TableColumn<OrderDetails, Double> totalCol = new TableColumn<>("Total");
         totalCol.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTotal()).asObject());
@@ -190,12 +194,14 @@ public class PrimaryController implements Initializable {
             Button btn = new Button("Xóa");
 
             btn.setOnAction(evt -> {
-//                Button b = (Button) evt.getSource();
-//                TableCell cell = (TableCell) b.getParent();
-//                Product p = (Product) cell.getTableRow().getItem();
-//                
-//                this.tbShowOrdersDetail.getItems().clear();
-//                
+                Button b = (Button) evt.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                OrderDetails orderDetails = (OrderDetails) cell.getTableRow().getItem();
+                
+                this.tbShowOrdersDetail.getItems().remove(orderDetails);
+                total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
+                txtTotal.setText(Double.toString(total));
+                this.tbShowOrdersDetail.refresh();
 //                System.out.println(this.tbShowOrdersDetail.getItems().remove(p));
             });
             TableCell c = new TableCell();
@@ -203,12 +209,13 @@ public class PrimaryController implements Initializable {
             return c;
         });
         
-        this.tbShowOrdersDetail.getColumns().addAll(colName, colQuantity, priceCol,totalCol,colDel);
+        this.tbShowOrdersDetail.getColumns().addAll(colName, colQuantity, priceCol,colPriceDiscount, totalCol,colDel);
     }
     
     private void loadTableOrdersColumns() {
         TableColumn colId = new TableColumn("Mã HĐ");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
+        colId.setPrefWidth(50);
         
         TableColumn colOrderDate = new TableColumn("Ngày tạo");
         colOrderDate.setCellValueFactory(new PropertyValueFactory("orderDate"));
@@ -242,11 +249,14 @@ public class PrimaryController implements Initializable {
     }
     
     private void loadTableShowProductsColumns() {
+        
         TableColumn colId = new TableColumn("Mã SP");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
-
+        colId.setPrefWidth(50);
+        
         TableColumn colName = new TableColumn("Tên SP");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
+        colName.setPrefWidth(170);
 
         TableColumn colCate = new TableColumn("Danh mục");
         colCate.setCellValueFactory(new PropertyValueFactory("categoryName"));
@@ -263,7 +273,6 @@ public class PrimaryController implements Initializable {
         TableColumn colAdd = new TableColumn("Thêm");
         colAdd.setCellFactory(r -> {
             Button btn = new Button("Thêm");
-
             btn.setOnAction(evt -> {
                 Button b = (Button) evt.getSource();
                 TableCell cell = (TableCell) b.getParent();
@@ -271,26 +280,36 @@ public class PrimaryController implements Initializable {
                 
                 Popup popup = new Popup();
                 VBox popupContent = new VBox();
-                Label quantityLabel = new Label("Số lượng: :");
+                Label quantityLabel = new Label("Số lượng: ");
                 TextField quantityTextField = new TextField();
+                quantityTextField.setText("0");
                 Button saveButton = new Button("Save");
                 saveButton.setOnAction(event -> {
-                    // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
                     int quantity = Integer.parseInt(quantityTextField.getText());
-//                    double priceDiscounted = promoService.getDiscountedPrice(p);
-//                    p.setPrice(priceDiscounted);
-//                    System.out.println(priceDiscounted);
-                    System.out.println(p.getPrice());
-                    OrderDetails cartItem = new OrderDetails(p, quantity);
-                    cartItems.add(cartItem);
-                    
+                    boolean check = true;
+                    //Kiem tra xem san pham do da co trong gio hang hay chua
+                    if(!cartItems.isEmpty()) { //Nếu mảng đó co sản phẩm
+                        for (OrderDetails cartItem: cartItems) { //Chạy vòng lặp từng sản phẩm
+                            if (cartItem.getProduct().getId().equals(p.getId())) { //Nếu sản phẩm vừa thêm vào trùng với sản phẩm đã có
+                                cartItem.setQuantity(cartItem.getQuantity()+quantity); //Set lại số lượng tăng lên
+                                check = false;
+                            }
+                        }
+                        if(check)
+                            cartItems.add(new OrderDetails(p, quantity));
+                    }
+                    else {
+                            // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
+                            OrderDetails cartItem = new OrderDetails(p, quantity);
+                            cartItems.add(cartItem);
+                        }
                     total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
                     txtTotal.setText(Double.toString(total));
                     
                     this.tbShowOrdersDetail.setItems(cartItems);
+                    this.tbShowOrdersDetail.refresh();
                     // Đóng Popup
                     popup.hide();
-                    
                  });
                 // Thêm các thành phần vào VBox
                 popupContent.getChildren().addAll(quantityLabel, quantityTextField, saveButton);
@@ -301,7 +320,7 @@ public class PrimaryController implements Initializable {
                 // Thiết lập sự kiện cho button
                 btn.setOnAction(event -> {
                     // Hiển thị Popup tại vị trí của button
-                    popup.show(btn.getScene().getWindow());
+                    popup.show(btn.getScene().getWindow(), 600, 500);
                 });
             });
             TableCell c = new TableCell();
@@ -309,14 +328,16 @@ public class PrimaryController implements Initializable {
             return c;
         });
         this.tbShowProducts.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colAdd);
-    }
+    } //Page chọn sản phẩm để thanh toán
 
     private void loadTableProductsColumns() {
         TableColumn colId = new TableColumn("Mã SP");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
+        colId.setPrefWidth(50);
 
         TableColumn colName = new TableColumn("Tên SP");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
+        colName.setPrefWidth(170);
 
         TableColumn colCate = new TableColumn("Danh mục");
         colCate.setCellValueFactory(new PropertyValueFactory("categoryName"));
@@ -379,6 +400,15 @@ public class PrimaryController implements Initializable {
                 Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
                 stage.setScene(scene);
                 stage.setTitle("Chỉnh sửa sản phẩm");
+                
+                stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
+                    try {
+                        loadProductsData(null);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                  });
+                
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
@@ -390,8 +420,8 @@ public class PrimaryController implements Initializable {
             return c;
          });
         
-    this.tbProducts.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colDel, colEdit);
-   }
+    this.tbProducts.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colEdit, colDel);
+   } //Page load tất cả các sản phẩm
     
     private void loadTableEmployeesColumns() {
         TableColumn colId = new TableColumn("Mã nhân viên");
@@ -399,13 +429,16 @@ public class PrimaryController implements Initializable {
         
         TableColumn colName = new TableColumn("Họ tên");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
-    }
+    } //Page load tất cả nhân viên
 
     private void loadTableCategoriesColumns() {
-        TableColumn colId = new TableColumn("Mã danh mục");
+        TableColumn colId = new TableColumn("ID");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
+        colId.setPrefWidth(50);
+        
         TableColumn colName = new TableColumn("Tên danh mục");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
+        colName.setPrefWidth(170);
         
         TableColumn colDel = new TableColumn("Delete");
         colDel.setCellFactory(r -> {
@@ -464,7 +497,7 @@ public class PrimaryController implements Initializable {
          });
         
          this.tbCategories.getColumns ().addAll(colId, colName, colDel, colEdit);
-    }
+    } //Page load tất cả danh mục
     
     private void loadTableCustomersColumns() {
         TableColumn colId = new TableColumn("Mã KH");
@@ -483,7 +516,7 @@ public class PrimaryController implements Initializable {
         colPoint.setCellValueFactory(new PropertyValueFactory("point"));
         
         this.tbCustomers.getColumns().addAll(colId, colName, colBirth, colPhone, colPoint);
-    }
+    } //Page load tất cả thông tin khách hàng
     
     
     //Load du lieu
@@ -530,27 +563,30 @@ public class PrimaryController implements Initializable {
         List<Customer> customers = cusS.getCustomers(null);
         String phone = txtPhone.getText();
         double tongTien = Double.parseDouble(txtTotal.getText());
-        if(!phone.isEmpty()) {
+        if(!phone.isEmpty()) { //Nếu txtPhone không rỗng
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             LocalDateTime purchaseDate = LocalDateTime.now();
             String formattedDateTime = purchaseDate.format(formatter);
             String purchaseDateSS = formattedDateTime.substring(0,5);
             System.out.println(purchaseDateSS);
             Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
-            String customerBirthDay = customer.getNgaySinh().substring(0,5);
-            System.out.println(customerBirthDay);
-            if(customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
-                double discount = tongTien * 0.1;
-                o.setTotal(tongTien - discount);
-                System.out.println("Ngay sinh da trung");
+            if(customer != null) {
+                String customerBirthDay = customer.getNgaySinh().substring(0,5);
+                if(customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
+                    double discount = tongTien * 0.1;
+                    o.setTotal(tongTien - discount);
+                }
+                else {
+                    o.setTotal(Double.parseDouble(txtTotal.getText()));
+                }
             }
             else {
-                o.setTotal(Double.parseDouble(txtTotal.getText()));
+                return;
             }
-        } 
-        else {
-            o.setTotal(Double.parseDouble(txtTotal.getText()));
         }
+        else  //Nếu txtPhone rỗng
+            o.setTotal(Double.parseDouble(txtTotal.getText()));
+        
         oS.addOrder(o);
         ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
         boolean tmp = false;

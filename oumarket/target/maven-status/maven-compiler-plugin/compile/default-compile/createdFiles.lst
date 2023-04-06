@@ -6,4 +6,5 @@ com\tdkhoa\oumarket\SecondaryController.class
 com\tdkhoa\oumarket\AddProductController.class
 pojo\Product.class
 pojo\Employee.class
+services\ProductService.class
 pojo\Receipt.class

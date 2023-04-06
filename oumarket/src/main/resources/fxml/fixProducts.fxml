@@ -11,7 +11,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tdkhoa.oumarket.EditProductController">
    <children>
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="610.0" stylesheets="@setProducts.css">
+      <VBox fx:id="sceneVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="610.0" stylesheets="@setProducts.css">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="OU" text="OU MARKET ">
                <VBox.margin>

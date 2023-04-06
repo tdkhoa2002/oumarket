@@ -4,6 +4,7 @@
  */
 package com.tdkhoa.oumarket;
 
+import static com.tdkhoa.oumarket.AddProductController.pS;
 import static com.tdkhoa.oumarket.PrimaryController.pRow;
 import java.net.URL;
 import java.sql.SQLException;
@@ -15,14 +16,19 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import pojo.Category;
 import pojo.Product;
 import pojo.Promotion;
 import services.CategoryService;
 import services.ProductService;
 import services.PromotionService;
+import utils.MessageBox;
 
 /**
  *
@@ -33,8 +39,9 @@ public class EditProductController implements Initializable {
     @FXML private TextField txtPrice;
     @FXML private TextField txtQuantity;
     @FXML private TextField txtUnit;
-    @FXML ComboBox<Promotion> cbPromotions;
-    
+    @FXML private ComboBox<Promotion> cbPromotions;
+    @FXML private VBox sceneVBox;
+     Stage stageOut;
     @FXML private ComboBox<Category> cbCategories;
     static ProductService pS = new ProductService();
     
@@ -69,6 +76,21 @@ public class EditProductController implements Initializable {
         pRow.setUnit(this.txtUnit.getText());
         pRow.setPromotion_id(this.cbPromotions.getSelectionModel().getSelectedItem().getId());
         pRow.setPromotion_name(this.cbPromotions.getSelectionModel().getSelectedItem().getName());
-        pS.editProduct(pRow);
+        
+        try {
+            if (pS.editProduct(pRow)) {
+                Alert a = MessageBox.getBox("Sản phẩm", "Sửa sản phẩm thành công ", Alert.AlertType.INFORMATION);
+                a.showAndWait().ifPresent(res -> {
+                    if (res == ButtonType.OK) {
+                        stageOut = (Stage) sceneVBox.getScene().getWindow();
+                        stageOut.close();
+                    }
+                });
+            }
+        } catch (SQLException ex) {
+            MessageBox.getBox("Product", "Edit product failed", Alert.AlertType.ERROR).show();
+            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }
