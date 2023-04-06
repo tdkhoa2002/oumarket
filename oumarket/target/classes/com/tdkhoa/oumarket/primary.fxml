@@ -19,22 +19,13 @@
             <content>
               <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="489.0" prefWidth="1098.0">
                      <children>
-                        <HBox prefHeight="58.0" prefWidth="917.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="OU" text="OU MARKET " textAlignment="CENTER" wrappingWidth="474.5574035644531">
-                                 <HBox.margin>
-                                    <Insets bottom="10.0" left="250.0" top="10.0" />
-                                 </HBox.margin>
-                              </Text>
-                           </children>
-                        </HBox>
                         <HBox id="h1" layoutX="-1.0" layoutY="42.0" prefHeight="35.0" prefWidth="1137.0" styleClass="v1">
                            <children>
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Search: ">
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin></Text>
-                              <TextField>
+                              <TextField fx:id="txtSearch">
                                  <HBox.margin>
                                     <Insets />
                                  </HBox.margin>
@@ -72,6 +63,15 @@
                         <Button layoutX="1027.0" layoutY="464.0" mnemonicParsing="false" onAction="#savePay" prefHeight="56.0" prefWidth="139.0" styleClass="h4" text="Thanh Toán" />
                         <Button layoutX="910.0" layoutY="466.0" mnemonicParsing="false" onAction="#closeView" prefHeight="57.0" prefWidth="82.0" styleClass="h3" text="HỦY" />
                         <TableView fx:id="tbShowOrdersDetail" layoutX="616.0" layoutY="78.0" prefHeight="369.0" prefWidth="551.0" />
+                        <HBox prefHeight="58.0" prefWidth="917.0">
+                           <children>
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="OU" text="OU MARKET " textAlignment="CENTER" wrappingWidth="474.5574035644531">
+                                 <HBox.margin>
+                                    <Insets bottom="10.0" left="250.0" top="10.0" />
+                                 </HBox.margin>
+                              </Text>
+                           </children>
+                        </HBox>
                      </children>
                   </AnchorPane>
             </content>
@@ -122,6 +122,16 @@
                      </children>
                   </AnchorPane>
                </content>
+            </Tab>
+            <Tab text="Khuyến Mãi">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView layoutX="14.0" layoutY="14.0" prefHeight="395.0" prefWidth="569.0" />
+                        <Button fx:id="btnAddPromotion" layoutX="626.0" layoutY="108.0" mnemonicParsing="false" onAction="#viewAddPromotion" prefHeight="104.0" prefWidth="137.0" text="Tạo mã khuyến mãi" />
+                     </children>
+                  </AnchorPane>
+              </content>
             </Tab>
         </tabs>
          <VBox.margin>

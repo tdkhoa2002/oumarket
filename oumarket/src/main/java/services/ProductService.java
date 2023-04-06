@@ -37,20 +37,6 @@ public class ProductService {
 
             try {
                 conn.commit();
-                
-//                sql = "SELECT * from categories WHERE id =?";
-//                
-//                stm = conn.prepareCall(sql);
-//                
-//                stm.setInt(1, p.getCategoryId());
-//                
-//                 ResultSet rs = stm.executeQuery();
-//                
-//                 while(rs.next()) {
-//                     p.setCategoryName(rs.getString("name"));
-//                 }
-                 System.out.println(p.getCategoryName());
-                
                 return true;
             } catch (SQLException ex) {
                 System.err.println(ex.getMessage());
@@ -64,12 +50,13 @@ public class ProductService {
         List<Product> results = new ArrayList<>();
         try ( Connection conn = JdbcUtils.getConn() ) {
             String sql = "SELECT * FROM products";
-//            if(kw != null && !kw.isEmpty()){
-//                sql += "Where name like concat (''%', ?, '%')";
-//            }
+            if(kw != null && !kw.isEmpty()){
+                sql += " Where name like concat('%', ?, '%')";
+            }
             PreparedStatement stm = conn.prepareCall(sql);
-//            if (kw != null && !kw.isEmpty())
-//                    stm.setString(1, kw);
+            if (kw != null && !kw.isEmpty()) {
+                stm.setString(1, kw);
+            }
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                  Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getInt("category_id"), rs.getDouble("price"), 

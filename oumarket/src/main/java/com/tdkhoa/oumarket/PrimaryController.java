@@ -44,6 +44,7 @@ import pojo.Promotion;
 import services.PromotionService;
 import services.CategoryService;
 import services.CustomerService;
+import services.EmployeeService;
 import services.OrderDetailsService;
 import services.OrderService;
 import services.ProductService;
@@ -70,13 +71,15 @@ public class PrimaryController implements Initializable {
     @FXML TableView<Employee> tbEmployees;
     @FXML TableView<Order> tbOrders;
     @FXML TableView<Customer> tbCustomers;
+    @FXML TableView<Promotion> tbPromotions;
     @FXML ComboBox<Category> cbCategories;
     @FXML TextField txtTotal;
     @FXML TextField txtPhone;
     @FXML private Button btnAddSP;
     @FXML private Button btnAddCate;
     @FXML private Button btnAddCustomer;
-//    @FXML private TextField txtSearch;
+    @FXML private Button btnAddPromotion;
+    @FXML private TextField txtSearch;
     @FXML private VBox sceneVBox;
     Stage stageOut;
     @Override
@@ -89,14 +92,24 @@ public class PrimaryController implements Initializable {
             this.loadTableShowOrdersDetailColumns();
             this.loadTableOrdersColumns();
             this.loadTableCustomersColumns();
+//            this.loadTablePromotionsColumns();
             
             this.loadProductsData(null);
             this.loadCategoriesData(null);
             this.loadCustomerData(null);
             this.loadOrdersData();
+//            this.loadPromotionData(null);
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        this.txtSearch.textProperty().addListener(e -> {
+            try {
+                this.loadProductsData(this.txtSearch.getText());
+            } catch (SQLException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 
     public void viewAddProduct(ActionEvent evt) {
@@ -159,6 +172,30 @@ public class PrimaryController implements Initializable {
                 stage.setOnHidden(e -> {                       //xử lý khi sự kiện stage đóng lại
                     try {
                         loadCustomerData(null);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                  });
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+    }
+    
+    public void viewAddPromotion(ActionEvent evt) throws SQLException {
+        this.btnAddPromotion.setOnAction(event -> {
+            try {
+                Stage stage = new Stage();
+                // Tạo Scene mới
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/setVoucher.fxml"));
+                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                stage.setScene(scene);
+                stage.setTitle("Tạo khuyến mãi");
+                
+                stage.setOnHidden(e -> {                       //xử lý khi sự kiện stage đóng lại
+                    try {
+                        loadPromotionData(null);
                     } catch (SQLException ex) {
                         Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -518,6 +555,72 @@ public class PrimaryController implements Initializable {
         this.tbCustomers.getColumns().addAll(colId, colName, colBirth, colPhone, colPoint);
     } //Page load tất cả thông tin khách hàng
     
+    private void loadTablePromotionsColumns() {
+        TableColumn colId = new TableColumn("ID");
+        colId.setCellValueFactory(new PropertyValueFactory("id"));
+        colId.setPrefWidth(50);
+        
+        TableColumn colName = new TableColumn("Tên mã khuyến mãi");
+        colName.setCellValueFactory(new PropertyValueFactory("name"));
+        colName.setPrefWidth(170);
+        
+        TableColumn colDel = new TableColumn("Delete");
+        colDel.setCellFactory(r -> {
+            Button btn = new Button("Delete");
+
+            btn.setOnAction(evt -> {
+                Alert a = MessageBox.getBox("Khuyến mãi",
+                        "Bạn có chắc muốn xóa mã khuyến mãi này không ?",
+                        Alert.AlertType.CONFIRMATION);
+                a.showAndWait().ifPresent(res -> {
+                    if (res == ButtonType.OK) {
+                        Button b = (Button) evt.getSource();
+                        TableCell cell = (TableCell) b.getParent();
+                        Promotion pro = (Promotion) cell.getTableRow().getItem();
+                        try {
+                            if (promoService.deletePromotion(pro.getId())) {
+                                MessageBox.getBox("Khuyến mãi", "Xóa thành công", Alert.AlertType.INFORMATION).show();
+                                this.loadPromotionData(null);
+                            } else {
+                                MessageBox.getBox("Khuyến mãi", "Xóa thất bại", Alert.AlertType.WARNING).show();
+                            }
+                        } catch (SQLException ex) {
+                            MessageBox.getBox("Khuyến mãi", ex.getMessage(), Alert.AlertType.WARNING).show();
+                            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                });
+            });
+            TableCell c = new TableCell();
+            c.setGraphic(btn);
+            return c;
+        });
+        
+        TableColumn colEdit = new TableColumn("Edit");
+        colEdit.setCellFactory(r -> {
+            Button btnEdit = new Button("Edit");
+
+            btnEdit.setOnAction(event -> {
+//            try {
+//                Stage stage = new Stage();
+//                // Tạo Scene mới
+//                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixVoucher.fxml"));
+//                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+//                stage.setScene(scene);
+//                stage.setTitle("Chỉnh sửa sản phẩm");
+//                stage.show();
+//            } catch (IOException ex) {
+//                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+        });
+            
+            TableCell c = new TableCell();
+            c.setGraphic(btnEdit);
+            return c;
+         });
+        
+         this.tbPromotions.getColumns().addAll(colId, colName, colEdit, colDel);
+    } //Page load tất cả mã khuyến mãi
     
     //Load du lieu
     
@@ -552,6 +655,15 @@ public class PrimaryController implements Initializable {
         this.tbOrders.getItems().clear();
         this.tbOrders.setItems(FXCollections.observableList(orders));
     }
+    
+    private void loadPromotionData(String kw) throws SQLException {
+        List<Promotion> pros = promoService.getPromotions(kw);
+        
+        System.out.println(pros);
+        
+        this.tbPromotions.getItems().clear();
+        this.tbPromotions.setItems(FXCollections.observableList(pros));
+    }   
     
     public void closeView(ActionEvent evt) {
         stageOut = (Stage) sceneVBox.getScene().getWindow();
@@ -598,10 +710,13 @@ public class PrimaryController implements Initializable {
                 tmp = false;
             }
         }
-        if(tmp == true)
+        if(tmp == true){
+            oDS.updateQuantityInStock(orderDetailsList);
+            this.tbShowOrdersDetail.getItems().clear();
+            loadProductsData(null);
             MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
+        }
         else 
             MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
-        this.tbShowOrdersDetail.getItems().clear();
     }
 }

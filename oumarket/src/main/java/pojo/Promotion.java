@@ -23,11 +23,16 @@ public class Promotion {
         
     }
     
-    public Promotion (int id, String name, double value, String start, String end) {
+    public Promotion (int id, String name, double value) {
         this.id = id;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        this.timeStart = LocalDate.parse(start, formatter);
-        this.timeEnd = LocalDate.parse(end, formatter);
+        this.value = value;
+        this.name = name;
+    }
+    
+    public Promotion (int id, String name, double value, LocalDate start, LocalDate end) {
+        this.id = id;
+        this.timeStart = start;
+        this.timeEnd = end;
         this.name = name;
         this.value = value;
     }

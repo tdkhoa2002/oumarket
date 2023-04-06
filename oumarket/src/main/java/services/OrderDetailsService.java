@@ -7,6 +7,7 @@ package services;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import javafx.collections.ObservableList;
 import pojo.OrderDetails;
 import pojo.Order;
 
@@ -34,6 +35,18 @@ public class OrderDetailsService {
             } catch (SQLException ex) {
                 System.err.println(ex.getMessage());
                 return false;
+            }
+        }
+    }
+    
+    public void updateQuantityInStock(ObservableList<OrderDetails> orderDetailsList) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "UPDATE products SET quantity = quantity-? WHERE id =?";
+            PreparedStatement prepare = conn.prepareStatement(sql);
+            for (OrderDetails oD : orderDetailsList) {
+                prepare.setInt(1, oD.getQuantity());
+                prepare.setString(2, oD.getProduct().getId());
+                prepare.executeUpdate();
             }
         }
     }

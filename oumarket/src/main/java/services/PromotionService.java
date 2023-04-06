@@ -10,11 +10,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import pojo.Category;
 import pojo.Product;
 import pojo.Promotion;
 
@@ -36,7 +34,11 @@ public class PromotionService {
                     String start = rs.getString("start");
                     String end = rs.getString("end");
                     
-                    promos.add(new Promotion(id, name, value, start, end));
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate startTime = LocalDate.parse(start, formatter);
+                    LocalDate endTime = LocalDate.parse(end, formatter);
+                    
+                    promos.add(new Promotion(id, name, value));
                 }
             }
             return promos;
