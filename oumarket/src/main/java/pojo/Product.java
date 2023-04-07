@@ -21,6 +21,7 @@ public class Product {
     private double priceDiscount = 0;
     private int promotion_id;
     private String promotion_name;
+    private double total;
     
     {
         setId(UUID.randomUUID().toString());
@@ -33,6 +34,13 @@ public class Product {
         this.quantity = quantity;
         this.unit = unit;
         
+    }
+    
+    public Product (String id, String name, double price, int quantity) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
     }
     
     public Product(String id, String name, int categoryId, double price, int quantity, String unit, int promotion_id) {
@@ -189,5 +197,6 @@ public class Product {
     public void setPriceDiscount(double priceDiscount) {
         this.priceDiscount = priceDiscount;
     }
+
 
 }

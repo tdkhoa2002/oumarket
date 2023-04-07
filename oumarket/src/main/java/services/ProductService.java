@@ -51,7 +51,7 @@ public class ProductService {
         try ( Connection conn = JdbcUtils.getConn() ) {
             String sql = "SELECT * FROM products";
             if(kw != null && !kw.isEmpty()){
-                sql += " Where name like concat('%', ?, '%')";
+                sql += " WHERE name LIKE concat('%', ?, '%')";
             }
             PreparedStatement stm = conn.prepareCall(sql);
             if (kw != null && !kw.isEmpty()) {

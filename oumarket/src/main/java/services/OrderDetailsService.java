@@ -6,16 +6,22 @@ package services;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.collections.ObservableList;
 import pojo.OrderDetails;
 import pojo.Order;
+import pojo.Product;
 
 /**
  *
  * @author Khoa Tran
  */
 public class OrderDetailsService {
+    
+    
     public boolean saveOderDetails(OrderDetails oD, Order o) throws SQLException {
         try ( Connection conn = JdbcUtils.getConn()) {
             conn.setAutoCommit(false);
@@ -48,6 +54,21 @@ public class OrderDetailsService {
                 prepare.setString(2, oD.getProduct().getId());
                 prepare.executeUpdate();
             }
+        }
+    }
+    
+    public List<Product> viewDetail(Order o) throws SQLException {
+        List<Product> products = new ArrayList<>();
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "SELECT * FROM orderdetails WHERE order_id = ?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, o.getId());
+            ResultSet rs = stm.executeQuery();
+            while(rs.next()) {
+                Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getDouble("price"), rs.getInt("quantity"));
+                products.add(p);
+            }
+            return products;
         }
     }
 }

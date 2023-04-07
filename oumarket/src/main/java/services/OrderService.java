@@ -18,6 +18,7 @@ import pojo.Order;
  * @author Khoa Tran
  */
 public class OrderService {
+    public static Order order;
     public boolean addOrder(Order o) throws SQLException {
         try ( Connection conn = JdbcUtils.getConn()) {
             conn.setAutoCommit(false);
@@ -54,5 +55,21 @@ public class OrderService {
         }
           return ordersList;
     }
+
+    /**
+     * @return the order
+     */
+    public static Order getOrder() {
+        return order;
+    }
+
+    /**
+     * @param aOrder the order to set
+     */
+    public static void setOrder(Order aOrder) {
+        order = aOrder;
+    }
+    
+    
     
 }
