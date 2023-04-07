@@ -4,8 +4,10 @@
  */
 package pojo;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import static java.time.LocalDateTime.now;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 /**
@@ -14,21 +16,28 @@ import java.util.UUID;
  */
 public class Order {
     private String id;
-    private LocalDateTime orderDate;
+    private String orderDate;
     private Double total;
     
     {
         setId(UUID.randomUUID().toString());
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        setOrderDate(currentDate.format(formatter));
+    }
+    public Order () {
+        
     }
     
-    public Order() {
-        this.orderDate = LocalDateTime.now();
-    }
-    
-    public Order(String id, LocalDateTime orderDate, double total) {
-        this.id = id;
-        this.orderDate = orderDate;
+    public Order (String orderDate, double total) {
+        
         this.total = total;
+    }
+    
+    public Order(String id, String orderDate, double total) {
+        this.id = id;
+        this.total = total;
+        this.orderDate = orderDate;
     }
 
     /**
@@ -48,14 +57,14 @@ public class Order {
     /**
      * @return the orderDate
      */
-    public LocalDateTime getOrderDate() {
+    public String getOrderDate() {
         return orderDate;
     }
 
     /**
      * @param orderDate the orderDate to set
      */
-    public void setOrderDate(LocalDateTime orderDate) {
+    public void setOrderDate(String orderDate) {
         this.orderDate = orderDate;
     }
 

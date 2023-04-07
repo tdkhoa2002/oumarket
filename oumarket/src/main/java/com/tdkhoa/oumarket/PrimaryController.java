@@ -49,6 +49,7 @@ import services.OrderDetailsService;
 import services.OrderService;
 import services.ProductService;
 import utils.MessageBox;
+import pojo.Data;
 
 public class PrimaryController implements Initializable {
 
@@ -265,6 +266,13 @@ public class PrimaryController implements Initializable {
                 Button btnView = new Button("View");
 
                 btnView.setOnAction(event -> {
+                    
+                    Button b = (Button) event.getSource();
+                    TableCell cell = (TableCell) b.getParent();
+                    Order order = (Order) cell.getTableRow().getItem();
+                    Data data = new Data();
+                    data.setId(order.getId());
+                    
                     try {
                         Stage stage = new Stage();
                         // Tạo Scene mới

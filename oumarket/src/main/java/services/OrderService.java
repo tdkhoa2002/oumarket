@@ -1,7 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+///*
+// * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+// * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+// */
 package services;
 
 import java.sql.Connection;
@@ -26,7 +26,7 @@ public class OrderService {
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, o.getId());
             stm.setDouble(2, o.getTotal());
-            stm.setString(3, o.getOrderDate().toString());
+            stm.setString(3, o.getOrderDate());
             
             stm.executeUpdate();
             try {
@@ -39,6 +39,20 @@ public class OrderService {
         }
     }
     
+    public Order findOrder(String id) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "SELECT * FROM orders WHERE id = ?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, id);
+            ResultSet rs = stm.executeQuery();
+            while(rs.next()){
+                Order o = new Order(rs.getString("orderDate"), rs.getDouble("total"));
+                return o;
+            }
+        }
+        return null;
+    }
+    
     public List<Order> getOrders() throws SQLException {
         List<Order> ordersList = new ArrayList<>();
         try ( Connection conn = JdbcUtils.getConn() ) {
@@ -48,9 +62,8 @@ public class OrderService {
             while (rs.next()) {
                 String id = rs.getString("id");
                 String time = rs.getString("orderDate");
-                LocalDateTime orderDate = LocalDateTime.parse(time);
                 double total = rs.getDouble("total");
-                ordersList.add(new Order(id, orderDate, total));
+                ordersList.add(new Order(id, time, total));
             }
         }
           return ordersList;

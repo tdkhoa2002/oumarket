@@ -4,7 +4,6 @@
  */
 package com.tdkhoa.oumarket;
 
-import static com.tdkhoa.oumarket.PrimaryController.products;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.List;
@@ -24,6 +23,8 @@ import pojo.OrderDetails;
 import pojo.Product;
 import services.OrderDetailsService;
 import services.OrderService;
+import pojo.Data;
+import pojo.Order;
 
 
 /**
@@ -34,33 +35,47 @@ public class ViewOrderDetailsController implements Initializable {
     @FXML TextField txtName;
     @FXML TextField txtPrice;
     @FXML TextField txtTienGiam;
-    @FXML TextField total;
+    @FXML TextField txtTotal;
     @FXML TextField txtTienNhan;
     @FXML TextField txtTienTra;
     @FXML DatePicker orderDate;
+    @FXML TextField txtDate;
     @FXML TableView tbProducts;
-    static OrderDetailsService oDS = new OrderDetailsService();
+    OrderDetailsService oDS = new OrderDetailsService();
     OrderService oD = new OrderService();
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.loadTableOrderDetailsColumn();
         try {
-            this.loadData();
+            this.loadDataProducts();
+            Order o = oD.findOrder(Data.getId());
+//            System.out.println(o.getOrderDate());
+            txtTotal.setText(o.getTotal().toString());
+            txtDate.setText(o.getOrderDate());
         } catch (SQLException ex) {
             Logger.getLogger(ViewOrderDetailsController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     
     public void loadTableOrderDetailsColumn() {
-        TableColumn colName = new TableColumn("Tên");
+        TableColumn<Product, String> colName = new TableColumn<>("Tên");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
+        colName.setPrefWidth(170);
         
-        this.tbProducts.getColumns().addAll(colName);
+        TableColumn<Product, Double> colPrice = new TableColumn<>("Giá");
+        colPrice.setCellValueFactory(new PropertyValueFactory("price"));
+        
+        TableColumn<Product, String> colQuantity = new TableColumn<>("Số lượng");
+        colQuantity.setCellValueFactory(new PropertyValueFactory("quantity"));
+        
+        this.tbProducts.getColumns().addAll(colName, colPrice, colQuantity);
     }
     
-    public void loadData() throws SQLException {
+    public void loadDataProducts() throws SQLException {
+        List<Product> pros = oDS.viewDetail(Data.getId());
+        
         this.tbProducts.getItems().clear();
-        this.tbProducts.setItems(FXCollections.observableList(products));
+        this.tbProducts.setItems(FXCollections.observableList(pros));
     }
 }

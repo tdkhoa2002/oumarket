@@ -57,15 +57,15 @@ public class OrderDetailsService {
         }
     }
     
-    public List<Product> viewDetail(Order o) throws SQLException {
+    public List<Product> viewDetail(String id) throws SQLException {
         List<Product> products = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "SELECT * FROM orderdetails WHERE order_id = ?";
             PreparedStatement stm = conn.prepareCall(sql);
-            stm.setString(1, o.getId());
+            stm.setString(1, id);
             ResultSet rs = stm.executeQuery();
             while(rs.next()) {
-                Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getDouble("price"), rs.getInt("quantity"));
+                Product p = new Product(rs.getString("id"), rs.getString("productName"), rs.getDouble("price"), rs.getInt("quantity"));
                 products.add(p);
             }
             return products;
