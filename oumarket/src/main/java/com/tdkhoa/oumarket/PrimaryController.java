@@ -39,6 +39,7 @@ import pojo.Employee;
 import pojo.OrderDetails;
 import pojo.Product;
 import services.CategoryService;
+import services.EmployeeService;
 import services.ProductService;
 import utils.MessageBox;
 
@@ -46,7 +47,9 @@ public class PrimaryController implements Initializable {
 
     static ProductService pS = new ProductService();
     static CategoryService cS  = new CategoryService();
+    static EmployeeService eS = new EmployeeService();
     static Product pRow = new Product ();
+    
     
     @FXML TableView<Product> tbProducts;
     @FXML TableView<Product> tbShowProducts;
@@ -59,6 +62,8 @@ public class PrimaryController implements Initializable {
     @FXML TableView<Employee> tbEmployees;
     @FXML ComboBox<Category> cbCategories;
     @FXML TextField txtTotal;
+    
+    @FXML private Button btnAddEmp;
     @FXML private Button btnAddSP;
     @FXML private Button btnAddCate;
     @FXML private Spinner spinner;
@@ -75,6 +80,7 @@ public class PrimaryController implements Initializable {
             this.loadTableShowOrdersDetailColumns();
             this.loadProductsData(null);
             this.loadCategoriesData(null);
+            this.loadEmployeesData(null);
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -126,6 +132,30 @@ public class PrimaryController implements Initializable {
             }
         });
     }
+    public void viewAddEmployee(ActionEvent evt) throws SQLException {
+    this.btnAddEmp.setOnAction(event -> {
+        try {
+            Stage stage = new Stage();
+            // Tạo Scene mới
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/setEmloyee.fxml"));
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Thêm nhân viên");
+
+            stage.setOnHidden(e -> {                       
+                try {
+                    loadEmployeesData(null);
+                } catch (SQLException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+              });
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    });
+}
+
     
     private void loadTableShowOrdersDetailColumns() {
         TableColumn<OrderDetails, String> colName = new TableColumn<>("Tên SP");
@@ -329,13 +359,80 @@ public class PrimaryController implements Initializable {
         this.tbCategories.setItems(FXCollections.observableList(cates));
     }
 
-    private void loadTableEmployeesColumns() {
-        TableColumn colId = new TableColumn("Mã nhân viên");
-        colId.setCellValueFactory(new PropertyValueFactory("id"));
-        
-        TableColumn colName = new TableColumn("Họ tên");
-        colId.setCellValueFactory(new PropertyValueFactory("name"));
+   private void loadTableEmployeesColumns() {
+    TableColumn colId = new TableColumn("Mã nhân viên");
+    colId.setCellValueFactory(new PropertyValueFactory("id"));
+
+    TableColumn colName = new TableColumn("Họ tên");
+    colName.setCellValueFactory(new PropertyValueFactory("name"));
+
+    TableColumn colDel = new TableColumn("Xoá");
+    colDel.setCellFactory(r -> {
+        Button btn = new Button("Xoá");
+
+        btn.setOnAction(evt -> {
+            Alert a = MessageBox.getBox("Nhân viên",
+                    "Bạn có chắc muốn xoá nhân viên này?",
+                    Alert.AlertType.CONFIRMATION);
+            a.showAndWait().ifPresent(res -> {
+                if (res == ButtonType.OK) {
+                    Button b = (Button) evt.getSource();
+                    TableCell cell = (TableCell) b.getParent();
+                    Employee e = (Employee) cell.getTableRow().getItem();
+                    try {
+                        if (eS.deleteEmployee(e.getId())) {
+                            MessageBox.getBox("Nhân viên", "Xoá thành công", Alert.AlertType.INFORMATION).show();
+                            this.loadEmployeesData(null);
+                        } else {
+                            MessageBox.getBox("Nhân viên", "Xoá thất bại", Alert.AlertType.WARNING).show();
+                        }
+
+                    } catch (SQLException ex) {
+                        MessageBox.getBox("Nhân viên", ex.getMessage(), Alert.AlertType.WARNING).show();
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+        });
+        TableCell c = new TableCell();
+        c.setGraphic(btn);
+        return c;
+    });
+
+    TableColumn colEdit = new TableColumn("Sửa");
+    colEdit.setCellFactory(r -> {
+        Button btnEdit = new Button("Sửa");
+
+        btnEdit.setOnAction(event -> {
+            try {
+                Stage stage = new Stage();
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/suaNhanVien.fxml"));
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setTitle("Chỉnh sửa thông tin nhân viên");
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        TableCell c = new TableCell();
+        c.setGraphic(btnEdit);
+        return c;
+    });
+
+    this.tbEmployees.getColumns().addAll(colId, colName, colDel, colEdit);
+}
+
+
+    private void loadEmployeesData(String kw) throws SQLException {
+        List<Employee> employees = eS.getEmployees(kw);
+
+        this.tbEmployees.getItems().clear();
+        this.tbEmployees.setItems(FXCollections.observableList(employees));
     }
+
+   
 
     private void loadTableCategoriesColumns() {
         TableColumn colId = new TableColumn("Mã danh mục");

@@ -90,8 +90,8 @@
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                      <children>
-                        <TableView prefHeight="371.0" prefWidth="476.0" />
-                        <Button layoutX="504.0" layoutY="123.0" mnemonicParsing="false" prefHeight="102.0" prefWidth="139.0" text="THÊM NHÂN VIÊN " />
+                        <TableView fx:id="tbEmployees" prefHeight="363.0" prefWidth="480.0" />
+                        <Button fx:id="btnAddEmp" layoutX="504.0" layoutY="123.0" mnemonicParsing="false" onAction="#viewAddEmployee" prefHeight="102.0" prefWidth="139.0" text="THÊM NHÂN VIÊN " />
                      </children></AnchorPane>
               </content>
             </Tab>
