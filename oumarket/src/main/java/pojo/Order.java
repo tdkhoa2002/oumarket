@@ -18,6 +18,8 @@ public class Order {
     private String id;
     private String orderDate;
     private Double total;
+    private Double tienKhachDua;
+    private Double tienTraKhach;
     
     {
         setId(UUID.randomUUID().toString());
@@ -29,9 +31,11 @@ public class Order {
         
     }
     
-    public Order (String orderDate, double total) {
+    public Order (String orderDate, double total, double tienKhachDua, double tienTraKhach) {
         
         this.total = total;
+        this.tienKhachDua = tienKhachDua;
+        this.tienTraKhach = tienTraKhach;
     }
     
     public Order(String id, String orderDate, double total) {
@@ -80,6 +84,34 @@ public class Order {
      */
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    /**
+     * @return the tienKhachDua
+     */
+    public Double getTienKhachDua() {
+        return tienKhachDua;
+    }
+
+    /**
+     * @param tienKhachDua the tienKhachDua to set
+     */
+    public void setTienKhachDua(Double tienKhachDua) {
+        this.tienKhachDua = tienKhachDua;
+    }
+
+    /**
+     * @return the tienTraKhach
+     */
+    public Double getTienTraKhach() {
+        return tienTraKhach;
+    }
+
+    /**
+     * @param tienTraKhach the tienTraKhach to set
+     */
+    public void setTienTraKhach(Double tienTraKhach) {
+        this.tienTraKhach = tienTraKhach;
     }
     
 }

@@ -22,11 +22,13 @@ public class OrderService {
     public boolean addOrder(Order o) throws SQLException {
         try ( Connection conn = JdbcUtils.getConn()) {
             conn.setAutoCommit(false);
-            String sql = "INSERT INTO orders(id, total, orderDate) VALUES(?,?,?)"; // SQL injection
+            String sql = "INSERT INTO orders(id, total, orderDate, tienKhachDua, tienTraLai) VALUES(?,?,?, ?, ?)"; // SQL injection
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, o.getId());
             stm.setDouble(2, o.getTotal());
             stm.setString(3, o.getOrderDate());
+            stm.setDouble(4, o.getTienKhachDua());
+            stm.setDouble(5, o.getTienTraKhach());
             
             stm.executeUpdate();
             try {
@@ -46,7 +48,7 @@ public class OrderService {
             stm.setString(1, id);
             ResultSet rs = stm.executeQuery();
             while(rs.next()){
-                Order o = new Order(rs.getString("orderDate"), rs.getDouble("total"));
+                Order o = new Order(rs.getString("orderDate"), rs.getDouble("total"),rs.getDouble("tienKhachDua"), rs.getDouble("tienTraLai"));
                 return o;
             }
         }

@@ -41,6 +41,7 @@ public class ViewOrderDetailsController implements Initializable {
     @FXML DatePicker orderDate;
     @FXML TextField txtDate;
     @FXML TableView tbProducts;
+    private double sum = 0;
     OrderDetailsService oDS = new OrderDetailsService();
     OrderService oD = new OrderService();
     
@@ -53,6 +54,9 @@ public class ViewOrderDetailsController implements Initializable {
 //            System.out.println(o.getOrderDate());
             txtTotal.setText(o.getTotal().toString());
             txtDate.setText(o.getOrderDate());
+            txtTienNhan.setText(o.getTienKhachDua().toString());
+            txtTienTra.setText(o.getTienKhachDua().toString());
+            txtTienGiam.setText(Double.toString(sum - Double.parseDouble(txtTotal.getText())));
         } catch (SQLException ex) {
             Logger.getLogger(ViewOrderDetailsController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -74,6 +78,12 @@ public class ViewOrderDetailsController implements Initializable {
     
     public void loadDataProducts() throws SQLException {
         List<Product> pros = oDS.viewDetail(Data.getId());
+        
+        for(Product x: pros) {
+            sum += x.getPrice() * x.getQuantity();
+        }
+        System.out.println("Tong tien hang: ");
+        System.out.println(sum);
         
         this.tbProducts.getItems().clear();
         this.tbProducts.setItems(FXCollections.observableList(pros));

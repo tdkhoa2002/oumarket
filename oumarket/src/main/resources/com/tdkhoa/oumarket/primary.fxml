@@ -53,11 +53,11 @@
                         <Button layoutX="22.0" layoutY="434.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="80.0" styleClass="h2" stylesheets="@Style.css" text="Sale" />
                         <Button layoutX="223.0" layoutY="375.0" mnemonicParsing="false" prefHeight="117.0" prefWidth="136.0" styleClass="h2" text="Đổi User" />
                         <Text layoutX="16.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số điện thoại:" />
-                        <TextField fx:id="txtPhone" layoutX="81.0" layoutY="292.0" />
-                        <Text layoutX="248.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="VAT(%): " wrappingWidth="50.26171875" />
-                        <TextField layoutX="313.0" layoutY="292.0" />
-                        <Text layoutX="13.0" layoutY="354.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền hàng: " />
-                        <TextField layoutX="81.0" layoutY="336.0" />
+                        <TextField fx:id="txtPhone" layoutX="96.0" layoutY="292.0" prefHeight="23.0" prefWidth="124.0" />
+                        <Text layoutX="224.0" layoutY="309.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền khách đưa: " wrappingWidth="93.46173095703125" />
+                        <TextField fx:id="txtTienKhachDua" disable="true" layoutX="313.0" layoutY="292.0" text="0" />
+                        <Text disable="true" layoutX="13.0" layoutY="354.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền trả khách: " />
+                        <TextField fx:id="txtTienTraKhach" disable="true" layoutX="96.0" layoutY="336.0" prefHeight="23.0" prefWidth="123.0" text="0" />
                         <Text layoutX="254.0" layoutY="353.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tổng: " />
                         <TextField fx:id="txtTotal" disable="true" layoutX="313.0" layoutY="335.0" />
                         <Button layoutX="1027.0" layoutY="464.0" mnemonicParsing="false" onAction="#savePay" prefHeight="56.0" prefWidth="139.0" styleClass="h4" text="Thanh Toán" />

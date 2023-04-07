@@ -13,6 +13,7 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -76,6 +77,8 @@ public class PrimaryController implements Initializable {
     @FXML ComboBox<Category> cbCategories;
     @FXML TextField txtTotal;
     @FXML TextField txtPhone;
+    @FXML TextField txtTienKhachDua;
+    @FXML TextField txtTienTraKhach;
     @FXML private Button btnAddSP;
     @FXML private Button btnAddCate;
     @FXML private Button btnAddCustomer;
@@ -109,6 +112,25 @@ public class PrimaryController implements Initializable {
                 this.loadProductsData(this.txtSearch.getText());
             } catch (SQLException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
+        this.txtTienKhachDua.textProperty().addListener(e -> {
+            if (!this.txtTienKhachDua.getText().equals("")) {
+                double tienTraKhach = Double.parseDouble(this.txtTienKhachDua.getText()) - Double.parseDouble(this.txtTotal.getText());
+                this.txtTienTraKhach.setText(Double.toString(tienTraKhach));
+            }
+            else {
+                this.txtTienTraKhach.setText("0");
+            }
+        });
+        
+        this.cartItems.addListener((ListChangeListener<OrderDetails>) change -> {
+            if(!this.cartItems.isEmpty()) {
+                this.txtTienKhachDua.setDisable(false);
+            }
+            else {
+                this.txtTienKhachDua.setDisable(true);
             }
         });
     }
@@ -679,52 +701,59 @@ public class PrimaryController implements Initializable {
     }
     
     public void savePay() throws SQLException {
-        Order o = new Order();
-        List<Customer> customers = cusS.getCustomers(null);
-        String phone = txtPhone.getText();
-        double tongTien = Double.parseDouble(txtTotal.getText());
-        if(!phone.isEmpty()) { //Nếu txtPhone không rỗng
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-            LocalDateTime purchaseDate = LocalDateTime.now();
-            String formattedDateTime = purchaseDate.format(formatter);
-            String purchaseDateSS = formattedDateTime.substring(0,5);
-            System.out.println(purchaseDateSS);
-            Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
-            if(customer != null) {
-                String customerBirthDay = customer.getNgaySinh().substring(0,5);
-                if(customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
-                    double discount = tongTien * 0.1;
-                    o.setTotal(tongTien - discount);
+        if(Double.parseDouble(this.txtTienTraKhach.getText()) > 0){
+            Order o = new Order();
+            List<Customer> customers = cusS.getCustomers(null);
+            String phone = txtPhone.getText();
+            double tongTien = Double.parseDouble(txtTotal.getText());
+            if(!phone.isEmpty()) { //Nếu txtPhone không rỗng
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDateTime purchaseDate = LocalDateTime.now();
+                String formattedDateTime = purchaseDate.format(formatter);
+                String purchaseDateSS = formattedDateTime.substring(0,5);
+                System.out.println(purchaseDateSS);
+                Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
+                if(customer != null) {
+                    String customerBirthDay = customer.getNgaySinh().substring(0,5);
+                    if(customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
+                        double discount = tongTien * 0.1;
+                        o.setTotal(tongTien - discount);
+                    }
+                    else {
+                        o.setTotal(Double.parseDouble(txtTotal.getText()));
+                    }
                 }
                 else {
-                    o.setTotal(Double.parseDouble(txtTotal.getText()));
+                    return;
                 }
             }
-            else {
-                return;
+            else  //Nếu txtPhone rỗng
+                o.setTotal(Double.parseDouble(txtTotal.getText()));
+            o.setTienKhachDua(Double.parseDouble(txtTienKhachDua.getText()));
+            o.setTienTraKhach(Double.parseDouble(txtTienTraKhach.getText()));
+            oS.addOrder(o);
+            ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
+            boolean tmp = false;
+            for (OrderDetails oD : orderDetailsList) {
+                if(oDS.saveOderDetails(oD, o)) {
+                    tmp = true;
+                }
+                else {
+                    tmp = false;
+                }
             }
-        }
-        else  //Nếu txtPhone rỗng
-            o.setTotal(Double.parseDouble(txtTotal.getText()));
-        
-        oS.addOrder(o);
-        ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
-        boolean tmp = false;
-        for (OrderDetails oD : orderDetailsList) {
-            if(oDS.saveOderDetails(oD, o)) {
-                tmp = true;
+            if(tmp == true){
+                oDS.updateQuantityInStock(orderDetailsList);
+                this.tbShowOrdersDetail.getItems().clear();
+                loadProductsData(null);
+                loadOrdersData();
+                MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
             }
-            else {
-                tmp = false;
-            }
+            else 
+                MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
         }
-        if(tmp == true){
-            oDS.updateQuantityInStock(orderDetailsList);
-            this.tbShowOrdersDetail.getItems().clear();
-            loadProductsData(null);
-            MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
-        }
-        else 
+        else {
             MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
+        }
     }
 }
