@@ -11,6 +11,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 import pojo.Employee;
@@ -148,6 +150,15 @@ public class EmployeeService {
 //        }
 //        
 //    }
+    public boolean update(Employee p) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "UPDATE employee SET name =? WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, p.getName());
+            stm.setInt(2, p.getId());
+            return stm.executeUpdate() > 0;
+        }
+    }
 //    public static void update(Employee std){
 //        
 //        Connection con = null;
@@ -156,7 +167,7 @@ public class EmployeeService {
 //            
 //            con = JdbcUtils.getConn();
 //            
-//            String sql = "update employee set fullname=? where id = ?";
+//            String sql = "UPDATE employee SET name =? WHERE id=?";
 //            statement = con.prepareCall(sql);
 //            
 //            statement.setString(1, std.getName());

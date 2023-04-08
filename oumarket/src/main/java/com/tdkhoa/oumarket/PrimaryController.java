@@ -49,6 +49,7 @@ public class PrimaryController implements Initializable {
     static CategoryService cS  = new CategoryService();
     static EmployeeService eS = new EmployeeService();
     static Product pRow = new Product ();
+    static Employee eRow = new Employee();
     
     
     @FXML TableView<Product> tbProducts;
@@ -404,9 +405,12 @@ public class PrimaryController implements Initializable {
         Button btnEdit = new Button("Sửa");
 
         btnEdit.setOnAction(event -> {
+            Button b = (Button) event.getSource();
+            TableCell cell = (TableCell) b.getParent();
+            eRow = (Employee) cell.getTableRow().getItem();
             try {
                 Stage stage = new Stage();
-                Parent root = FXMLLoader.load(getClass().getResource("/fxml/suaNhanVien.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixEmployee.fxml"));
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.setTitle("Chỉnh sửa thông tin nhân viên");
