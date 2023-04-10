@@ -747,6 +747,9 @@ public class PrimaryController implements Initializable {
                 this.tbShowOrdersDetail.getItems().clear();
                 loadProductsData(null);
                 loadOrdersData();
+                txtTienKhachDua.setText("0");
+                txtTotal.setText("0");
+                txtTienTraKhach.setText("0");
                 MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
             }
             else 

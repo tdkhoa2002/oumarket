@@ -87,10 +87,10 @@ public class ProductService {
                  
                  double priceDiscounted = 0;
                  priceDiscounted = promoService.getDiscountedPrice(p);
-                    DecimalFormat decimalFormat = new DecimalFormat("#.##"); // Số # thay thế cho số 0
-                    decimalFormat.setRoundingMode(RoundingMode.CEILING); // Đặt chế độ làm tròn
-                    String formattedNumber = decimalFormat.format(priceDiscounted);
-                    p.setPriceDiscount(Double.parseDouble(formattedNumber));
+//                    DecimalFormat decimalFormat = new DecimalFormat("#.##"); // Số # thay thế cho số 0
+//                    decimalFormat.setRoundingMode(RoundingMode.CEILING); // Đặt chế độ làm tròn
+//                    String formattedNumber = decimalFormat.format(priceDiscounted);
+                    p.setPriceDiscount(priceDiscounted);
                  
                  results.add(p);
              }
