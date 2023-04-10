@@ -69,7 +69,7 @@ public class AddProductController implements Initializable {
                 });
             }
         } catch (SQLException ex) {
-            MessageBox.getBox("Product", "Add product failed", Alert.AlertType.ERROR).show();
+            MessageBox.getBox("Sản phẩm", "Thêm sản phẩm thất bại", Alert.AlertType.ERROR).show();
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

@@ -268,9 +268,9 @@ public class PrimaryController implements Initializable {
         colName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getName()));
         colName.setPrefWidth(170);
 
-        TableColumn<OrderDetails, Integer> colQuantity = new TableColumn<>("Số lượng");
-        colQuantity.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getQuantity()).asObject());
-        
+        TableColumn<OrderDetails, Double> colQuantity = new TableColumn<>("Số lượng");
+        colQuantity.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getQuantity()).asObject());
+            
         TableColumn<OrderDetails, Double> priceCol = new TableColumn<>("Price");
         priceCol.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getPrice()).asObject());
         
@@ -383,13 +383,14 @@ public class PrimaryController implements Initializable {
                 quantityTextField.setText("0");
                 Button saveButton = new Button("Save");
                 saveButton.setOnAction(event -> {
-                    int quantity = Integer.parseInt(quantityTextField.getText());
+                    
+                    Double quantity = Double.parseDouble(quantityTextField.getText().trim());
                     boolean check = true;
                     //Kiem tra xem san pham do da co trong gio hang hay chua
                     if(!cartItems.isEmpty()) { //Nếu mảng đó co sản phẩm
                         for (OrderDetails cartItem: cartItems) { //Chạy vòng lặp từng sản phẩm
                             if (cartItem.getProduct().getId().equals(p.getId())) { //Nếu sản phẩm vừa thêm vào trùng với sản phẩm đã có
-                                cartItem.setQuantity(cartItem.getQuantity()+quantity); //Set lại số lượng tăng lên
+                                cartItem.setQuantity((int) (cartItem.getQuantity()+quantity)); //Set lại số lượng tăng lên
                                 check = false;
                             }
                         }
@@ -408,6 +409,7 @@ public class PrimaryController implements Initializable {
                     this.tbShowOrdersDetail.refresh();
                     // Đóng Popup
                     popup.hide();
+                    quantityTextField.clear();
                  });
                 // Thêm các thành phần vào VBox
                 popupContent.getChildren().addAll(quantityLabel, quantityTextField, saveButton);
@@ -464,10 +466,10 @@ public class PrimaryController implements Initializable {
                         Product p = (Product) cell.getTableRow().getItem();
                         try {
                             if (pS.deleteProduct(p.getId())) {
-                                MessageBox.getBox("Product", "Delete successful", Alert.AlertType.INFORMATION).show();
+                                MessageBox.getBox("Sản phẩm", "Xóa thành công", Alert.AlertType.INFORMATION).show();
                                 this.loadProductsData(null);
                             } else {
-                                MessageBox.getBox("Product", "Delete failed", Alert.AlertType.WARNING).show();
+                                MessageBox.getBox("Sản phẩm", "Xóa thất bại", Alert.AlertType.WARNING).show();
                             }
 
                         } catch (SQLException ex) {
@@ -612,8 +614,8 @@ public class PrimaryController implements Initializable {
             Button btn = new Button("Delete");
 
             btn.setOnAction(evt -> {
-                Alert a = MessageBox.getBox("Category",
-                        "Are you sure to delete this category?",
+                Alert a = MessageBox.getBox("Danh mục",
+                        "Bạn có chắc chắn muốn xóa danh mục này không ?",
                         Alert.AlertType.CONFIRMATION);
                 a.showAndWait().ifPresent(res -> {
                     if (res == ButtonType.OK) {
@@ -622,14 +624,13 @@ public class PrimaryController implements Initializable {
                         Category c = (Category) cell.getTableRow().getItem();
                         try {
                             if (cS.deleteCategory(c.getId())) {
-                                MessageBox.getBox("Category", "Delete successful", Alert.AlertType.INFORMATION).show();
+                                MessageBox.getBox("Danh mục", "Xóa thành công", Alert.AlertType.INFORMATION).show();
                                 this.loadCategoriesData(null);
                             } else {
-                                MessageBox.getBox("Category", "Delete failed", Alert.AlertType.WARNING).show();
+                                MessageBox.getBox("Danh mục", "Xóa thất bại", Alert.AlertType.WARNING).show();
                             }
-
                         } catch (SQLException ex) {
-                            MessageBox.getBox("Category", ex.getMessage(), Alert.AlertType.WARNING).show();
+                            MessageBox.getBox("Danh mục", ex.getMessage(), Alert.AlertType.WARNING).show();
                             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
@@ -648,7 +649,7 @@ public class PrimaryController implements Initializable {
             try {
                 Stage stage = new Stage();
                 // Tạo Scene mới
-                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixProducts.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixCategory.fxml"));
                 Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
                 stage.setScene(scene);
                 stage.setTitle("Chỉnh sửa sản phẩm");
@@ -795,10 +796,18 @@ public class PrimaryController implements Initializable {
         this.tbPromotions.setItems(FXCollections.observableList(pros));
     }   
     
-    public void closeView(ActionEvent evt) {
-        stageOut = (Stage) sceneVBox.getScene().getWindow();
-        stageOut.close();
+//    public void closeView(ActionEvent evt) {
+//        stageOut = (Stage) sceneVBox.getScene().getWindow();
+//        stageOut.close();
+//    }
+    
+    public void refreshCart() {
+        this.tbShowOrdersDetail.getItems().clear();
+        this.txtTienKhachDua.setText("0");
+        this.txtTienTraKhach.setText("0");
+        this.txtTotal.setText("0");
     }
+    
     
     public void savePay() throws SQLException {
         if(Double.parseDouble(this.txtTienTraKhach.getText()) > 0){
@@ -856,7 +865,7 @@ public class PrimaryController implements Initializable {
                 MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
         }
         else {
-            MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
+            MessageBox.getBox("Hóa đơn", "Vui lòng nhập tiền phù hợp", Alert.AlertType.ERROR).show();
         }
     }
 }

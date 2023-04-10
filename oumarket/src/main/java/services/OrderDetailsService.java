@@ -29,7 +29,7 @@ public class OrderDetailsService {
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, oD.getProduct().getName());
             stm.setDouble(2, oD.getPrice());
-            stm.setInt(3, oD.getQuantity());
+            stm.setDouble(3, oD.getQuantity());
             stm.setDouble(4, oD.getTotal());
             stm.setString(5, o.getId());
 
@@ -50,7 +50,7 @@ public class OrderDetailsService {
             String sql = "UPDATE products SET quantity = quantity-? WHERE id =?";
             PreparedStatement prepare = conn.prepareStatement(sql);
             for (OrderDetails oD : orderDetailsList) {
-                prepare.setInt(1, oD.getQuantity());
+                prepare.setDouble(1, oD.getQuantity());
                 prepare.setString(2, oD.getProduct().getId());
                 prepare.executeUpdate();
             }
