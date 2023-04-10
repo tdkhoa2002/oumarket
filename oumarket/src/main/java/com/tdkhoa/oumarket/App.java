@@ -21,8 +21,9 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         this.Stage = stage;
-        scene = new Scene(loadFXML("primary"), 640, 480);
+        scene = new Scene(loadFXML("login"), 600, 400);
         stage.setScene(scene);
+        stage.setTitle("Đăng Nhập");
         
         Button button = new Button("Show New Scene");
         button.setOnAction(event -> showSceneAddProduct());
