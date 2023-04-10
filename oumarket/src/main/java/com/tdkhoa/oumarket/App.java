@@ -7,8 +7,6 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 
 /**
  * JavaFX App
@@ -23,7 +21,6 @@ public class App extends Application {
         this.Stage = stage;
         scene = new Scene(loadFXML("primary"));
         stage.setScene(scene);
-        
         stage.show();
     }
 
