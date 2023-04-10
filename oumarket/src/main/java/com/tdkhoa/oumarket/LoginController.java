@@ -41,18 +41,23 @@ public class LoginController {
     public void handleLoginButtonAction(ActionEvent eve) {
         this.btnLogin.setOnAction(event -> {
                String username = usernameField.getText();
-               String password = passwordField.getText();
-
-            if (aS.authenticateUser(username, password)) {
+            String password = passwordField.getText();
+            if (username.isEmpty()) {
+                actiontarget.setText("Vui lòng Nhập tên đăng nhập");
+            } else {
+                if (aS.authenticateUser(username, password)) {
                     // ẩn form login
                     btnLogin.getScene().getWindow().hide();
                     // chuyển hướng đến ứng dụng
                     this.viewApp(eve);
-            } else {
-                // hiển thị thông báo lỗi
-                actiontarget.setFill(Color.RED);
-                actiontarget.setText("Incorrect username or password.");
+                } else {
+                    // hiển thị thông báo lỗi
+                    actiontarget.setFill(Color.RED);
+                    actiontarget.setText("Incorrect username or password.");
+                }
             }
+              
+            
         });
     }
     public void handleSiginButtonAction(ActionEvent eve) {
@@ -67,10 +72,11 @@ public class LoginController {
                     // kiểm tra vài trò của người dùng
                     if (userRoles.contains("admin")) {
                         // chuyển hướng đén 
+                        
                     } else {
                         // hiển thị thông báo lỗi
                         actiontarget.setFill(Color.RED);
-                        actiontarget.setText("User does not have required role.");
+                        actiontarget.setText("Người dùng không phải admin.");
                     }
                 } else {
                     // hiển thị thông báo lỗi

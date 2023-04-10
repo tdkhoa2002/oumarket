@@ -48,33 +48,7 @@ public class EmployeeService {
         }
     }
     
-    public boolean addEmployee(Employee c) throws SQLException {
-        try ( Connection conn = JdbcUtils.getConn()) {
-            conn.setAutoCommit(false);
-            String sql = "INSERT INTO employee(name) VALUES(?)"; // SQL injection
-            PreparedStatement stm = conn.prepareCall(sql);
-            stm.setString(1, c.getName());
-
-            stm.executeUpdate();
-
-            try {
-                conn.commit();
-                return true;
-            } catch (SQLException ex) {
-                System.err.println(ex.getMessage());
-                return false;
-            }
-        }
-    }
     
-    public void saveDb(Employee c) throws SQLException {
-        try(Connection conn = JdbcUtils.getConn()){
-            String sql = "UPDATE categories SET name = ? ";
-            PreparedStatement stm = conn.prepareStatement(sql);
-            stm.setString(1, c.getName());
-            stm.executeUpdate();
-        }
-    }
 //    public static List<Employee> findAll() {
 //        List<Employee> employeeList = new ArrayList<>();
 //        Connection con = null;
@@ -116,40 +90,40 @@ public class EmployeeService {
 //      //ket thuc
 //        return employeeList ;  
 //    }   
-//    public static void insert(Employee std){
-//        
-//        Connection con = null;
-//        PreparedStatement statement = null;
-//        try {
-//            con = JdbcUtils.getConn();
-//            
-//            String sql = "insert into employee(fullname)";
-//            statement = con.prepareCall(sql);
-//            
-//            statement.setString(1, std.getName());
-//            
-//            statement.execute();
-//        } catch (SQLException ex) {
-//            Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//        } finally {
-//            if (statement != null) {
-//                try {
-//                    statement.close();
-//                } catch (SQLException ex) {
-//                    Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//
-//        }
-//        if (con != null) {
-//            try {
-//                con.close();
-//            } catch (SQLException ex) {
-//                Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//        
-//    }
+    public void insert(Employee std){
+        
+        Connection con = null;
+        PreparedStatement statement = null;
+        try {
+            con = JdbcUtils.getConn();
+            
+            String sql = "INSERT INTO employee(name) VALUES(?)";
+            statement = con.prepareCall(sql);
+            
+            statement.setString(1, std.getName());
+            
+            statement.execute();
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            if (statement != null) {
+                try {
+                    statement.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        }
+        if (con != null) {
+            try {
+                con.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+    }
     public boolean update(Employee p) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "UPDATE employee SET name =? WHERE id=?";

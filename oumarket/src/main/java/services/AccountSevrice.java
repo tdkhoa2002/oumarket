@@ -124,7 +124,7 @@ public class AccountSevrice {
                 conn = JdbcUtils.getConn();
 
                 // Tạo câu lệnh truy vấn
-                String sql = "SELECT role FROM user_roles WHERE username = ?";
+                String sql = "SELECT role FROM account WHERE username = ?";
                 stmt = conn.prepareStatement(sql);
                 stmt.setString(1, username);
 
