@@ -8,7 +8,6 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import javafx.scene.control.Button;
-import javafx.scene.layout.StackPane;
 
 /**
  * JavaFX App
@@ -24,10 +23,8 @@ public class App extends Application {
         scene = new Scene(loadFXML("login"), 600, 400);
         stage.setScene(scene);
         stage.setTitle("Đăng Nhập");
-        
-        Button button = new Button("Show New Scene");
-        button.setOnAction(event -> showSceneAddProduct());
-        
+//        scene = new Scene(loadFXML("primary"));
+//        stage.setScene(scene);
         stage.show();
     }
 
@@ -38,12 +35,6 @@ public class App extends Application {
     private static Parent loadFXML(String fxml) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource(fxml + ".fxml"));
         return fxmlLoader.load();
-    }
-    
-    private void showSceneAddProduct() {
-        StackPane newRoot = new StackPane();
-        Scene newScene = new Scene(newRoot, 400, 300);
-        Stage.setScene(newScene);
     }
 
     public static void main(String[] args) {

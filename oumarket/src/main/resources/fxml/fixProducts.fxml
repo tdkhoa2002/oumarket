@@ -11,7 +11,7 @@
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tdkhoa.oumarket.EditProductController">
    <children>
-      <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="610.0" stylesheets="@setProducts.css">
+      <VBox fx:id="sceneVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="610.0" stylesheets="@setProducts.css">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="OU" text="OU MARKET ">
                <VBox.margin>
@@ -61,19 +61,6 @@
                   <Insets left="30.0" />
                </VBox.margin>
             </HBox>
-            <HBox prefHeight="35.0" prefWidth="600.0" stylesheets="@setProducts.css">
-               <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mô tả: " />
-                  <TextField prefHeight="25.0" prefWidth="274.0">
-                     <HBox.margin>
-                        <Insets left="45.0" />
-                     </HBox.margin>
-                  </TextField>
-               </children>
-               <VBox.margin>
-                  <Insets left="30.0" />
-               </VBox.margin>
-            </HBox>
             <HBox layoutX="41.0" layoutY="253.0" prefHeight="29.0" prefWidth="587.0" stylesheets="@setProducts.css">
                <children>
                   <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị:">
@@ -89,16 +76,29 @@
             </HBox>
             <HBox prefHeight="36.0" prefWidth="609.0">
                <children>
-                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Danh Mục" />
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Danh Mục:" />
                   <ComboBox fx:id="cbCategories" prefHeight="23.0" prefWidth="274.0">
                      <HBox.margin>
-                        <Insets left="33.0" />
+                        <Insets left="28.0" />
                      </HBox.margin>
                   </ComboBox>
                </children>
                <VBox.margin>
                   <Insets left="30.0" top="5.0" />
                </VBox.margin>
+            </HBox>
+            <HBox layoutX="41.0" layoutY="304.0" prefHeight="36.0" prefWidth="609.0">
+               <children>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Khuyến mãi: ">
+                     <HBox.margin>
+                        <Insets left="30.0" />
+                     </HBox.margin></Text>
+                  <ComboBox fx:id="cbPromotions" prefHeight="23.0" prefWidth="274.0">
+                     <HBox.margin>
+                        <Insets left="14.0" />
+                     </HBox.margin>
+                  </ComboBox>
+               </children>
             </HBox>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
