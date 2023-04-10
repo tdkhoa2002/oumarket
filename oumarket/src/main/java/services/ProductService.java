@@ -85,12 +85,12 @@ public class ProductService {
                      p.setPromotion_name(rs2.getString("name"));
                  }
                  
-                 double priceDiscounted = 0;
-                 priceDiscounted = promoService.getDiscountedPrice(p);
-                    DecimalFormat decimalFormat = new DecimalFormat("#.##"); // Số # thay thế cho số 0
-                    decimalFormat.setRoundingMode(RoundingMode.CEILING); // Đặt chế độ làm tròn
-                    String formattedNumber = decimalFormat.format(priceDiscounted);
-                    p.setPriceDiscount(Double.parseDouble(formattedNumber));
+                 double priceDiscounted;
+                 priceDiscounted = PromotionService.getDiscountedPrice(p);
+//                    DecimalFormat decimalFormat = new DecimalFormat("#.##"); // Số # thay thế cho số 0
+//                    decimalFormat.setRoundingMode(RoundingMode.CEILING); // Đặt chế độ làm tròn
+//                    String formattedNumber = decimalFormat.format(priceDiscounted);
+                    p.setPriceDiscount(priceDiscounted);
                  
                  results.add(p);
              }

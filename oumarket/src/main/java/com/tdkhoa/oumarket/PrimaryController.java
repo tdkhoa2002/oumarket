@@ -97,7 +97,7 @@ public class PrimaryController implements Initializable {
             this.loadTableOrdersColumns();
             this.loadTableCustomersColumns();
             this.loadTablePromotionsColumns();
-            
+//            
             this.loadProductsData(null);
             this.loadCategoriesData(null);
             this.loadCustomerData(null);

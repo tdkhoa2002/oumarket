@@ -33,19 +33,6 @@
             <Insets left="30.0" />
          </VBox.margin>
       </HBox>
-      <HBox prefHeight="35.0" prefWidth="600.0">
-         <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mã sản phẩm: " />
-            <TextField prefHeight="25.0" prefWidth="274.0">
-               <HBox.margin>
-                  <Insets left="5.0" />
-               </HBox.margin>
-            </TextField>
-         </children>
-         <VBox.margin>
-            <Insets left="30.0" />
-         </VBox.margin>
-      </HBox>
       <HBox prefHeight="35.0" prefWidth="600.0" stylesheets="@setProducts.css">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Số lượng: " />
@@ -73,19 +60,6 @@
       </HBox>
       <HBox prefHeight="35.0" prefWidth="600.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Mô tả: " />
-            <TextField prefHeight="25.0" prefWidth="274.0">
-               <HBox.margin>
-                  <Insets left="45.0" />
-               </HBox.margin>
-            </TextField>
-         </children>
-         <VBox.margin>
-            <Insets left="30.0" />
-         </VBox.margin>
-      </HBox>
-      <HBox prefHeight="35.0" prefWidth="600.0">
-         <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị: " />
             <TextField fx:id="txtUnit" prefHeight="25.0" prefWidth="274.0">
                <HBox.margin>
@@ -97,10 +71,16 @@
             <Insets left="30.0" />
          </VBox.margin>
       </HBox>
-      <HBox layoutX="41.0" layoutY="296.0" prefHeight="28.0" prefWidth="750.0">
+      <HBox layoutX="41.0" layoutY="296.0" prefHeight="23.0" prefWidth="565.0">
          <children>
-            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Danh mục:" wrappingWidth="112.51906895637512" />
-            <ComboBox fx:id="cbCategories" prefWidth="150.0" />
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Danh mục:" wrappingWidth="64.51906895637512">
+               <HBox.margin>
+                  <Insets left="30.0" />
+               </HBox.margin></Text>
+            <ComboBox fx:id="cbCategories" prefWidth="150.0">
+               <HBox.margin>
+                  <Insets left="20.0" />
+               </HBox.margin></ComboBox>
          </children>
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0">
