@@ -44,6 +44,8 @@ import pojo.Product;
 import pojo.Promotion;
 import services.PromotionService;
 import services.CategoryService;
+import utils.MessageBox;
+import services.EmployeeService;
 import services.CustomerService;
 import services.EmployeeService;
 import services.OrderDetailsService;
@@ -56,7 +58,10 @@ public class PrimaryController implements Initializable {
 
     static ProductService pS = new ProductService();
     static CategoryService cS  = new CategoryService();
+    static EmployeeService eS = new EmployeeService();
     static Product pRow = new Product ();
+    static Employee eRow = new Employee();
+    
     static OrderDetailsService oDS = new OrderDetailsService();
     static OrderService oS = new OrderService();
     static CustomerService cusS = new CustomerService();
@@ -76,6 +81,7 @@ public class PrimaryController implements Initializable {
     @FXML TableView<Promotion> tbPromotions;
     @FXML ComboBox<Category> cbCategories;
     @FXML TextField txtTotal;
+    @FXML private Button btnAddEmp;
     @FXML TextField txtPhone;
     @FXML TextField txtTienKhachDua;
     @FXML TextField txtTienTraKhach;
@@ -100,6 +106,7 @@ public class PrimaryController implements Initializable {
 //            
             this.loadProductsData(null);
             this.loadCategoriesData(null);
+            this.loadEmployeesData(null);
             this.loadCustomerData(null);
             this.loadOrdersData();
             this.loadPromotionData(null);
@@ -181,6 +188,30 @@ public class PrimaryController implements Initializable {
             }
         });
     }
+    public void viewAddEmployee(ActionEvent evt) throws SQLException {
+    this.btnAddEmp.setOnAction(event -> {
+        try {
+            Stage stage = new Stage();
+            // Tạo Scene mới
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/setEmloyee.fxml"));
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle("Thêm nhân viên");
+
+            stage.setOnHidden(e -> {                       
+                try {
+                    loadEmployeesData(null);
+                } catch (SQLException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+              });
+            stage.show();
+        } catch (IOException ex) {
+            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    });
+}
+
     
     public void viewAddCustomer(ActionEvent evt) throws SQLException {
         this.btnAddCustomer.setOnAction(event -> {
@@ -489,14 +520,83 @@ public class PrimaryController implements Initializable {
         
     this.tbProducts.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colEdit, colDel);
    } //Page load tất cả các sản phẩm
-    
-    private void loadTableEmployeesColumns() {
-        TableColumn colId = new TableColumn("Mã nhân viên");
-        colId.setCellValueFactory(new PropertyValueFactory("id"));
-        
-        TableColumn colName = new TableColumn("Họ tên");
-        colName.setCellValueFactory(new PropertyValueFactory("name"));
-    } //Page load tất cả nhân viên
+
+   private void loadTableEmployeesColumns() {
+    TableColumn colId = new TableColumn("Mã nhân viên");
+    colId.setCellValueFactory(new PropertyValueFactory("id"));
+
+    TableColumn colName = new TableColumn("Họ tên");
+    colName.setCellValueFactory(new PropertyValueFactory("name"));
+
+    TableColumn colDel = new TableColumn("Xoá");
+    colDel.setCellFactory(r -> {
+        Button btn = new Button("Xoá");
+
+        btn.setOnAction(evt -> {
+            Alert a = MessageBox.getBox("Nhân viên",
+                    "Bạn có chắc muốn xoá nhân viên này?",
+                    Alert.AlertType.CONFIRMATION);
+            a.showAndWait().ifPresent(res -> {
+                if (res == ButtonType.OK) {
+                    Button b = (Button) evt.getSource();
+                    TableCell cell = (TableCell) b.getParent();
+                    Employee e = (Employee) cell.getTableRow().getItem();
+                    try {
+                        if (eS.deleteEmployee(e.getId())) {
+                            MessageBox.getBox("Nhân viên", "Xoá thành công", Alert.AlertType.INFORMATION).show();
+                            this.loadEmployeesData(null);
+                        } else {
+                            MessageBox.getBox("Nhân viên", "Xoá thất bại", Alert.AlertType.WARNING).show();
+                        }
+
+                    } catch (SQLException ex) {
+                        MessageBox.getBox("Nhân viên", ex.getMessage(), Alert.AlertType.WARNING).show();
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                }
+            });
+        });
+        TableCell c = new TableCell();
+        c.setGraphic(btn);
+        return c;
+    });
+
+    TableColumn colEdit = new TableColumn("Sửa");
+    colEdit.setCellFactory(r -> {
+        Button btnEdit = new Button("Sửa");
+
+        btnEdit.setOnAction(event -> {
+            Button b = (Button) event.getSource();
+            TableCell cell = (TableCell) b.getParent();
+            eRow = (Employee) cell.getTableRow().getItem();
+            try {
+                Stage stage = new Stage();
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixEmployee.fxml"));
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setTitle("Chỉnh sửa thông tin nhân viên");
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+
+        TableCell c = new TableCell();
+        c.setGraphic(btnEdit);
+        return c;
+    });
+
+    this.tbEmployees.getColumns().addAll(colId, colName, colDel, colEdit);
+}
+
+
+    private void loadEmployeesData(String kw) throws SQLException {
+        List<Employee> employees = eS.getEmployees(kw);
+
+        this.tbEmployees.getItems().clear();
+        this.tbEmployees.setItems(FXCollections.observableList(employees));
+    }
+   
 
     private void loadTableCategoriesColumns() {
         TableColumn colId = new TableColumn("ID");
