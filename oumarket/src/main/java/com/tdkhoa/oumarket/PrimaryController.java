@@ -60,6 +60,7 @@ public class PrimaryController implements Initializable {
     static EmployeeService eS = new EmployeeService();
     static Product pRow = new Product ();
     static Employee eRow = new Employee();
+    static Category cRow = new Category();
     
     static OrderDetailsService oDS = new OrderDetailsService();
     static OrderService oS = new OrderService();
@@ -661,6 +662,7 @@ public class PrimaryController implements Initializable {
                             if (cS.deleteCategory(c.getId())) {
                                 MessageBox.getBox("Danh mục", "Xóa thành công", Alert.AlertType.INFORMATION).show();
                                 this.loadCategoriesData(null);
+                                this.loadProductsData(null);
                             } else {
                                 MessageBox.getBox("Danh mục", "Xóa thất bại", Alert.AlertType.WARNING).show();
                             }
@@ -679,8 +681,10 @@ public class PrimaryController implements Initializable {
         TableColumn colEdit = new TableColumn("Edit");
         colEdit.setCellFactory(r -> {
             Button btnEdit = new Button("Edit");
-
             btnEdit.setOnAction(event -> {
+            Button b = (Button) event.getSource();
+            TableCell cell = (TableCell) b.getParent();
+            cRow = (Category) cell.getTableRow().getItem();
             try {
                 Stage stage = new Stage();
                 // Tạo Scene mới
@@ -688,6 +692,13 @@ public class PrimaryController implements Initializable {
                 Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
                 stage.setScene(scene);
                 stage.setTitle("Chỉnh sửa sản phẩm");
+                stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
+                    try {
+                        loadCategoriesData(null);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                  });
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);

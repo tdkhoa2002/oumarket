@@ -5,6 +5,7 @@
 package com.tdkhoa.oumarket;
 
 
+import static com.tdkhoa.oumarket.EditProductController.itemsUnit;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -38,6 +39,7 @@ public class AddProductController implements Initializable {
     @FXML private TextField txtQuantity;
     @FXML private TextField txtUnit;
     @FXML private ComboBox<Category> cbCategories;
+    @FXML private ComboBox<String> cbUnit;
     @FXML private VBox sceneVBox;
      Stage stageOut;
     
@@ -46,6 +48,7 @@ public class AddProductController implements Initializable {
     @Override
     public void initialize (URL url, ResourceBundle rb) {
         CategoryService s = new CategoryService();
+        this.cbUnit.setItems(FXCollections.observableArrayList(itemsUnit));
         try {
             List<Category> cates = s.getCategories(null);
             this.cbCategories.setItems(FXCollections.observableList(cates));

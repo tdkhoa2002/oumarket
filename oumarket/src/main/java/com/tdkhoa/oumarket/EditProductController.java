@@ -24,7 +24,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import pojo.Category;
-import pojo.Product;
 import pojo.Promotion;
 import services.CategoryService;
 import services.ProductService;
@@ -41,7 +40,7 @@ public class EditProductController implements Initializable {
     @FXML private TextField txtQuantity;
     @FXML private ComboBox<Promotion> cbPromotions;
     @FXML private VBox sceneVBox;
-    String[] items = {"Cái", "Gói", "Kg", "Chai", "Lon"};
+    static public String[] itemsUnit = {"Cái", "Gói", "Kg", "Chai", "Lon"};
     @FXML ComboBox<String> cbUnit;
      Stage stageOut;
     @FXML private ComboBox<Category> cbCategories;
@@ -59,7 +58,7 @@ public class EditProductController implements Initializable {
         cbCategories.setPromptText(pRow.getCategoryName());
         cbPromotions.setPromptText(pRow.getPromotion_name());
         System.out.println(pRow.getPromotion_name());
-        this.cbUnit.setItems(FXCollections.observableArrayList(items));
+        this.cbUnit.setItems(FXCollections.observableArrayList(itemsUnit));
         try {
 //            txtName.setText(product.getName());
             List<Category> cates = s.getCategories(null);

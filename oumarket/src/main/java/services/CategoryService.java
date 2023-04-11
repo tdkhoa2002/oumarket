@@ -34,11 +34,21 @@ public class CategoryService {
     
     public boolean deleteCategory(int id) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "DELETE FROM categories WHERE id=?";
-            PreparedStatement stm = conn.prepareCall(sql);
-            stm.setInt(1, id);
             
-            return stm.executeUpdate() > 0;
+            String sql1 = "SELECT * FROM products WHERE category_id = ?";
+            PreparedStatement stmGetProducts = conn.prepareCall(sql1);
+            stmGetProducts.setInt(1, id);
+            ResultSet rs = stmGetProducts.executeQuery();
+            while(rs.next()){
+                String sql2 = "DELETE FROM products WHERE category_id = ?";
+                PreparedStatement stmDeleteProduct = conn.prepareCall(sql2);
+                stmDeleteProduct.setInt(1, id);
+                stmDeleteProduct.executeUpdate();
+            }
+            String sql3 = "DELETE FROM categories WHERE id=?";
+            PreparedStatement stmDeleteCategory = conn.prepareCall(sql3);
+            stmDeleteCategory.setInt(1, id);
+            return stmDeleteCategory.executeUpdate() > 0;
         }
     }
     
@@ -61,12 +71,13 @@ public class CategoryService {
         }
     }
     
-    public void saveDb(Category c) throws SQLException {
-        try(Connection conn = JdbcUtils.getConn()){
-            String sql = "UPDATE categories SET name = ? ";
-            PreparedStatement stm = conn.prepareStatement(sql);
+    public boolean editCategory(Category c) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "UPDATE categories SET name =? WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, c.getName());
-            stm.executeUpdate();
+            stm.setInt(2, c.getId());
+            return stm.executeUpdate() > 0;
         }
     }
 }
