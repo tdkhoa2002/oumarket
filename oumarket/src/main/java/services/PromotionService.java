@@ -5,10 +5,13 @@
 package services;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ import pojo.Promotion;
  * @author Khoa Tran
  */
 public class PromotionService {
-        public List<Promotion> getPromotions(String kw) throws SQLException {
+        public List<Promotion> getPromotions(String kw) throws SQLException, ParseException {
             List<Promotion> promos = new ArrayList<>();
             try (Connection conn = JdbcUtils.getConn()) {
                 Statement stm = conn.createStatement();
@@ -31,14 +34,10 @@ public class PromotionService {
                     int id = rs.getInt("id");
                     String name = rs.getString("name");
                     double value = rs.getInt("value");
-                    String start = rs.getString("start");
-                    String end = rs.getString("end");
+                    Date start = rs.getDate("start");
+                    Date end = rs.getDate("end");
                     
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDate startTime = LocalDate.parse(start, formatter);
-                    LocalDate endTime = LocalDate.parse(end, formatter);
-                    
-                    promos.add(new Promotion(id, name, value));
+                    promos.add(new Promotion(id, name, value, start, end));
                 }
             }
             return promos;
@@ -61,9 +60,8 @@ public class PromotionService {
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, p.getName());
             stm.setDouble(2, p.getValue());
-            stm.setString(3, p.getTimeStart().toString());
-            stm.setString(4, p.getTimeEnd().toString());
-
+            stm.setDate(3, p.getTimeStart());
+            stm.setDate(4, p.getTimeEnd());
             stm.executeUpdate();
 
             try {
@@ -77,8 +75,9 @@ public class PromotionService {
     }
     
     public static boolean isPromotionActive(Promotion promotion) {
-        LocalDate now = LocalDate.now();
-        return now.isAfter(promotion.getTimeStart()) && now.isBefore(promotion.getTimeEnd());
+//        LocalDate now = LocalDate.now();
+//        return now.isAfter(promotion.getTimeStart()) && now.isBefore(promotion.getTimeEnd());
+          return false;
     }
 
     public static double getDiscountedPrice(Product product) throws SQLException {

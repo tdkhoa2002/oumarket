@@ -46,14 +46,9 @@
                               <Insets top="10.0" />
                            </padding>
                         </HBox>
-                        <Button layoutX="116.0" layoutY="434.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="81.0" styleClass="h2" text="Mã KH" />
-                        <Button layoutX="119.0" layoutY="374.0" mnemonicParsing="false" prefHeight="51.0" prefWidth="76.0" styleClass="h2" text=" Ghi chú" />
                         <TableView fx:id="tbShowProducts" layoutY="78.0" prefHeight="199.0" prefWidth="563.0" />
-                        <Button layoutX="22.0" layoutY="373.0" mnemonicParsing="false" prefHeight="54.0" prefWidth="80.0" styleClass="h2" text="Thống kê" />
-                        <Button layoutX="22.0" layoutY="434.0" mnemonicParsing="false" prefHeight="50.0" prefWidth="80.0" styleClass="h2" stylesheets="@Style.css" text="Sale" />
-                        <Button layoutX="223.0" layoutY="375.0" mnemonicParsing="false" prefHeight="117.0" prefWidth="136.0" styleClass="h2" text="Đổi User" />
                         <Text layoutX="16.0" layoutY="310.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Số điện thoại:" />
-                        <TextField fx:id="txtPhone" layoutX="96.0" layoutY="292.0" prefHeight="23.0" prefWidth="124.0" />
+                        <TextField fx:id="txtPhone" layoutX="96.0" layoutY="292.0" prefColumnCount="0" prefHeight="23.0" prefWidth="124.0" />
                         <Text layoutX="224.0" layoutY="309.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền khách đưa: " wrappingWidth="93.46173095703125" />
                         <TextField fx:id="txtTienKhachDua" disable="true" layoutX="313.0" layoutY="292.0" text="0" />
                         <Text disable="true" layoutX="13.0" layoutY="354.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tiền trả khách: " />

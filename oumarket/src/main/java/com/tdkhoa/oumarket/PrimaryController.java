@@ -3,6 +3,7 @@ package com.tdkhoa.oumarket;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -44,8 +45,6 @@ import pojo.Product;
 import pojo.Promotion;
 import services.PromotionService;
 import services.CategoryService;
-import utils.MessageBox;
-import services.EmployeeService;
 import services.CustomerService;
 import services.EmployeeService;
 import services.OrderDetailsService;
@@ -91,10 +90,17 @@ public class PrimaryController implements Initializable {
     @FXML private Button btnAddPromotion;
     @FXML private TextField txtSearch;
     @FXML private VBox sceneVBox;
+    List<Customer> customers;
     Stage stageOut;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            this.txtPhone.setPrefColumnCount(10);
+            this.txtTotal.setText("0");
+            this.txtTienKhachDua.setText("0");
+            this.txtTienTraKhach.setText("0");
+            
+            this.customers = cusS.getCustomers();
             this.loadTableProductsColumns();
             this.loadTableCategoriesColumns();
             this.loadTableEmployeesColumns();
@@ -107,9 +113,10 @@ public class PrimaryController implements Initializable {
             this.loadProductsData(null);
             this.loadCategoriesData(null);
             this.loadEmployeesData(null);
-            this.loadCustomerData(null);
+            this.loadCustomerData();
             this.loadOrdersData();
             this.loadPromotionData(null);
+            
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -133,11 +140,39 @@ public class PrimaryController implements Initializable {
         });
         
         this.cartItems.addListener((ListChangeListener<OrderDetails>) change -> {
-            if(!this.cartItems.isEmpty()) {
+            if( !this.cartItems.isEmpty() ) {
                 this.txtTienKhachDua.setDisable(false);
+//                double price1 = Double.parseDouble(this.txtTienKhachDua.getText()) - this.total;
+//                this.txtTienTraKhach.setText(Double.toString(price1));
+//                System.out.println(price1);
+//                System.out.println(txtTienKhachDua.getText());
+//                System.out.println(this.total);
             }
             else {
                 this.txtTienKhachDua.setDisable(true);
+            }
+        });
+        
+        this.txtPhone.textProperty().addListener(e -> {
+            try {
+                if(this.txtPhone.getText().length() > 9 ) {
+                    Customer c = cusS.findCustomerByPhoneNumber(customers, this.txtPhone.getText());
+                    if (c != null) {
+                        MessageBox.getBox("Tìm kiếm khách hàng", "Đã tìm thấy khách hàng", Alert.AlertType.CONFIRMATION).show();
+                        double tongTien = Double.parseDouble(txtTotal.getText());
+                        double discount = tongTien * 0.1;
+                        double s = tongTien - discount;
+                        txtTotal.setText(Double.toString(s));
+                    }
+                    else {
+                        MessageBox.getBox("Tìm kiếm khách hàng", "Không tồn tại khách hàng có số điện thoại này", Alert.AlertType.ERROR).show();
+                    }
+                }
+                else {
+                    this.txtPhone.setEditable(true);
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
@@ -188,6 +223,7 @@ public class PrimaryController implements Initializable {
             }
         });
     }
+    
     public void viewAddEmployee(ActionEvent evt) throws SQLException {
     this.btnAddEmp.setOnAction(event -> {
         try {
@@ -212,7 +248,6 @@ public class PrimaryController implements Initializable {
     });
 }
 
-    
     public void viewAddCustomer(ActionEvent evt) throws SQLException {
         this.btnAddCustomer.setOnAction(event -> {
             try {
@@ -225,7 +260,7 @@ public class PrimaryController implements Initializable {
                 
                 stage.setOnHidden(e -> {                       //xử lý khi sự kiện stage đóng lại
                     try {
-                        loadCustomerData(null);
+                        loadCustomerData();
                     } catch (SQLException ex) {
                         Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -773,8 +808,8 @@ public class PrimaryController implements Initializable {
         this.tbCategories.setItems(FXCollections.observableList(cates));
     }
     
-    private void loadCustomerData(String kw) throws SQLException {
-        List<Customer> customers = cusS.getCustomers(kw);
+    private void loadCustomerData() throws SQLException {
+        List<Customer> customers = cusS.getCustomers();
         
         this.tbCustomers.getItems().clear();
         this.tbCustomers.setItems(FXCollections.observableList(customers));
@@ -788,7 +823,12 @@ public class PrimaryController implements Initializable {
     }
     
     private void loadPromotionData(String kw) throws SQLException {
-        List<Promotion> pros = promoService.getPromotions(kw);
+        List<Promotion> pros = null;
+        try {
+            pros = promoService.getPromotions(kw);
+        } catch (ParseException ex) {
+            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         
         System.out.println(pros);
         
@@ -802,17 +842,18 @@ public class PrimaryController implements Initializable {
 //    }
     
     public void refreshCart() {
+        Double priceRefresh = 0.0;
         this.tbShowOrdersDetail.getItems().clear();
-        this.txtTienKhachDua.setText("0");
-        this.txtTienTraKhach.setText("0");
-        this.txtTotal.setText("0");
+        this.txtTienKhachDua.setText(Double.toString(priceRefresh));
+        this.txtTienTraKhach.setText(Double.toString(priceRefresh));
+        this.txtTotal.setText(Double.toString(priceRefresh));
     }
     
-    
     public void savePay() throws SQLException {
-        if(Double.parseDouble(this.txtTienTraKhach.getText()) > 0){
+        Double tienTraKhach = Double.parseDouble(this.txtTienTraKhach.getText());
+        Double tienKhachDua = Double.parseDouble(this.txtTienKhachDua.getText());
+        if(tienTraKhach >= 0 && tienKhachDua > total){
             Order o = new Order();
-            List<Customer> customers = cusS.getCustomers(null);
             String phone = txtPhone.getText();
             double tongTien = Double.parseDouble(txtTotal.getText());
             if(!phone.isEmpty()) { //Nếu txtPhone không rỗng
@@ -820,20 +861,20 @@ public class PrimaryController implements Initializable {
                 LocalDateTime purchaseDate = LocalDateTime.now();
                 String formattedDateTime = purchaseDate.format(formatter);
                 String purchaseDateSS = formattedDateTime.substring(0,5);
-                System.out.println(purchaseDateSS);
                 Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
                 if(customer != null) {
                     String customerBirthDay = customer.getNgaySinh().substring(0,5);
                     if(customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
                         double discount = tongTien * 0.1;
-                        o.setTotal(tongTien - discount);
+                        double s = tongTien - discount;
+                        o.setTotal(s);
                     }
                     else {
                         o.setTotal(Double.parseDouble(txtTotal.getText()));
                     }
                 }
                 else {
-                    return;
+                    MessageBox.getBox("Tìm kiếm khách hàng", "Không tồn tại khách hàng có số điện thoại này", Alert.AlertType.ERROR).show();
                 }
             }
             else  //Nếu txtPhone rỗng

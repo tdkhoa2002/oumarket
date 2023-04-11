@@ -5,7 +5,13 @@
 package com.tdkhoa.oumarket;
 
 import static com.tdkhoa.oumarket.AddCategoryController.cS;
+import java.sql.Date;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -31,12 +37,10 @@ public class AddPromotionController {
     @FXML private DatePicker endTime;
     PromotionService proService = new PromotionService();
      Stage stageOut;
-    public void addPromotion (ActionEvent evt) throws SQLException {
-        Promotion p = new Promotion();
-        p.setName(name.getText());
-        p.setValue(Double.parseDouble(value.getText()));
-        p.setTimeStart(startTime.getValue());
-        p.setTimeEnd(endTime.getValue());
+    public void addPromotion (ActionEvent evt) throws SQLException, ParseException {
+        Date startTime = Date.valueOf(this.startTime.getValue());
+        Date endTime = Date.valueOf(this.endTime.getValue());
+        Promotion p = new Promotion(this.name.getText(), Double.parseDouble(value.getText()), startTime, endTime);
         proService.addPromotion(p);
         Alert a = MessageBox.getBox("Mã khuyến mãi", "Bạn có chắc muốn thêm mã khuyến mãi này không? ", Alert.AlertType.CONFIRMATION);
             a.showAndWait().ifPresent(res -> {

@@ -21,7 +21,7 @@ import utils.MessageBox;
  * @author Khoa Tran
  */
 public class CustomerService {
-    public List<Customer> getCustomers(String kw) throws SQLException {
+    public List<Customer> getCustomers() throws SQLException {
         List<Customer> customersList = new ArrayList<>();
         try ( Connection conn = JdbcUtils.getConn() ) {
             String sql = "SELECT * FROM customer";
@@ -67,7 +67,6 @@ public class CustomerService {
                 return customer;
             }
         }
-        MessageBox.getBox("Tìm kiếm khách hàng", "Không tồn tại khách hàng có số điện thoại này", Alert.AlertType.ERROR).show();
         return null;
     }
 }

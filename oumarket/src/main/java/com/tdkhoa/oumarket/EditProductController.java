@@ -8,6 +8,7 @@ import static com.tdkhoa.oumarket.AddProductController.pS;
 import static com.tdkhoa.oumarket.PrimaryController.pRow;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
@@ -38,9 +39,10 @@ public class EditProductController implements Initializable {
     @FXML private TextField txtName;
     @FXML private TextField txtPrice;
     @FXML private TextField txtQuantity;
-    @FXML private TextField txtUnit;
     @FXML private ComboBox<Promotion> cbPromotions;
     @FXML private VBox sceneVBox;
+    String[] items = {"Cái", "Gói", "Kg", "Chai", "Lon"};
+    @FXML ComboBox<String> cbUnit;
      Stage stageOut;
     @FXML private ComboBox<Category> cbCategories;
     static ProductService pS = new ProductService();
@@ -53,10 +55,11 @@ public class EditProductController implements Initializable {
         txtName.setText(pRow.getName());
         txtPrice.setText(Double.toString(pRow.getPrice()));
         txtQuantity.setText(Integer.toString(pRow.getQuantity()));
-        txtUnit.setText(pRow.getUnit());
+        cbUnit.setValue(pRow.getUnit());
         cbCategories.setPromptText(pRow.getCategoryName());
         cbPromotions.setPromptText(pRow.getPromotion_name());
         System.out.println(pRow.getPromotion_name());
+        this.cbUnit.setItems(FXCollections.observableArrayList(items));
         try {
 //            txtName.setText(product.getName());
             List<Category> cates = s.getCategories(null);
@@ -64,6 +67,8 @@ public class EditProductController implements Initializable {
             this.cbCategories.setItems(FXCollections.observableList(cates));
             this.cbPromotions.setItems(FXCollections.observableList(promotions));
         } catch (SQLException ex) {
+            Logger.getLogger(EditProductController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ParseException ex) {
             Logger.getLogger(EditProductController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -73,7 +78,7 @@ public class EditProductController implements Initializable {
         pRow.setCategoryId(this.cbCategories.getSelectionModel().getSelectedItem().getId());
         pRow.setQuantity(Integer.parseInt(this.txtQuantity.getText()));
         pRow.setPrice(Double.parseDouble(this.txtPrice.getText()));
-        pRow.setUnit(this.txtUnit.getText());
+        pRow.setUnit(this.cbUnit.getValue());
         pRow.setPromotion_id(this.cbPromotions.getSelectionModel().getSelectedItem().getId());
         pRow.setPromotion_name(this.cbPromotions.getSelectionModel().getSelectedItem().getName());
         

@@ -67,11 +67,11 @@
                      <HBox.margin>
                         <Insets left="30.0" />
                      </HBox.margin></Text>
-                  <TextField fx:id="txtUnit" prefHeight="26.0" prefWidth="274.0">
+                  <ComboBox fx:id="cbUnit" prefHeight="23.0" prefWidth="274.0">
                      <HBox.margin>
                         <Insets left="45.0" />
                      </HBox.margin>
-                  </TextField>
+                  </ComboBox>
                </children>
             </HBox>
             <HBox prefHeight="36.0" prefWidth="609.0">
