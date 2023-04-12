@@ -50,7 +50,7 @@ public class PrimaryController implements Initializable {
     static EmployeeService eS = new EmployeeService();
     static Product pRow = new Product ();
     static Employee eRow = new Employee();
-    
+    static LoginController lC = new LoginController();
     
     @FXML TableView<Product> tbProducts;
     @FXML TableView<Product> tbShowProducts;
@@ -68,6 +68,7 @@ public class PrimaryController implements Initializable {
     @FXML private Button btnAddSP;
     @FXML private Button btnAddCate;
     @FXML private Spinner spinner;
+   
 //    @FXML private TextField txtSearch;
     @FXML private VBox sceneVBox;
     Stage stageOut;
@@ -82,6 +83,7 @@ public class PrimaryController implements Initializable {
             this.loadProductsData(null);
             this.loadCategoriesData(null);
             this.loadEmployeesData(null);
+            
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -507,4 +509,6 @@ public class PrimaryController implements Initializable {
         stageOut = (Stage) sceneVBox.getScene().getWindow();
         stageOut.close();
     }
+    
+   
 }

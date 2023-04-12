@@ -4,8 +4,6 @@
  */
 package pojo;
 
-import java.util.UUID;
-
 /**
  *
  * @author Khoa Tran
