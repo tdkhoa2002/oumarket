@@ -46,7 +46,7 @@ public class LoginController {
                 actiontarget.setText("Vui lòng Nhập tên đăng nhập");
             } else {
                 if (aS.authenticateUser(username, password)) {
-                    a = username;
+                   
                     // ẩn form login
                     btnLogin.getScene().getWindow().hide();
                     // chuyển hướng đến ứng dụng
