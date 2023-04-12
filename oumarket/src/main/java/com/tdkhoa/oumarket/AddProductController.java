@@ -60,7 +60,7 @@ public class AddProductController implements Initializable {
     public void addProductHandler (ActionEvent evt) {
         Product p = new Product(this.txtName.getText(),
                 this.cbCategories.getSelectionModel().getSelectedItem().getId(), Double.parseDouble(this.txtPrice.getText()),
-                Integer.parseInt(this.txtQuantity.getText()), this.txtUnit.getText());
+                Integer.parseInt(this.txtQuantity.getText()), this.cbUnit.getValue());
         try {
             if (pS.addProduct(p)) {
                 Alert a = MessageBox.getBox("Sản phẩm", "Thêm sản phẩm thành công ", Alert.AlertType.INFORMATION);
