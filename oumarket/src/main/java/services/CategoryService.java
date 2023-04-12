@@ -55,16 +55,21 @@ public class CategoryService {
     public boolean addCategory(Category c) throws SQLException {
         try ( Connection conn = JdbcUtils.getConn()) {
             conn.setAutoCommit(false);
-            String sql = "INSERT INTO categories(name) VALUES(?)"; // SQL injection
+            String sql = "SELECT * FROM categories WHERE name = ?";
+            PreparedStatement stmCheckUnique = conn.prepareCall(sql);
+            stmCheckUnique.setString(1, c.getName());
+            ResultSet resultSet = stmCheckUnique.executeQuery();
+            if(resultSet.next()) {
+                return false;
+            }
+            sql = "INSERT INTO categories(name) VALUES (?)";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, c.getName());
-
             stm.executeUpdate();
-
             try {
                 conn.commit();
                 return true;
-            } catch (SQLException ex) {
+            }catch(SQLException ex) {
                 System.err.println(ex.getMessage());
                 return false;
             }

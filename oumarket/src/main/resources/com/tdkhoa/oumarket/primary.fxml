@@ -31,12 +31,6 @@
                                  </HBox.margin>
                               </TextField>
                               <Button mnemonicParsing="false" text="Tìm" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Quầy:">
-                                 <HBox.margin>
-                                    <Insets left="10.0" />
-                                 </HBox.margin>
-                              </Text>
-                              <TextField prefHeight="23.0" prefWidth="57.0" />
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chi nhánh: " />
                               <TextField />
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tên NV: " />
