@@ -17,7 +17,7 @@
                   <Font size="18.0" />
                </font>
             </Label>
-            <Button fx:id="btnSigup" layoutX="40.0" layoutY="347.0" mnemonicParsing="false" onAction="#handleSigupButtonAction" prefHeight="26.0" prefWidth="150.0" text="Đăng kí" />
+            <Button fx:id="btnSigup" layoutX="40.0" layoutY="347.0" mnemonicParsing="false" onAction="#viewSigup" prefHeight="26.0" prefWidth="150.0" text="Đăng kí" />
          </children></AnchorPane>
       <AnchorPane layoutX="244.0" layoutY="7.0" prefHeight="420.0" prefWidth="362.0" style="-fx-background-color: #ffffff;">
          <children>

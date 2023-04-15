@@ -106,50 +106,9 @@ public class PrimaryController implements Initializable {
 
     @FXML private VBox sceneVBox;
 
-    @FXML
-    TableView<Product> tbProducts;
-    @FXML
-    TableView<Product> tbShowProducts;
+    
 
     @FXML
-    TableView<OrderDetails> tbShowOrdersDetail;
-    ObservableList<OrderDetails> cartItems = FXCollections.observableArrayList();
-    double total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
-
-    @FXML
-    TableView<Category> tbCategories;
-    @FXML
-    TableView<Employee> tbEmployees;
-    @FXML
-    TableView<Order> tbOrders;
-    @FXML
-    TableView<Customer> tbCustomers;
-    @FXML
-    TableView<Promotion> tbPromotions;
-    @FXML
-    ComboBox<Category> cbCategories;
-    @FXML
-    TextField txtTotal;
-    @FXML
-    private Button btnAddEmp;
-    @FXML
-    TextField txtPhone;
-    @FXML
-    TextField txtTienKhachDua;
-    @FXML
-    TextField txtTienTraKhach;
-    @FXML
-    private Button btnAddSP;
-    @FXML
-    private Button btnAddCate;
-    @FXML
-    private Button btnAddCustomer;
-    @FXML
-    private Button btnAddPromotion;
-    @FXML
-    private TextField txtSearch;
-    @FXML
-    private VBox sceneVBox;
     List<Customer> customers;
 
     Stage stageOut;
@@ -196,11 +155,6 @@ public class PrimaryController implements Initializable {
             this.loadProductsData(null);
             this.loadCategoriesData(null);
             this.loadEmployeesData(null);
-
-
-            
-
-            this.loadCustomerData(null);
 
             this.loadCustomerData();
 
