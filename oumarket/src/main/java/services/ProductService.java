@@ -48,7 +48,7 @@ public class ProductService {
                 conn.commit();
                 return true;
             } catch (SQLException ex) {
-                System.err.println(ex.getMessage());
+//                MessageBox.getBox("Sản phẩm", "Nhập thông tin sản phẩm", Alert.AlertType.WARNING).show();
                 return false;
             }
         }
@@ -125,18 +125,7 @@ public class ProductService {
             stm.setInt(5, p.getQuantity());
             stm.setInt(6, p.getPromotion_id());
             stm.setString(7, p.getId());
-
-//            sql = "SELECT * from promotion WHERE id =?";
-//                
-//                stm = conn.prepareCall(sql);
-//                
-//                stm.setInt(1, p.getPromotion_id());
-//                
-//                 ResultSet rs1 = stm.executeQuery();
-//                
-//                 while(rs1.next()) {
-//                     p.setPromotion_name(rs1.getString("name"));
-//                 }
+            
             return stm.executeUpdate() > 0;
         }
     }

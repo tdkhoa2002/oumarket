@@ -34,7 +34,7 @@ import utils.MessageBox;
  *
  * @author Khoa Tran
  */
-public class AddCustomerController implements Initializable{
+public class AddCustomerController implements Initializable {
 
     static CustomerService cusService = new CustomerService();
 
@@ -47,7 +47,7 @@ public class AddCustomerController implements Initializable{
     @FXML
     private VBox sceneVBox;
     Stage stageOut;
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         this.phone.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -58,26 +58,40 @@ public class AddCustomerController implements Initializable{
     }
 
     public void addCustomer(ActionEvent evt) throws SQLException {
-        Customer cus = new Customer();
-        cus.setName(name.getText());
+        if (this.name.getText().isEmpty() || this.phone.getText().isEmpty() || this.ngaySinh.getValue() == null) {
+            MessageBox.getBox("Khách hàng", "Dữ liệu không được để trống", Alert.AlertType.WARNING).show();
+        } else {
+            try {
+                Long.parseLong(this.phone.getText());
+                if (this.phone.getText().length() == 10) {
+                    Customer cus = new Customer();
+                    cus.setName(name.getText());
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        String formattedDateTime = ngaySinh.getValue().format(formatter);
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    String formattedDateTime = ngaySinh.getValue().format(formatter);
 
-        cus.setNgaySinh(formattedDateTime);
-        cus.setPhone(phone.getText());
-        Alert a = MessageBox.getBox("Thêm khách hàng", "Bạn có chắc muốn thêm khách hàng không? ", Alert.AlertType.CONFIRMATION);
-        a.showAndWait().ifPresent(res -> {
-            if (res == ButtonType.OK) {
-                try {
-                    cusService.addCustomer(cus);
-                } catch (SQLException ex) {
-                    Logger.getLogger(AddCustomerController.class.getName()).log(Level.SEVERE, null, ex);
+                    cus.setNgaySinh(formattedDateTime);
+                    cus.setPhone(phone.getText());
+                    Alert a = MessageBox.getBox("Thêm khách hàng", "Bạn có chắc muốn thêm khách hàng không? ", Alert.AlertType.CONFIRMATION);
+                    a.showAndWait().ifPresent(res -> {
+                        if (res == ButtonType.OK) {
+                            try {
+                                cusService.addCustomer(cus);
+                            } catch (SQLException ex) {
+                                Logger.getLogger(AddCustomerController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            stageOut = (Stage) sceneVBox.getScene().getWindow();
+                            stageOut.close();
+                        }
+                    });
                 }
-                stageOut = (Stage) sceneVBox.getScene().getWindow();
-                stageOut.close();
+                else {
+                    MessageBox.getBox("Khách hàng", "Số điện thoại phải đủ 10 ký tự", Alert.AlertType.WARNING).show();
+                }
+            } catch (NumberFormatException ex) {
+                MessageBox.getBox("Khách hàng", "Số điện thoại nhập không hợp lệ", Alert.AlertType.WARNING).show();
             }
-        });
+        }
     }
 
     public void closeView(ActionEvent evt) {

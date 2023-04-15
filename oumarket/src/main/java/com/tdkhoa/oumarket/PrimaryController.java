@@ -61,6 +61,7 @@ public class PrimaryController implements Initializable {
     static Product pRow = new Product();
     static Employee eRow = new Employee();
     static Category cRow = new Category();
+    static Promotion proRow = new Promotion();
 
     static OrderDetailsService oDS = new OrderDetailsService();
     static OrderService oS = new OrderService();
@@ -184,11 +185,6 @@ public class PrimaryController implements Initializable {
         this.cartItems.addListener((ListChangeListener<OrderDetails>) change -> {
             if (!this.cartItems.isEmpty()) {
                 this.txtTienKhachDua.setDisable(false);
-//                double price1 = Double.parseDouble(this.txtTienKhachDua.getText()) - this.total;
-//                this.txtTienTraKhach.setText(Double.toString(price1));
-//                System.out.println(price1);
-//                System.out.println(txtTienKhachDua.getText());
-//                System.out.println(this.total);
             } else {
                 this.txtTienKhachDua.setDisable(true);
             }
@@ -821,17 +817,24 @@ public class PrimaryController implements Initializable {
             Button btnEdit = new Button("Edit");
 
             btnEdit.setOnAction(event -> {
-//            try {
-//                Stage stage = new Stage();
-//                // Tạo Scene mới
-//                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixVoucher.fxml"));
-//                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
-//                stage.setScene(scene);
-//                stage.setTitle("Chỉnh sửa sản phẩm");
-//                stage.show();
-//            } catch (IOException ex) {
-//                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            try {
+                Stage stage = new Stage();
+                // Tạo Scene mới
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixVoucher.fxml"));
+                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                stage.setScene(scene);
+                stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
+                        try {
+                            loadPromotionData(null);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                stage.setTitle("Chỉnh sửa sản phẩm");
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
             });
 
             TableCell c = new TableCell();
@@ -904,58 +907,64 @@ public class PrimaryController implements Initializable {
     public void savePay() throws SQLException {
         Double tienTraKhach = Double.parseDouble(this.txtTienTraKhach.getText());
         Double tienKhachDua = Double.parseDouble(this.txtTienKhachDua.getText());
-        if (tienTraKhach >= 0 && tienKhachDua > total) {
-            Order o = new Order();
-            String phone = txtPhone.getText();
-            double tongTien = Double.parseDouble(txtTotal.getText());
-            if (!phone.isEmpty()) { //Nếu txtPhone không rỗng
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDateTime purchaseDate = LocalDateTime.now();
-                String formattedDateTime = purchaseDate.format(formatter);
-                String purchaseDateSS = formattedDateTime.substring(0, 5);
-                Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
-                if (customer != null) {
-                    String customerBirthDay = customer.getNgaySinh().substring(0, 5);
-                    if (customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
-                        double discount = tongTien * 0.1;
-                        double s = tongTien - discount;
-                        o.setTotal(s);
-                    } else {
-                        o.setTotal(Double.parseDouble(txtTotal.getText()));
-                    }
-                } else {
-                    MessageBox.getBox("Tìm kiếm khách hàng", "Không tồn tại khách hàng có số điện thoại này", Alert.AlertType.ERROR).show();
-                }
-            } else //Nếu txtPhone rỗng
-            {
-                o.setTotal(Double.parseDouble(txtTotal.getText()));
-            }
-            o.setTienKhachDua(Double.parseDouble(txtTienKhachDua.getText()));
-            o.setTienTraKhach(Double.parseDouble(txtTienTraKhach.getText()));
-            oS.addOrder(o);
-            ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
-            boolean tmp = false;
-            for (OrderDetails oD : orderDetailsList) {
-                if (oDS.saveOderDetails(oD, o)) {
-                    tmp = true;
-                } else {
-                    tmp = false;
-                }
-            }
-            if (tmp == true) {
-                oDS.updateQuantityInStock(orderDetailsList);
-                this.tbShowOrdersDetail.getItems().clear();
-                loadProductsData(null);
-                loadOrdersData();
-                txtTienKhachDua.setText("0");
-                txtTotal.setText("0");
-                txtTienTraKhach.setText("0");
-                MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
-            } else {
-                MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
-            }
+        if (this.cartItems.isEmpty()) {
+            MessageBox.getBox("Hóa đơn", "Không có sản phẩm trong giỏ hàng", Alert.AlertType.WARNING).show();
         } else {
-            MessageBox.getBox("Hóa đơn", "Vui lòng nhập tiền phù hợp", Alert.AlertType.ERROR).show();
+            if (tienTraKhach >= 0 && tienKhachDua >= total) {
+                Order o = new Order();
+                String phone = txtPhone.getText();
+                double tongTien = Double.parseDouble(txtTotal.getText());
+                if (!phone.isEmpty()) { //Nếu txtPhone không rỗng
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDateTime purchaseDate = LocalDateTime.now();
+                    String formattedDateTime = purchaseDate.format(formatter);
+                    String purchaseDateSS = formattedDateTime.substring(0, 5);
+                    Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
+                    cusS.updatePoint(customer, this.total);
+                    if (customer != null) {
+                        String customerBirthDay = customer.getNgaySinh().substring(0, 5);
+                        if (customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
+                            double discount = tongTien * 0.1;
+                            double s = tongTien - discount;
+                            o.setTotal(s);
+                        } else {
+                            o.setTotal(Double.parseDouble(txtTotal.getText()));
+                        }
+                    } else {
+                        MessageBox.getBox("Tìm kiếm khách hàng", "Không tồn tại khách hàng có số điện thoại này", Alert.AlertType.ERROR).show();
+                    }
+                } else //Nếu txtPhone rỗng
+                {
+                    o.setTotal(Double.parseDouble(txtTotal.getText()));
+                }
+                o.setTienKhachDua(Double.parseDouble(txtTienKhachDua.getText()));
+                o.setTienTraKhach(Double.parseDouble(txtTienTraKhach.getText()));
+                oS.addOrder(o);
+                ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
+                boolean tmp = false;
+                for (OrderDetails oD : orderDetailsList) {
+                    if (oDS.saveOderDetails(oD, o)) {
+                        tmp = true;
+                    } else {
+                        tmp = false;
+                    }
+                }
+                if (tmp == true) {
+                    oDS.updateQuantityInStock(orderDetailsList);
+                    this.tbShowOrdersDetail.getItems().clear();
+                    loadProductsData(null);
+                    loadOrdersData();
+                    loadCustomerData();
+                    txtTienKhachDua.setText("0");
+                    txtTotal.setText("0");
+                    txtTienTraKhach.setText("0");
+                    MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
+                } else {
+                    MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
+                }
+            } else {
+                MessageBox.getBox("Hóa đơn", "Vui lòng nhập tiền phù hợp", Alert.AlertType.ERROR).show();
+            }
         }
     }
 }

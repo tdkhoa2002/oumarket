@@ -69,15 +69,14 @@ public class CustomerService {
 
             LocalDate now = LocalDate.now();
             int yearOfNow = now.getYear();
-            
+
             int yearOfBirthDay = Integer.parseInt(cus.getNgaySinh().substring(6, 10));
-            
+
             stm.executeUpdate();
             if (yearOfNow - yearOfBirthDay < 16) {
                 MessageBox.getBox("Khách hàng", "Khách hàng phải trên 16 tuổi", Alert.AlertType.ERROR).show();
                 return false;
-            }
-            else {
+            } else {
                 try {
                     conn.commit();
                     return true;
@@ -95,5 +94,17 @@ public class CustomerService {
             }
         }
         return null;
+    }
+
+    public boolean updatePoint(Customer c, double total) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "UPDATE customer SET point = ?  WHERE name=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            double p = c.getPoint() + total * 0.00001;
+            stm.setDouble(1, p);
+            stm.setString(2, c.getName());
+
+            return stm.executeUpdate() > 0;
+        }
     }
 }

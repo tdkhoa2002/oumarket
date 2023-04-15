@@ -11,7 +11,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.control.Alert;
 import pojo.Category;
+import utils.MessageBox;
 /**
  *
  * @author Khoa Tran
@@ -78,7 +80,16 @@ public class CategoryService {
     
     public boolean editCategory(Category c) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "UPDATE categories SET name =? WHERE id=?";
+            
+            String sql = "SELECT * FROM categories WHERE name = ?";
+            PreparedStatement stmCheckUnique = conn.prepareCall(sql);
+            stmCheckUnique.setString(1, c.getName());
+            ResultSet resultSet = stmCheckUnique.executeQuery();
+            if (resultSet.next()) {
+                MessageBox.getBox("Danh mục", "Danh mục đã tồn tại", Alert.AlertType.ERROR).show();
+                return false;
+            }
+            sql = "UPDATE categories SET name =? WHERE id=?";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, c.getName());
             stm.setInt(2, c.getId());
