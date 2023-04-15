@@ -22,6 +22,9 @@ services\OrderDetailsService.class
 com\tdkhoa\oumarket\PrimaryController.class
 services\CategoryService.class
 utils\MessageBox.class
+com\tdkhoa\oumarket\LoginController.class
+module-info.class
+com\tdkhoa\oumarket\EditCategoryController.class
 pojo\Customer.class
 pojo\Receipt.class
 com\tdkhoa\oumarket\AddPromotionController.class

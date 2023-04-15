@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox fx:id="sceneVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="610.0" stylesheets="@setProducts.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1">
+<VBox fx:id="sceneVBox" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="446.0" prefWidth="610.0" stylesheets="@setProducts.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.tdkhoa.oumarket.EditCategoryController">
    <children>
       <Text strokeType="OUTSIDE" strokeWidth="0.0" styleClass="OU" text="OU MARKET ">
          <VBox.margin>
@@ -52,12 +52,7 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Button fx:id="btnCancel" mnemonicParsing="false" onAction="#closeView" prefHeight="58.0" prefWidth="94.0" styleClass="h3" text="HỦY ">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="btnConfirm" mnemonicParsing="false" onAction="#addCategory" prefHeight="57.0" prefWidth="135.0" styleClass="h4" text="XÁC NHẬN " />
+            <Button fx:id="btnConfirm" mnemonicParsing="false" onAction="#editCategoryHandler" prefHeight="57.0" prefWidth="135.0" styleClass="h4" text="XÁC NHẬN " />
          </children>
          <VBox.margin>
             <Insets left="340.0" top="20.0" />

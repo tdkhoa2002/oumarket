@@ -12,9 +12,9 @@ import javafx.collections.ObservableList;
  */
 public class OrderDetails {
     private Product product;
-    private int quantity;
+    private double quantity;
 
-    public OrderDetails(Product product, int quantity) {
+    public OrderDetails(Product product, double quantity) {
         this.product = product;
         this.quantity = quantity;
     }
@@ -34,7 +34,7 @@ public class OrderDetails {
     /**
      * @return the quantity
      */
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 

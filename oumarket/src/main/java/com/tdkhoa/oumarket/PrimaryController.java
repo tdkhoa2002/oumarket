@@ -3,6 +3,7 @@ package com.tdkhoa.oumarket;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -44,8 +45,6 @@ import pojo.Product;
 import pojo.Promotion;
 import services.PromotionService;
 import services.CategoryService;
-import utils.MessageBox;
-import services.EmployeeService;
 import services.CustomerService;
 import services.EmployeeService;
 import services.OrderDetailsService;
@@ -57,18 +56,23 @@ import pojo.Data;
 public class PrimaryController implements Initializable {
 
     static ProductService pS = new ProductService();
-    static CategoryService cS  = new CategoryService();
+    static CategoryService cS = new CategoryService();
     static EmployeeService eS = new EmployeeService();
-    static Product pRow = new Product ();
+    static Product pRow = new Product();
     static Employee eRow = new Employee();
-
     static LoginController lC = new LoginController();
 
     
+
+    static Category cRow = new Category();
+    static Promotion proRow = new Promotion();
+
+
     static OrderDetailsService oDS = new OrderDetailsService();
     static OrderService oS = new OrderService();
     static CustomerService cusS = new CustomerService();
     static PromotionService promoService = new PromotionService();
+
 
     
     @FXML TableView<Product> tbProducts;
@@ -101,10 +105,85 @@ public class PrimaryController implements Initializable {
     @FXML private TextField txtSearch;
 
     @FXML private VBox sceneVBox;
+
+    @FXML
+    TableView<Product> tbProducts;
+    @FXML
+    TableView<Product> tbShowProducts;
+
+    @FXML
+    TableView<OrderDetails> tbShowOrdersDetail;
+    ObservableList<OrderDetails> cartItems = FXCollections.observableArrayList();
+    double total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
+
+    @FXML
+    TableView<Category> tbCategories;
+    @FXML
+    TableView<Employee> tbEmployees;
+    @FXML
+    TableView<Order> tbOrders;
+    @FXML
+    TableView<Customer> tbCustomers;
+    @FXML
+    TableView<Promotion> tbPromotions;
+    @FXML
+    ComboBox<Category> cbCategories;
+    @FXML
+    TextField txtTotal;
+    @FXML
+    private Button btnAddEmp;
+    @FXML
+    TextField txtPhone;
+    @FXML
+    TextField txtTienKhachDua;
+    @FXML
+    TextField txtTienTraKhach;
+    @FXML
+    private Button btnAddSP;
+    @FXML
+    private Button btnAddCate;
+    @FXML
+    private Button btnAddCustomer;
+    @FXML
+    private Button btnAddPromotion;
+    @FXML
+    private TextField txtSearch;
+    @FXML
+    private VBox sceneVBox;
+    List<Customer> customers;
+
     Stage stageOut;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            this.txtPhone.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue.length() > 10) {
+                    this.txtPhone.setText(oldValue);
+                }
+                try {
+                    if (newValue.length() == 10) {
+                        Customer c = cusS.findCustomerByPhoneNumber(customers, this.txtPhone.getText());
+                        if (c != null) {
+                            MessageBox.getBox("Tìm kiếm khách hàng", "Đã tìm thấy khách hàng", Alert.AlertType.CONFIRMATION).show();
+                            double tongTien = Double.parseDouble(txtTotal.getText());
+                            double discount = tongTien * 0.1;
+                            double s = tongTien - discount;
+                            txtTotal.setText(Double.toString(s));
+                        } else {
+                            MessageBox.getBox("Tìm kiếm khách hàng", "Không tồn tại khách hàng có số điện thoại này", Alert.AlertType.ERROR).show();
+                        }
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+
+            this.txtTotal.setText("0");
+            this.txtTienKhachDua.setText("0");
+            this.txtTienTraKhach.setText("0");
+
+            this.customers = cusS.getCustomers();
             this.loadTableProductsColumns();
             this.loadTableCategoriesColumns();
             this.loadTableEmployeesColumns();
@@ -118,16 +197,20 @@ public class PrimaryController implements Initializable {
             this.loadCategoriesData(null);
             this.loadEmployeesData(null);
 
+
             
 
             this.loadCustomerData(null);
+
+            this.loadCustomerData();
+
             this.loadOrdersData();
             this.loadPromotionData(null);
 
         } catch (SQLException ex) {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+
         this.txtSearch.textProperty().addListener(e -> {
             try {
                 this.loadProductsData(this.txtSearch.getText());
@@ -135,25 +218,27 @@ public class PrimaryController implements Initializable {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
-        
+
         this.txtTienKhachDua.textProperty().addListener(e -> {
             if (!this.txtTienKhachDua.getText().equals("")) {
                 double tienTraKhach = Double.parseDouble(this.txtTienKhachDua.getText()) - Double.parseDouble(this.txtTotal.getText());
                 this.txtTienTraKhach.setText(Double.toString(tienTraKhach));
-            }
-            else {
+            } else {
                 this.txtTienTraKhach.setText("0");
             }
         });
-        
+
         this.cartItems.addListener((ListChangeListener<OrderDetails>) change -> {
-            if(!this.cartItems.isEmpty()) {
+            if (!this.cartItems.isEmpty()) {
                 this.txtTienKhachDua.setDisable(false);
-            }
-            else {
+            } else {
                 this.txtTienKhachDua.setDisable(true);
             }
         });
+
+//        this.txtPhone.textProperty().addListener(e -> {
+//            
+//        });
     }
 
     public void viewAddProduct(ActionEvent evt) {
@@ -171,14 +256,14 @@ public class PrimaryController implements Initializable {
                     } catch (SQLException ex) {
                         Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                  });
+                });
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
-    
+
     public void viewAddCategory(ActionEvent evt) throws SQLException {
         this.btnAddCate.setOnAction(event -> {
             try {
@@ -188,45 +273,45 @@ public class PrimaryController implements Initializable {
                 Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
                 stage.setScene(scene);
                 stage.setTitle("Tạo danh mục");
-                
+
                 stage.setOnHidden(e -> {                       //xử lý khi sự kiện stage đóng lại
                     try {
                         loadCategoriesData(null);
                     } catch (SQLException ex) {
                         Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                  });
+                });
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
+
     public void viewAddEmployee(ActionEvent evt) throws SQLException {
-    this.btnAddEmp.setOnAction(event -> {
-        try {
-            Stage stage = new Stage();
-            // Tạo Scene mới
-            Parent root = FXMLLoader.load(getClass().getResource("/fxml/setEmloyee.fxml"));
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            stage.setTitle("Thêm nhân viên");
+        this.btnAddEmp.setOnAction(event -> {
+            try {
+                Stage stage = new Stage();
+                // Tạo Scene mới
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/setEmloyee.fxml"));
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setTitle("Thêm nhân viên");
 
-            stage.setOnHidden(e -> {                       
-                try {
-                    loadEmployeesData(null);
-                } catch (SQLException ex) {
-                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-                }
-              });
-            stage.show();
-        } catch (IOException ex) {
-            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    });
-}
+                stage.setOnHidden(e -> {
+                    try {
+                        loadEmployeesData(null);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+    }
 
-    
     public void viewAddCustomer(ActionEvent evt) throws SQLException {
         this.btnAddCustomer.setOnAction(event -> {
             try {
@@ -236,21 +321,21 @@ public class PrimaryController implements Initializable {
                 Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
                 stage.setScene(scene);
                 stage.setTitle("Thêm khách hàng");
-                
+
                 stage.setOnHidden(e -> {                       //xử lý khi sự kiện stage đóng lại
                     try {
-                        loadCustomerData(null);
+                        loadCustomerData();
                     } catch (SQLException ex) {
                         Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                  });
+                });
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
-    
+
     public void viewAddPromotion(ActionEvent evt) throws SQLException {
         this.btnAddPromotion.setOnAction(event -> {
             try {
@@ -260,112 +345,117 @@ public class PrimaryController implements Initializable {
                 Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
                 stage.setScene(scene);
                 stage.setTitle("Tạo khuyến mãi");
-                
+
                 stage.setOnHidden(e -> {                       //xử lý khi sự kiện stage đóng lại
                     try {
                         loadPromotionData(null);
                     } catch (SQLException ex) {
                         Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                  });
+                });
                 stage.show();
             } catch (IOException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
-    
-    
+
     //Hien thi cot trong bang
     private void loadTableShowOrdersDetailColumns() {
         TableColumn<OrderDetails, String> colName = new TableColumn<>("Tên SP");
         colName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getProduct().getName()));
         colName.setPrefWidth(170);
 
-        TableColumn<OrderDetails, Integer> colQuantity = new TableColumn<>("Số lượng");
-        colQuantity.setCellValueFactory(cellData -> new SimpleIntegerProperty(cellData.getValue().getQuantity()).asObject());
-        
+        TableColumn<OrderDetails, Double> colQuantity = new TableColumn<>("Số lượng");
+        colQuantity.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getQuantity()).asObject());
+
         TableColumn<OrderDetails, Double> priceCol = new TableColumn<>("Price");
         priceCol.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getPrice()).asObject());
-        
+
         TableColumn<OrderDetails, Double> colPriceDiscount = new TableColumn<>("Price Discounted");
         colPriceDiscount.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getProduct().getPriceDiscount()).asObject());
 
         TableColumn<OrderDetails, Double> totalCol = new TableColumn<>("Total");
         totalCol.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getTotal()).asObject());
-        
+
         TableColumn colDel = new TableColumn("Xóa");
         colDel.setCellFactory(r -> {
             Button btn = new Button("Xóa");
 
             btn.setOnAction(evt -> {
-                Button b = (Button) evt.getSource();
-                TableCell cell = (TableCell) b.getParent();
-                OrderDetails orderDetails = (OrderDetails) cell.getTableRow().getItem();
-                
-                this.tbShowOrdersDetail.getItems().remove(orderDetails);
-                total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
-                txtTotal.setText(Double.toString(total));
-                this.tbShowOrdersDetail.refresh();
-//                System.out.println(this.tbShowOrdersDetail.getItems().remove(p));
+                Alert a = MessageBox.getBox("Hóa đơn",
+                        "Bạn có chắc chắn muốn xóa không ?",
+                        Alert.AlertType.CONFIRMATION);
+                a.showAndWait().ifPresent(res -> {
+                    if (res == ButtonType.OK) {
+                        Button b = (Button) evt.getSource();
+                        TableCell cell = (TableCell) b.getParent();
+                        OrderDetails orderDetails = (OrderDetails) cell.getTableRow().getItem();
+
+                        this.tbShowOrdersDetail.getItems().remove(orderDetails);
+                        total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
+                        txtTotal.setText(Double.toString(total));
+                        this.tbShowOrdersDetail.refresh();
+                    }
+                });
             });
             TableCell c = new TableCell();
             c.setGraphic(btn);
             return c;
         });
-        
-        this.tbShowOrdersDetail.getColumns().addAll(colName, colQuantity, priceCol,colPriceDiscount, totalCol,colDel);
+
+        this.tbShowOrdersDetail.getColumns().addAll(colName, colQuantity, priceCol, colPriceDiscount, totalCol, colDel);
     }
-    
+
     private void loadTableOrdersColumns() {
         TableColumn colId = new TableColumn("Mã HĐ");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
         colId.setPrefWidth(50);
-        
+
         TableColumn colOrderDate = new TableColumn("Ngày tạo");
         colOrderDate.setCellValueFactory(new PropertyValueFactory("orderDate"));
-        
+
         TableColumn colTotal = new TableColumn("Tổng");
         colTotal.setCellValueFactory(new PropertyValueFactory("total"));
-        
+
         TableColumn colSelect = new TableColumn("Xem");
         colSelect.setCellFactory(r -> {
-                Button btnView = new Button("View");
+            Button btnView = new Button("View");
 
-                btnView.setOnAction(event -> {
-                    
-                    Button b = (Button) event.getSource();
-                    TableCell cell = (TableCell) b.getParent();
-                    Order order = (Order) cell.getTableRow().getItem();
-                    Data data = new Data();
-                    data.setId(order.getId());
-                    
-                    try {
-                        Stage stage = new Stage();
-                        // Tạo Scene mới
-                        Parent root = FXMLLoader.load(getClass().getResource("/fxml/viewOrderDetails.fxml"));
-                        Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
-                        stage.setScene(scene);
-                        stage.setTitle("Xem chi tiết hóa đơn");
-                        stage.show();
-                    } catch (IOException ex) {
-                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                });
+            btnView.setOnAction(event -> {
+
+                Button b = (Button) event.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                Order order = (Order) cell.getTableRow().getItem();
+                Data data = new Data();
+                data.setId(order.getId());
+
+                try {
+                    Stage stage = new Stage();
+                    // Tạo Scene mới
+                    Parent root = FXMLLoader.load(getClass().getResource("/fxml/viewOrderDetails.fxml"));
+                    Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                    stage.setScene(scene);
+                    stage.setTitle("Xem chi tiết hóa đơn");
+                    stage.show();
+                } catch (IOException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
             TableCell c = new TableCell();
             c.setGraphic(btnView);
             return c;
         });
-        
+
         this.tbOrders.getColumns().addAll(colId, colOrderDate, colTotal, colSelect);
     }
-    
+
     private void loadTableShowProductsColumns() {
-        
+
         TableColumn colId = new TableColumn("Mã SP");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
         colId.setPrefWidth(50);
-        
+
         TableColumn colName = new TableColumn("Tên SP");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
         colName.setPrefWidth(170);
@@ -381,7 +471,7 @@ public class PrimaryController implements Initializable {
 
         TableColumn colQuantity = new TableColumn("Số lượng");
         colQuantity.setCellValueFactory(new PropertyValueFactory("quantity"));
-        
+
         TableColumn colAdd = new TableColumn("Thêm");
         colAdd.setCellFactory(r -> {
             Button btn = new Button("Thêm");
@@ -389,7 +479,7 @@ public class PrimaryController implements Initializable {
                 Button b = (Button) evt.getSource();
                 TableCell cell = (TableCell) b.getParent();
                 Product p = (Product) cell.getTableRow().getItem();
-                
+
                 Popup popup = new Popup();
                 VBox popupContent = new VBox();
                 Label quantityLabel = new Label("Số lượng: ");
@@ -397,32 +487,52 @@ public class PrimaryController implements Initializable {
                 quantityTextField.setText("0");
                 Button saveButton = new Button("Save");
                 saveButton.setOnAction(event -> {
-                    int quantity = Integer.parseInt(quantityTextField.getText());
+
+                    Double quantity = Double.parseDouble(quantityTextField.getText().trim());
                     boolean check = true;
-                    //Kiem tra xem san pham do da co trong gio hang hay chua
-                    if(!cartItems.isEmpty()) { //Nếu mảng đó co sản phẩm
-                        for (OrderDetails cartItem: cartItems) { //Chạy vòng lặp từng sản phẩm
-                            if (cartItem.getProduct().getId().equals(p.getId())) { //Nếu sản phẩm vừa thêm vào trùng với sản phẩm đã có
-                                cartItem.setQuantity(cartItem.getQuantity()+quantity); //Set lại số lượng tăng lên
-                                check = false;
+                    double sumQuantityProduct = 0;
+                    if (!p.getUnit().equals("Kg")) {
+                        try {
+                            int q = Integer.parseInt(quantityTextField.getText());
+                            if (p.getQuantity() >= quantity) {
+                                //Kiem tra xem san pham do da co trong gio hang hay chua
+                                if (!cartItems.isEmpty()) { //Nếu mảng đó co sản phẩm
+                                    for (OrderDetails cartItem : cartItems) { //Chạy vòng lặp từng sản phẩm
+                                        if (cartItem.getProduct().getId().equals(p.getId())) { //Nếu sản phẩm vừa thêm vào trùng với sản phẩm đã có
+                                            sumQuantityProduct = cartItem.getQuantity() + quantity;
+                                            if (sumQuantityProduct <= p.getQuantity()) {
+                                                cartItem.setQuantity((int) (sumQuantityProduct)); //Set lại số lượng tăng lên
+                                            } else {
+                                                MessageBox.getBox("Số lượng sản phẩm", "Quá số lượng của kho", Alert.AlertType.WARNING).show();
+                                            }
+                                            check = false;
+                                        }
+                                    }
+                                    if (check) {
+                                        cartItems.add(new OrderDetails(p, quantity));
+                                    }
+                                } else {
+                                    // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
+                                    OrderDetails cartItem = new OrderDetails(p, quantity);
+                                    cartItems.add(cartItem);
+                                }
+                            } else {
+                                MessageBox.getBox("Số lượng", "Quá số lượng của kho", Alert.AlertType.ERROR).show();
                             }
+                        } catch (NumberFormatException ex) {
+                            MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
                         }
-                        if(check)
-                            cartItems.add(new OrderDetails(p, quantity));
                     }
-                    else {
-                            // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
-                            OrderDetails cartItem = new OrderDetails(p, quantity);
-                            cartItems.add(cartItem);
-                        }
+
                     total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
                     txtTotal.setText(Double.toString(total));
-                    
+
                     this.tbShowOrdersDetail.setItems(cartItems);
                     this.tbShowOrdersDetail.refresh();
                     // Đóng Popup
                     popup.hide();
-                 });
+                    quantityTextField.clear();
+                });
                 // Thêm các thành phần vào VBox
                 popupContent.getChildren().addAll(quantityLabel, quantityTextField, saveButton);
 
@@ -439,7 +549,7 @@ public class PrimaryController implements Initializable {
             c.setGraphic(btn);
             return c;
         });
-        this.tbShowProducts.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colAdd);
+        this.tbShowProducts.getColumns().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colAdd);
     } //Page chọn sản phẩm để thanh toán
 
     private void loadTableProductsColumns() {
@@ -468,8 +578,8 @@ public class PrimaryController implements Initializable {
             Button btn = new Button("Delete");
 
             btn.setOnAction(evt -> {
-                Alert a = MessageBox.getBox("Product",
-                        "Are you sure to delete this product?",
+                Alert a = MessageBox.getBox("Sản phẩm",
+                        "Bạn có chắc chắn muốn xóa sản phẩm này không ?",
                         Alert.AlertType.CONFIRMATION);
                 a.showAndWait().ifPresent(res -> {
                     if (res == ButtonType.OK) {
@@ -478,14 +588,14 @@ public class PrimaryController implements Initializable {
                         Product p = (Product) cell.getTableRow().getItem();
                         try {
                             if (pS.deleteProduct(p.getId())) {
-                                MessageBox.getBox("Product", "Delete successful", Alert.AlertType.INFORMATION).show();
+                                MessageBox.getBox("Sản phẩm", "Xóa thành công", Alert.AlertType.INFORMATION).show();
                                 this.loadProductsData(null);
                             } else {
-                                MessageBox.getBox("Product", "Delete failed", Alert.AlertType.WARNING).show();
+                                MessageBox.getBox("Sản phẩm", "Xóa thất bại", Alert.AlertType.WARNING).show();
                             }
 
                         } catch (SQLException ex) {
-                            MessageBox.getBox("Product", ex.getMessage(), Alert.AlertType.WARNING).show();
+                            MessageBox.getBox("Sản phẩm", ex.getMessage(), Alert.AlertType.WARNING).show();
                             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                         }
 
@@ -496,113 +606,112 @@ public class PrimaryController implements Initializable {
             c.setGraphic(btn);
             return c;
         });
-        
+
         TableColumn colEdit = new TableColumn("Edit");
         colEdit.setCellFactory(r -> {
             Button btnEdit = new Button("Edit");
 
             btnEdit.setOnAction(event -> {
-            Button b = (Button) event.getSource();
-            TableCell cell = (TableCell) b.getParent();
-            pRow = (Product) cell.getTableRow().getItem();
-            try {
-                Stage stage = new Stage();
-                // Tạo Scene mới
-                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixProducts.fxml"));
-                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
-                stage.setScene(scene);
-                stage.setTitle("Chỉnh sửa sản phẩm");
-                
-                stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
-                    try {
-                        loadProductsData(null);
-                    } catch (SQLException ex) {
-                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                  });
-                
-                stage.show();
-            } catch (IOException ex) {
-                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
-            
+                Button b = (Button) event.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                pRow = (Product) cell.getTableRow().getItem();
+                try {
+                    Stage stage = new Stage();
+                    // Tạo Scene mới
+                    Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixProducts.fxml"));
+                    Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                    stage.setScene(scene);
+                    stage.setTitle("Chỉnh sửa sản phẩm");
+
+                    stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
+                        try {
+                            loadProductsData(null);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+
+                    stage.show();
+                } catch (IOException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+
             TableCell c = new TableCell();
             c.setGraphic(btnEdit);
             return c;
-         });
-        
-    this.tbProducts.getColumns ().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colEdit, colDel);
-   } //Page load tất cả các sản phẩm
+        });
 
-   private void loadTableEmployeesColumns() {
-    TableColumn colId = new TableColumn("Mã nhân viên");
-    colId.setCellValueFactory(new PropertyValueFactory("id"));
+        this.tbProducts.getColumns().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colEdit, colDel);
+    } //Page load tất cả các sản phẩm
 
-    TableColumn colName = new TableColumn("Họ tên");
-    colName.setCellValueFactory(new PropertyValueFactory("name"));
+    private void loadTableEmployeesColumns() {
+        TableColumn colId = new TableColumn("Mã nhân viên");
+        colId.setCellValueFactory(new PropertyValueFactory("id"));
 
-    TableColumn colDel = new TableColumn("Xoá");
-    colDel.setCellFactory(r -> {
-        Button btn = new Button("Xoá");
+        TableColumn colName = new TableColumn("Họ tên");
+        colName.setCellValueFactory(new PropertyValueFactory("name"));
 
-        btn.setOnAction(evt -> {
-            Alert a = MessageBox.getBox("Nhân viên",
-                    "Bạn có chắc muốn xoá nhân viên này?",
-                    Alert.AlertType.CONFIRMATION);
-            a.showAndWait().ifPresent(res -> {
-                if (res == ButtonType.OK) {
-                    Button b = (Button) evt.getSource();
-                    TableCell cell = (TableCell) b.getParent();
-                    Employee e = (Employee) cell.getTableRow().getItem();
-                    try {
-                        if (eS.deleteEmployee(e.getId())) {
-                            MessageBox.getBox("Nhân viên", "Xoá thành công", Alert.AlertType.INFORMATION).show();
-                            this.loadEmployeesData(null);
-                        } else {
-                            MessageBox.getBox("Nhân viên", "Xoá thất bại", Alert.AlertType.WARNING).show();
+        TableColumn colDel = new TableColumn("Xoá");
+        colDel.setCellFactory(r -> {
+            Button btn = new Button("Xoá");
+
+            btn.setOnAction(evt -> {
+                Alert a = MessageBox.getBox("Nhân viên",
+                        "Bạn có chắc muốn xoá nhân viên này?",
+                        Alert.AlertType.CONFIRMATION);
+                a.showAndWait().ifPresent(res -> {
+                    if (res == ButtonType.OK) {
+                        Button b = (Button) evt.getSource();
+                        TableCell cell = (TableCell) b.getParent();
+                        Employee e = (Employee) cell.getTableRow().getItem();
+                        try {
+                            if (eS.deleteEmployee(e.getId())) {
+                                MessageBox.getBox("Nhân viên", "Xoá thành công", Alert.AlertType.INFORMATION).show();
+                                this.loadEmployeesData(null);
+                            } else {
+                                MessageBox.getBox("Nhân viên", "Xoá thất bại", Alert.AlertType.WARNING).show();
+                            }
+
+                        } catch (SQLException ex) {
+                            MessageBox.getBox("Nhân viên", ex.getMessage(), Alert.AlertType.WARNING).show();
+                            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                         }
-
-                    } catch (SQLException ex) {
-                        MessageBox.getBox("Nhân viên", ex.getMessage(), Alert.AlertType.WARNING).show();
-                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
+                });
+            });
+            TableCell c = new TableCell();
+            c.setGraphic(btn);
+            return c;
+        });
+
+        TableColumn colEdit = new TableColumn("Sửa");
+        colEdit.setCellFactory(r -> {
+            Button btnEdit = new Button("Sửa");
+
+            btnEdit.setOnAction(event -> {
+                Button b = (Button) event.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                eRow = (Employee) cell.getTableRow().getItem();
+                try {
+                    Stage stage = new Stage();
+                    Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixEmployee.fxml"));
+                    Scene scene = new Scene(root);
+                    stage.setScene(scene);
+                    stage.setTitle("Chỉnh sửa thông tin nhân viên");
+                    stage.show();
+                } catch (IOException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-        });
-        TableCell c = new TableCell();
-        c.setGraphic(btn);
-        return c;
-    });
 
-    TableColumn colEdit = new TableColumn("Sửa");
-    colEdit.setCellFactory(r -> {
-        Button btnEdit = new Button("Sửa");
-
-        btnEdit.setOnAction(event -> {
-            Button b = (Button) event.getSource();
-            TableCell cell = (TableCell) b.getParent();
-            eRow = (Employee) cell.getTableRow().getItem();
-            try {
-                Stage stage = new Stage();
-                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixEmployee.fxml"));
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.setTitle("Chỉnh sửa thông tin nhân viên");
-                stage.show();
-            } catch (IOException ex) {
-                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            TableCell c = new TableCell();
+            c.setGraphic(btnEdit);
+            return c;
         });
 
-        TableCell c = new TableCell();
-        c.setGraphic(btnEdit);
-        return c;
-    });
-
-    this.tbEmployees.getColumns().addAll(colId, colName, colDel, colEdit);
-}
-
+        this.tbEmployees.getColumns().addAll(colId, colName, colDel, colEdit);
+    }
 
     private void loadEmployeesData(String kw) throws SQLException {
         List<Employee> employees = eS.getEmployees(kw);
@@ -610,24 +719,23 @@ public class PrimaryController implements Initializable {
         this.tbEmployees.getItems().clear();
         this.tbEmployees.setItems(FXCollections.observableList(employees));
     }
-   
 
     private void loadTableCategoriesColumns() {
         TableColumn colId = new TableColumn("ID");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
         colId.setPrefWidth(50);
-        
+
         TableColumn colName = new TableColumn("Tên danh mục");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
         colName.setPrefWidth(170);
-        
+
         TableColumn colDel = new TableColumn("Delete");
         colDel.setCellFactory(r -> {
             Button btn = new Button("Delete");
 
             btn.setOnAction(evt -> {
-                Alert a = MessageBox.getBox("Category",
-                        "Are you sure to delete this category?",
+                Alert a = MessageBox.getBox("Danh mục",
+                        "Bạn có chắc chắn muốn xóa danh mục này không ?",
                         Alert.AlertType.CONFIRMATION);
                 a.showAndWait().ifPresent(res -> {
                     if (res == ButtonType.OK) {
@@ -636,14 +744,14 @@ public class PrimaryController implements Initializable {
                         Category c = (Category) cell.getTableRow().getItem();
                         try {
                             if (cS.deleteCategory(c.getId())) {
-                                MessageBox.getBox("Category", "Delete successful", Alert.AlertType.INFORMATION).show();
+                                MessageBox.getBox("Danh mục", "Xóa thành công", Alert.AlertType.INFORMATION).show();
                                 this.loadCategoriesData(null);
+                                this.loadProductsData(null);
                             } else {
-                                MessageBox.getBox("Category", "Delete failed", Alert.AlertType.WARNING).show();
+                                MessageBox.getBox("Danh mục", "Xóa thất bại", Alert.AlertType.WARNING).show();
                             }
-
                         } catch (SQLException ex) {
-                            MessageBox.getBox("Category", ex.getMessage(), Alert.AlertType.WARNING).show();
+                            MessageBox.getBox("Danh mục", ex.getMessage(), Alert.AlertType.WARNING).show();
                             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
@@ -653,61 +761,71 @@ public class PrimaryController implements Initializable {
             c.setGraphic(btn);
             return c;
         });
-        
+
         TableColumn colEdit = new TableColumn("Edit");
         colEdit.setCellFactory(r -> {
             Button btnEdit = new Button("Edit");
-
             btnEdit.setOnAction(event -> {
-            try {
-                Stage stage = new Stage();
-                // Tạo Scene mới
-                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixProducts.fxml"));
-                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
-                stage.setScene(scene);
-                stage.setTitle("Chỉnh sửa sản phẩm");
-                stage.show();
-            } catch (IOException ex) {
-                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        });
-            
+                Button b = (Button) event.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                cRow = (Category) cell.getTableRow().getItem();
+                try {
+                    Stage stage = new Stage();
+                    // Tạo Scene mới
+                    Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixCategory.fxml"));
+                    Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                    stage.setScene(scene);
+                    stage.setTitle("Chỉnh sửa sản phẩm");
+                    stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
+                        try {
+                            loadCategoriesData(null);
+                            loadProductsData(null);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                    stage.show();
+                } catch (IOException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+
             TableCell c = new TableCell();
             c.setGraphic(btnEdit);
             return c;
-         });
-        
-         this.tbCategories.getColumns ().addAll(colId, colName, colDel, colEdit);
+        });
+
+        this.tbCategories.getColumns().addAll(colId, colName, colDel, colEdit);
     } //Page load tất cả danh mục
-    
+
     private void loadTableCustomersColumns() {
         TableColumn colId = new TableColumn("Mã KH");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
-        
+
         TableColumn colName = new TableColumn("Họ tên");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
-        
+
         TableColumn colBirth = new TableColumn("Ngày Sinh");
         colBirth.setCellValueFactory(new PropertyValueFactory("ngaySinh"));
-        
+
         TableColumn colPhone = new TableColumn("SĐT");
         colPhone.setCellValueFactory(new PropertyValueFactory("phone"));
-        
+
         TableColumn colPoint = new TableColumn("Điểm");
         colPoint.setCellValueFactory(new PropertyValueFactory("point"));
-        
+
         this.tbCustomers.getColumns().addAll(colId, colName, colBirth, colPhone, colPoint);
     } //Page load tất cả thông tin khách hàng
-    
+
     private void loadTablePromotionsColumns() {
         TableColumn colId = new TableColumn("ID");
         colId.setCellValueFactory(new PropertyValueFactory("id"));
         colId.setPrefWidth(50);
-        
+
         TableColumn colName = new TableColumn("Tên mã khuyến mãi");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
         colName.setPrefWidth(170);
-        
+
         TableColumn colDel = new TableColumn("Delete");
         colDel.setCellFactory(r -> {
             Button btn = new Button("Delete");
@@ -739,140 +857,162 @@ public class PrimaryController implements Initializable {
             c.setGraphic(btn);
             return c;
         });
-        
+
         TableColumn colEdit = new TableColumn("Edit");
         colEdit.setCellFactory(r -> {
             Button btnEdit = new Button("Edit");
 
             btnEdit.setOnAction(event -> {
-//            try {
-//                Stage stage = new Stage();
-//                // Tạo Scene mới
-//                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixVoucher.fxml"));
-//                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
-//                stage.setScene(scene);
-//                stage.setTitle("Chỉnh sửa sản phẩm");
-//                stage.show();
-//            } catch (IOException ex) {
-//                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-        });
-            
+            try {
+                Stage stage = new Stage();
+                // Tạo Scene mới
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixVoucher.fxml"));
+                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                stage.setScene(scene);
+                stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
+                        try {
+                            loadPromotionData(null);
+                        } catch (SQLException ex) {
+                            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    });
+                stage.setTitle("Chỉnh sửa sản phẩm");
+                stage.show();
+            } catch (IOException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            });
+
             TableCell c = new TableCell();
             c.setGraphic(btnEdit);
             return c;
-         });
-        
-         this.tbPromotions.getColumns().addAll(colId, colName, colEdit, colDel);
+        });
+
+        this.tbPromotions.getColumns().addAll(colId, colName, colEdit, colDel);
     } //Page load tất cả mã khuyến mãi
-    
+
     //Load du lieu
-    
     private void loadProductsData(String kw) throws SQLException {
-        
+
         List<Product> pros = pS.getProducts(kw);
-        
+
         this.tbProducts.getItems().clear();
         this.tbProducts.setItems(FXCollections.observableList(pros));
-        
+
         this.tbShowProducts.getItems().clear();
         this.tbShowProducts.setItems(FXCollections.observableList(pros));
     }
-    
+
     private void loadCategoriesData(String kw) throws SQLException {
         List<Category> cates = cS.getCategories(kw);
-        
+
         this.tbCategories.getItems().clear();
         this.tbCategories.setItems(FXCollections.observableList(cates));
     }
-    
-    private void loadCustomerData(String kw) throws SQLException {
-        List<Customer> customers = cusS.getCustomers(kw);
-        
+
+    private void loadCustomerData() throws SQLException {
+        List<Customer> customers = cusS.getCustomers();
+
         this.tbCustomers.getItems().clear();
         this.tbCustomers.setItems(FXCollections.observableList(customers));
     }
-    
+
     private void loadOrdersData() throws SQLException {
         List<Order> orders = oS.getOrders();
-        
+
         this.tbOrders.getItems().clear();
         this.tbOrders.setItems(FXCollections.observableList(orders));
     }
-    
+
     private void loadPromotionData(String kw) throws SQLException {
-        List<Promotion> pros = promoService.getPromotions(kw);
-        
+        List<Promotion> pros = null;
+        try {
+            pros = promoService.getPromotions(kw);
+        } catch (ParseException ex) {
+            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         System.out.println(pros);
-        
+
         this.tbPromotions.getItems().clear();
         this.tbPromotions.setItems(FXCollections.observableList(pros));
-    }   
-    
-    public void closeView(ActionEvent evt) {
-        stageOut = (Stage) sceneVBox.getScene().getWindow();
-        stageOut.close();
     }
-    
+
+
+//    public void closeView(ActionEvent evt) {
+//        stageOut = (Stage) sceneVBox.getScene().getWindow();
+//        stageOut.close();
+//    }
+    public void refreshCart() {
+        Double priceRefresh = 0.0;
+        this.tbShowOrdersDetail.getItems().clear();
+        this.txtTienKhachDua.setText(Double.toString(priceRefresh));
+        this.txtTienTraKhach.setText(Double.toString(priceRefresh));
+        this.txtTotal.setText(Double.toString(priceRefresh));
+    }
 
 
     public void savePay() throws SQLException {
-        if(Double.parseDouble(this.txtTienTraKhach.getText()) > 0){
-            Order o = new Order();
-            List<Customer> customers = cusS.getCustomers(null);
-            String phone = txtPhone.getText();
-            double tongTien = Double.parseDouble(txtTotal.getText());
-            if(!phone.isEmpty()) { //Nếu txtPhone không rỗng
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                LocalDateTime purchaseDate = LocalDateTime.now();
-                String formattedDateTime = purchaseDate.format(formatter);
-                String purchaseDateSS = formattedDateTime.substring(0,5);
-                System.out.println(purchaseDateSS);
-                Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
-                if(customer != null) {
-                    String customerBirthDay = customer.getNgaySinh().substring(0,5);
-                    if(customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
-                        double discount = tongTien * 0.1;
-                        o.setTotal(tongTien - discount);
+        Double tienTraKhach = Double.parseDouble(this.txtTienTraKhach.getText());
+        Double tienKhachDua = Double.parseDouble(this.txtTienKhachDua.getText());
+        if (this.cartItems.isEmpty()) {
+            MessageBox.getBox("Hóa đơn", "Không có sản phẩm trong giỏ hàng", Alert.AlertType.WARNING).show();
+        } else {
+            if (tienTraKhach >= 0 && tienKhachDua >= total) {
+                Order o = new Order();
+                String phone = txtPhone.getText();
+                double tongTien = Double.parseDouble(txtTotal.getText());
+                if (!phone.isEmpty()) { //Nếu txtPhone không rỗng
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDateTime purchaseDate = LocalDateTime.now();
+                    String formattedDateTime = purchaseDate.format(formatter);
+                    String purchaseDateSS = formattedDateTime.substring(0, 5);
+                    Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
+                    cusS.updatePoint(customer, this.total);
+                    if (customer != null) {
+                        String customerBirthDay = customer.getNgaySinh().substring(0, 5);
+                        if (customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
+                            double discount = tongTien * 0.1;
+                            double s = tongTien - discount;
+                            o.setTotal(s);
+                        } else {
+                            o.setTotal(Double.parseDouble(txtTotal.getText()));
+                        }
+                    } else {
+                        MessageBox.getBox("Tìm kiếm khách hàng", "Không tồn tại khách hàng có số điện thoại này", Alert.AlertType.ERROR).show();
                     }
-                    else {
-                        o.setTotal(Double.parseDouble(txtTotal.getText()));
+                } else //Nếu txtPhone rỗng
+                {
+                    o.setTotal(Double.parseDouble(txtTotal.getText()));
+                }
+                o.setTienKhachDua(Double.parseDouble(txtTienKhachDua.getText()));
+                o.setTienTraKhach(Double.parseDouble(txtTienTraKhach.getText()));
+                oS.addOrder(o);
+                ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
+                boolean tmp = false;
+                for (OrderDetails oD : orderDetailsList) {
+                    if (oDS.saveOderDetails(oD, o)) {
+                        tmp = true;
+                    } else {
+                        tmp = false;
                     }
                 }
-                else {
-                    return;
+                if (tmp == true) {
+                    oDS.updateQuantityInStock(orderDetailsList);
+                    this.tbShowOrdersDetail.getItems().clear();
+                    loadProductsData(null);
+                    loadOrdersData();
+                    loadCustomerData();
+                    txtTienKhachDua.setText("0");
+                    txtTotal.setText("0");
+                    txtTienTraKhach.setText("0");
+                    MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
+                } else {
+                    MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
                 }
+            } else {
+                MessageBox.getBox("Hóa đơn", "Vui lòng nhập tiền phù hợp", Alert.AlertType.ERROR).show();
             }
-            else  //Nếu txtPhone rỗng
-                o.setTotal(Double.parseDouble(txtTotal.getText()));
-            o.setTienKhachDua(Double.parseDouble(txtTienKhachDua.getText()));
-            o.setTienTraKhach(Double.parseDouble(txtTienTraKhach.getText()));
-            oS.addOrder(o);
-            ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
-            boolean tmp = false;
-            for (OrderDetails oD : orderDetailsList) {
-                if(oDS.saveOderDetails(oD, o)) {
-                    tmp = true;
-                }
-                else {
-                    tmp = false;
-                }
-            }
-            if(tmp == true){
-                oDS.updateQuantityInStock(orderDetailsList);
-                this.tbShowOrdersDetail.getItems().clear();
-                loadProductsData(null);
-                loadOrdersData();
-                txtTienKhachDua.setText("0");
-                txtTotal.setText("0");
-                txtTienTraKhach.setText("0");
-                MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
-            }
-            else 
-                MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
-        }
-        else {
-            MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
         }
     }
 

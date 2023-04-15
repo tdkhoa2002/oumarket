@@ -12,19 +12,28 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.control.Alert;
 import pojo.Product;
-
-
+import utils.MessageBox;
 
 /**
  *
  * @author Khoa Tran
  */
 public class ProductService {
+
     public boolean addProduct(Product p) throws SQLException {
-        try ( Connection conn = JdbcUtils.getConn()) {
+        try (Connection conn = JdbcUtils.getConn()) {
             conn.setAutoCommit(false);
-            String sql = "INSERT INTO products(id, name, category_id, price, unit, quantity) VALUES(?, ?, ?, ?, ?, ?)"; // SQL injection
+            String sql = "SELECT * FROM products WHERE name = ?";
+            PreparedStatement stmCheckUnique = conn.prepareCall(sql);
+            stmCheckUnique.setString(1, p.getName());
+            ResultSet resultSet = stmCheckUnique.executeQuery();
+            if (resultSet.next()) {
+                MessageBox.getBox("Sản phẩm", "Sản phẩm này đã tồn tại", Alert.AlertType.ERROR).show();
+                return false;
+            }
+            sql = "INSERT INTO products(id, name, category_id, price, unit, quantity) VALUES(?, ?, ?, ?, ?, ?)"; // SQL injection
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, p.getId());
             stm.setString(2, p.getName());
@@ -39,18 +48,18 @@ public class ProductService {
                 conn.commit();
                 return true;
             } catch (SQLException ex) {
-                System.err.println(ex.getMessage());
+//                MessageBox.getBox("Sản phẩm", "Nhập thông tin sản phẩm", Alert.AlertType.WARNING).show();
                 return false;
             }
         }
     }
-    
+
     public List<Product> getProducts(String kw) throws SQLException {
         PromotionService promoService = new PromotionService();
         List<Product> results = new ArrayList<>();
-        try ( Connection conn = JdbcUtils.getConn() ) {
+        try (Connection conn = JdbcUtils.getConn()) {
             String sql = "SELECT * FROM products";
-            if(kw != null && !kw.isEmpty()){
+            if (kw != null && !kw.isEmpty()) {
                 sql += " WHERE name LIKE concat('%', ?, '%')";
             }
             PreparedStatement stm = conn.prepareCall(sql);
@@ -59,52 +68,52 @@ public class ProductService {
             }
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                 Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getInt("category_id"), rs.getDouble("price"), 
-                         rs.getInt("quantity"), rs.getString("unit"), rs.getInt("promotion_id"));
-                 sql = "SELECT * from categories WHERE id =?";
-                
+                Product p = new Product(rs.getString("id"), rs.getString("name"), rs.getInt("category_id"), rs.getDouble("price"),
+                        rs.getInt("quantity"), rs.getString("unit"), rs.getInt("promotion_id"));
+                sql = "SELECT * from categories WHERE id =?";
+
                 stm = conn.prepareCall(sql);
-                
+
                 stm.setInt(1, p.getCategoryId());
-                
-                 ResultSet rs1 = stm.executeQuery();
-                
-                 while(rs1.next()) {
-                     p.setCategoryName(rs1.getString("name"));
-                 }
-                 
-                 sql = "SELECT * from promotion WHERE id =?";
-                
+
+                ResultSet rs1 = stm.executeQuery();
+
+                while (rs1.next()) {
+                    p.setCategoryName(rs1.getString("name"));
+                }
+
+                sql = "SELECT * from promotion WHERE id =?";
+
                 stm = conn.prepareCall(sql);
-                
+
                 stm.setInt(1, p.getPromotion_id());
-                
-                 ResultSet rs2 = stm.executeQuery();
-                
-                 while(rs2.next()) {
-                     p.setPromotion_name(rs2.getString("name"));
-                 }
-                 
-                 double priceDiscounted = 0;
-                 priceDiscounted = promoService.getDiscountedPrice(p);
-                 p.setPriceDiscount(priceDiscounted);
-                 
-                 results.add(p);
-             }
+
+                ResultSet rs2 = stm.executeQuery();
+
+                while (rs2.next()) {
+                    p.setPromotion_name(rs2.getString("name"));
+                }
+
+                double priceDiscounted = 0;
+                priceDiscounted = promoService.getDiscountedPrice(p);
+                p.setPriceDiscount(priceDiscounted);
+
+                results.add(p);
+            }
         }
-          return results;
+        return results;
     }
-    
+
     public boolean deleteProduct(String id) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "DELETE FROM products WHERE id=?";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, id);
-            
+
             return stm.executeUpdate() > 0;
         }
     }
-    
+
     public boolean editProduct(Product p) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "UPDATE products SET name =?, category_id =?, price =?, unit =?, quantity=?, promotion_id = ? WHERE id=?";
@@ -117,22 +126,7 @@ public class ProductService {
             stm.setInt(6, p.getPromotion_id());
             stm.setString(7, p.getId());
             
-//            sql = "SELECT * from promotion WHERE id =?";
-//                
-//                stm = conn.prepareCall(sql);
-//                
-//                stm.setInt(1, p.getPromotion_id());
-//                
-//                 ResultSet rs1 = stm.executeQuery();
-//                
-//                 while(rs1.next()) {
-//                     p.setPromotion_name(rs1.getString("name"));
-//                 }
-            
-            
-
             return stm.executeUpdate() > 0;
         }
     }
 }
- 
