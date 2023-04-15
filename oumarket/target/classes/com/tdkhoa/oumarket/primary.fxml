@@ -33,7 +33,7 @@
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Chi nhánh: " />
                               <TextField />
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Tên NV: " />
-                              <TextField />
+                              <TextField fx:id="viewUser" />
                            </children>
                            <padding>
                               <Insets top="10.0" />

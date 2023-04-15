@@ -33,19 +33,20 @@ public class LoginController {
     
     @FXML private TextField usernameField;
     @FXML private PasswordField passwordField;
-    @FXML private Button btnSigin;
+    @FXML private Button btnSigup;
     @FXML private Button btnLogin;
     @FXML private Text actiontarget;
     @FXML private AnchorPane AnchorPane;
     
     public void handleLoginButtonAction(ActionEvent eve) {
         this.btnLogin.setOnAction(event -> {
-               String username = usernameField.getText();
+            String username = usernameField.getText();
             String password = passwordField.getText();
             if (username.isEmpty()) {
                 actiontarget.setText("Vui lòng Nhập tên đăng nhập");
             } else {
                 if (aS.authenticateUser(username, password)) {
+                   
                     // ẩn form login
                     btnLogin.getScene().getWindow().hide();
                     // chuyển hướng đến ứng dụng
@@ -60,8 +61,8 @@ public class LoginController {
             
         });
     }
-    public void handleSiginButtonAction(ActionEvent eve) {
-        this.btnSigin.setOnAction(event -> {
+    public void handleSigupButtonAction(ActionEvent eve) {
+        this.btnSigup.setOnAction(event -> {
                 String username = usernameField.getText();
                 String password = passwordField.getText();
 
@@ -72,7 +73,7 @@ public class LoginController {
                     // kiểm tra vài trò của người dùng
                     if (userRoles.contains("admin")) {
                         // chuyển hướng đén 
-                        
+                        viewSigup(eve);
                     } else {
                         // hiển thị thông báo lỗi
                         actiontarget.setFill(Color.RED);
@@ -94,6 +95,23 @@ public class LoginController {
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.setTitle(" ");
+//                
+                stage.show();
+                
+            } catch (IOException ex) {
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        
+    }
+    public void viewSigup(ActionEvent evt) {
+        
+            try {
+                Stage stage = new Stage();
+                
+                Parent root = FXMLLoader.load(getClass().getResource("/fxml/Sigup.fxml"));
+                Scene scene = new Scene(root);
+                stage.setScene(scene);
+                stage.setTitle(" ");
 //                stage.setOnHidden(e -> {  
 //                    try {
 //                        loadProductsData(null);
@@ -108,6 +126,7 @@ public class LoginController {
             }
         
     }
+    
     
 
 
