@@ -12,6 +12,8 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -41,10 +43,14 @@ public class AddPromotionController {
         Date startTime = Date.valueOf(this.startTime.getValue());
         Date endTime = Date.valueOf(this.endTime.getValue());
         Promotion p = new Promotion(this.name.getText(), Double.parseDouble(value.getText()), startTime, endTime);
-        proService.addPromotion(p);
         Alert a = MessageBox.getBox("Mã khuyến mãi", "Bạn có chắc muốn thêm mã khuyến mãi này không? ", Alert.AlertType.CONFIRMATION);
             a.showAndWait().ifPresent(res -> {
                 if (res == ButtonType.OK) {
+                    try {
+                        proService.addPromotion(p);
+                    } catch (SQLException ex) {
+                        Logger.getLogger(AddPromotionController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     stageOut = (Stage) sceneVBox.getScene().getWindow();
                     stageOut.close();
                 }

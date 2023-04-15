@@ -9,8 +9,10 @@ pojo\Employee.class
 com\tdkhoa\oumarket\AddCategoryController.class
 services\ProductService.class
 com\tdkhoa\oumarket\ViewOrderDetailsController.class
+com\tdkhoa\oumarket\LoginController.class
 module-info.class
-com\tdkhoa\oumarket\PrimaryController.class
+com\tdkhoa\oumarket\EditCategoryController.class
 pojo\Customer.class
 pojo\Receipt.class
 com\tdkhoa\oumarket\AddPromotionController.class
+com\tdkhoa\oumarket\FixEmployeeController.class

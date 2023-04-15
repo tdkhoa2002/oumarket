@@ -35,20 +35,27 @@ import utils.MessageBox;
  * @author Khoa Tran
  */
 public class EditProductController implements Initializable {
-    @FXML private TextField txtName;
-    @FXML private TextField txtPrice;
-    @FXML private TextField txtQuantity;
-    @FXML private ComboBox<Promotion> cbPromotions;
-    @FXML private VBox sceneVBox;
+
+    @FXML
+    private TextField txtName;
+    @FXML
+    private TextField txtPrice;
+    @FXML
+    private TextField txtQuantity;
+    @FXML
+    private ComboBox<Promotion> cbPromotions;
+    @FXML
+    private VBox sceneVBox;
     static public String[] itemsUnit = {"Cái", "Gói", "Kg", "Chai", "Lon"};
-    @FXML ComboBox<String> cbUnit;
-     Stage stageOut;
-    @FXML private ComboBox<Category> cbCategories;
+    @FXML
+    ComboBox<String> cbUnit;
+    Stage stageOut;
+    @FXML
+    private ComboBox<Category> cbCategories;
     static ProductService pS = new ProductService();
-    
-    
+
     @Override
-    public void initialize (URL url, ResourceBundle rb) {
+    public void initialize(URL url, ResourceBundle rb) {
         CategoryService s = new CategoryService();
         PromotionService promotionService = new PromotionService();
         txtName.setText(pRow.getName());
@@ -71,30 +78,33 @@ public class EditProductController implements Initializable {
             Logger.getLogger(EditProductController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     public void handleUpdateProduct(ActionEvent event) throws SQLException {
-        pRow.setName(this.txtName.getText());
-        pRow.setCategoryId(this.cbCategories.getSelectionModel().getSelectedItem().getId());
-        pRow.setQuantity(Integer.parseInt(this.txtQuantity.getText()));
-        pRow.setPrice(Double.parseDouble(this.txtPrice.getText()));
-        pRow.setUnit(this.cbUnit.getValue());
-        pRow.setPromotion_id(this.cbPromotions.getSelectionModel().getSelectedItem().getId());
-        pRow.setPromotion_name(this.cbPromotions.getSelectionModel().getSelectedItem().getName());
-        
-        try {
-            if (pS.editProduct(pRow)) {
-                Alert a = MessageBox.getBox("Sản phẩm", "Sửa sản phẩm thành công ", Alert.AlertType.INFORMATION);
-                a.showAndWait().ifPresent(res -> {
-                    if (res == ButtonType.OK) {
-                        stageOut = (Stage) sceneVBox.getScene().getWindow();
-                        stageOut.close();
-                    }
-                });
+        if (Double.parseDouble(this.txtPrice.getText()) > 0) {
+            pRow.setName(this.txtName.getText());
+            pRow.setCategoryId(this.cbCategories.getSelectionModel().getSelectedItem().getId());
+            pRow.setQuantity(Integer.parseInt(this.txtQuantity.getText()));
+            pRow.setPrice(Double.parseDouble(this.txtPrice.getText()));
+            pRow.setUnit(this.cbUnit.getValue());
+            pRow.setPromotion_id(this.cbPromotions.getSelectionModel().getSelectedItem().getId());
+            pRow.setPromotion_name(this.cbPromotions.getSelectionModel().getSelectedItem().getName());
+
+            try {
+                if (pS.editProduct(pRow)) {
+                    Alert a = MessageBox.getBox("Sản phẩm", "Sửa sản phẩm thành công ", Alert.AlertType.INFORMATION);
+                    a.showAndWait().ifPresent(res -> {
+                        if (res == ButtonType.OK) {
+                            stageOut = (Stage) sceneVBox.getScene().getWindow();
+                            stageOut.close();
+                        }
+                    });
+                }
+            } catch (SQLException ex) {
+                MessageBox.getBox("Product", "Edit product failed", Alert.AlertType.ERROR).show();
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
-        } catch (SQLException ex) {
-            MessageBox.getBox("Product", "Edit product failed", Alert.AlertType.ERROR).show();
-            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
+            MessageBox.getBox("Sản phẩm", "Giá không được nhỏ hơn 0", Alert.AlertType.WARNING).show();
         }
-        
     }
 }
