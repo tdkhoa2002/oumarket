@@ -11,9 +11,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.collections.FXCollections;
 import pojo.Category;
-import pojo.Product;
 /**
  *
  * @author Khoa Tran

@@ -18,6 +18,10 @@ public class Product {
     private double price;
     private String unit;
     private int quantity;
+    private double priceDiscount = 0;
+    private int promotion_id;
+    private String promotion_name;
+    private double total;
     
     {
         setId(UUID.randomUUID().toString());
@@ -32,13 +36,21 @@ public class Product {
         
     }
     
-    public Product(String id, String name, int categoryId, double price, int quantity, String unit) {
+    public Product (String id, String name, double price, int quantity) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+    }
+    
+    public Product(String id, String name, int categoryId, double price, int quantity, String unit, int promotion_id) {
         this.id = id;
         this.name = name;
         this.categoryId = categoryId;
         this.price = price;
         this.quantity = quantity;
         this.unit = unit;
+        this.promotion_id = promotion_id;
     }
     
     public Product() {
@@ -143,4 +155,48 @@ public class Product {
     public void setCategoryName(String categoryName) {
         this.categoryName = categoryName;
     }
+
+    /**
+     * @return the promotion_id
+     */
+    public int getPromotion_id() {
+        return promotion_id;
+    }
+
+    /**
+     * @param promotion_id the promotion_id to set
+     */
+    public void setPromotion_id(int promotion_id) {
+        this.promotion_id = promotion_id;
+    }
+
+    /**
+     * @return the promotion_name
+     */
+    public String getPromotion_name() {
+        return promotion_name;
+    }
+
+    /**
+     * @param promotion_name the promotion_name to set
+     */
+    public void setPromotion_name(String promotion_name) {
+        this.promotion_name = promotion_name;
+    }
+
+    /**
+     * @return the priceDiscount
+     */
+    public double getPriceDiscount() {
+        return priceDiscount;
+    }
+
+    /**
+     * @param priceDiscount the priceDiscount to set
+     */
+    public void setPriceDiscount(double priceDiscount) {
+        this.priceDiscount = priceDiscount;
+    }
+
+
 }

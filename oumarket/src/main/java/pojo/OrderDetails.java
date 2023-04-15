@@ -22,11 +22,14 @@ public class OrderDetails {
     public double getPrice() {
         return getProduct().getPrice();
     }
+    
+    public double getPriceDiscount() {
+        return getProduct().getPriceDiscount();
+    }
 
     public double getTotal() {
-        return getPrice() * quantity;
+        return getPriceDiscount() * quantity;
     }
-    
     
     /**
      * @return the quantity
