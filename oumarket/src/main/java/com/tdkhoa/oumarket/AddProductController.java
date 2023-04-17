@@ -69,25 +69,31 @@ public class AddProductController implements Initializable {
         if (this.txtName.getText().isEmpty() || this.txtQuantity.getText().isEmpty() || this.txtPrice.getText().isEmpty() || this.cbUnit.getValue() == null) {
             MessageBox.getBox("Sản phẩm", "Nhập thông tin sản phẩm", Alert.AlertType.WARNING).show();
         } else {
-            if (Double.parseDouble(this.txtPrice.getText()) > 0 && Integer.parseInt(this.txtQuantity.getText()) > 0) {
-                Product p = new Product(this.txtName.getText(),
-                        this.cbCategories.getSelectionModel().getSelectedItem().getId(), Double.parseDouble(this.txtPrice.getText()),
-                        Integer.parseInt(this.txtQuantity.getText()), this.cbUnit.getValue());
-                try {
-                    if (pS.addProduct(p)) {
-                        Alert a = MessageBox.getBox("Sản phẩm", "Thêm sản phẩm thành công ", Alert.AlertType.INFORMATION);
-                        a.showAndWait().ifPresent(res -> {
-                            if (res == ButtonType.OK) {
-                                stageOut = (Stage) sceneVBox.getScene().getWindow();
-                                stageOut.close();
-                            }
-                        });
+            try {
+                double pr = Double.parseDouble(this.txtPrice.getText());
+                double b = Double.parseDouble(this.txtQuantity.getText());
+                if (Double.parseDouble(this.txtPrice.getText()) > 0 && Integer.parseInt(this.txtQuantity.getText()) > 0) {
+                    Product p = new Product(this.txtName.getText(),
+                            this.cbCategories.getSelectionModel().getSelectedItem().getId(), Double.parseDouble(this.txtPrice.getText()),
+                            Integer.parseInt(this.txtQuantity.getText()), this.cbUnit.getValue());
+                    try {
+                        if (pS.addProduct(p)) {
+                            Alert a = MessageBox.getBox("Sản phẩm", "Thêm sản phẩm thành công ", Alert.AlertType.INFORMATION);
+                            a.showAndWait().ifPresent(res -> {
+                                if (res == ButtonType.OK) {
+                                    stageOut = (Stage) sceneVBox.getScene().getWindow();
+                                    stageOut.close();
+                                }
+                            });
+                        }
+                    } catch (SQLException ex) {
+                        MessageBox.getBox("Sản phẩm", "Thêm sản phẩm thất bại", Alert.AlertType.ERROR).show();
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (SQLException ex) {
-                    MessageBox.getBox("Sản phẩm", "Thêm sản phẩm thất bại", Alert.AlertType.ERROR).show();
-                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                } else {
+                    MessageBox.getBox("Sản phẩm", "Dữ liệu nhập không hợp lệ", Alert.AlertType.WARNING).show();
                 }
-            } else {
+            } catch (NumberFormatException ex) {
                 MessageBox.getBox("Sản phẩm", "Dữ liệu nhập không hợp lệ", Alert.AlertType.WARNING).show();
             }
         }

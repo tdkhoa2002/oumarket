@@ -121,50 +121,8 @@ public class PrimaryController implements Initializable {
     @FXML
     private VBox sceneVBox;
 
-//    @FXML
-//    TableView<Product> tbProducts;
-//    @FXML
-//    TableView<Product> tbShowProducts;
-//
-//    @FXML
-//    TableView<OrderDetails> tbShowOrdersDetail;
-//    ObservableList<OrderDetails> cartItems = FXCollections.observableArrayList();
-//    double total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
-//
-//    @FXML
-//    TableView<Category> tbCategories;
-//    @FXML
-//    TableView<Employee> tbEmployees;
-//    @FXML
-//    TableView<Order> tbOrders;
-//    @FXML
-//    TableView<Customer> tbCustomers;
-//    @FXML
-//    TableView<Promotion> tbPromotions;
-//    @FXML
-//    ComboBox<Category> cbCategories;
-//    @FXML
-//    TextField txtTotal;
-//    @FXML
-//    private Button btnAddEmp;
-//    @FXML
-//    TextField txtPhone;
-//    @FXML
-//    TextField txtTienKhachDua;
-//    @FXML
-//    TextField txtTienTraKhach;
-//    @FXML
-//    private Button btnAddSP;
-//    @FXML
-//    private Button btnAddCate;
-//    @FXML
-//    private Button btnAddCustomer;
-//    @FXML
-//    private Button btnAddPromotion;
-//    @FXML
-//    private TextField txtSearch;
-//    @FXML
-//    private VBox sceneVBox;
+
+    @FXML
     List<Customer> customers;
 
     Stage stageOut;
@@ -212,7 +170,6 @@ public class PrimaryController implements Initializable {
             this.loadCategoriesData(null);
             this.loadEmployeesData(null);
 
-//            this.loadCustomerData(null);
 
             this.loadCustomerData();
 
@@ -247,10 +204,6 @@ public class PrimaryController implements Initializable {
                 this.txtTienKhachDua.setDisable(true);
             }
         });
-
-//        this.txtPhone.textProperty().addListener(e -> {
-//            
-//        });
     }
 
     public void viewAddProduct(ActionEvent evt) {
@@ -499,41 +452,50 @@ public class PrimaryController implements Initializable {
                 quantityTextField.setText("0");
                 Button saveButton = new Button("Save");
                 saveButton.setOnAction(event -> {
-
-                    Double quantity = Double.parseDouble(quantityTextField.getText().trim());
-                    boolean check = true;
-                    double sumQuantityProduct = 0;
-                    if (!p.getUnit().equals("Kg")) {
-                        try {
-                            int q = Integer.parseInt(quantityTextField.getText());
-                            if (p.getQuantity() >= quantity) {
-                                //Kiem tra xem san pham do da co trong gio hang hay chua
-                                if (!cartItems.isEmpty()) { //Nếu mảng đó co sản phẩm
-                                    for (OrderDetails cartItem : cartItems) { //Chạy vòng lặp từng sản phẩm
-                                        if (cartItem.getProduct().getId().equals(p.getId())) { //Nếu sản phẩm vừa thêm vào trùng với sản phẩm đã có
-                                            sumQuantityProduct = cartItem.getQuantity() + quantity;
-                                            if (sumQuantityProduct <= p.getQuantity()) {
-                                                cartItem.setQuantity((int) (sumQuantityProduct)); //Set lại số lượng tăng lên
-                                            } else {
-                                                MessageBox.getBox("Số lượng sản phẩm", "Quá số lượng của kho", Alert.AlertType.WARNING).show();
+                    try {
+                        Double quantity = Double.parseDouble(quantityTextField.getText().trim());
+                        boolean check = true;
+                        double sumQuantityProduct = 0;
+                        if (quantity > 0) {
+                            if (!p.getUnit().equals("Kg")) {
+                                try {
+                                    int q = Integer.parseInt(quantityTextField.getText().trim());
+                                    if (p.getQuantity() >= quantity) {
+                                        //Kiem tra xem san pham do da co trong gio hang hay chua
+                                        if (!cartItems.isEmpty()) { //Nếu mảng đó co sản phẩm
+                                            for (OrderDetails cartItem : cartItems) { //Chạy vòng lặp từng sản phẩm
+                                                if (cartItem.getProduct().getId().equals(p.getId())) { //Nếu sản phẩm vừa thêm vào trùng với sản phẩm đã có
+                                                    sumQuantityProduct = cartItem.getQuantity() + quantity;
+                                                    if (sumQuantityProduct <= p.getQuantity()) {
+                                                        cartItem.setQuantity((int) (sumQuantityProduct)); //Set lại số lượng tăng lên
+                                                    } else {
+                                                        MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập không hợp lệ", Alert.AlertType.WARNING).show();
+                                                    }
+                                                    check = false;
+                                                }
                                             }
-                                            check = false;
+                                            if (check) {
+                                                cartItems.add(new OrderDetails(p, quantity));
+                                            }
+                                        } else {
+                                            // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
+                                            OrderDetails cartItem = new OrderDetails(p, quantity);
+                                            cartItems.add(cartItem);
                                         }
+                                    } else {
+                                        MessageBox.getBox("Số lượng", "Số lượng nhập không hợp lệ", Alert.AlertType.ERROR).show();
                                     }
-                                    if (check) {
-                                        cartItems.add(new OrderDetails(p, quantity));
-                                    }
-                                } else {
-                                    // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
-                                    OrderDetails cartItem = new OrderDetails(p, quantity);
-                                    cartItems.add(cartItem);
+                                } catch (NumberFormatException ex) {
+                                    MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
                                 }
                             } else {
-                                MessageBox.getBox("Số lượng", "Quá số lượng của kho", Alert.AlertType.ERROR).show();
+                                OrderDetails cartItem = new OrderDetails(p, quantity);
+                                cartItems.add(cartItem);
                             }
-                        } catch (NumberFormatException ex) {
-                            MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
                         }
+
+                    } catch (NumberFormatException ex) {
+                        MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
                     }
 
                     total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
@@ -554,7 +516,8 @@ public class PrimaryController implements Initializable {
                 // Thiết lập sự kiện cho button
                 btn.setOnAction(event -> {
                     // Hiển thị Popup tại vị trí của button
-                    popup.show(btn.getScene().getWindow(), 600, 500);
+                    popup.show(btn.getScene().getWindow(), 500, 500);
+//                    popup.show(btn.getScene().getWindow(), 600, 500);
                 });
             });
             TableCell c = new TableCell();
@@ -838,6 +801,18 @@ public class PrimaryController implements Initializable {
         colName.setCellValueFactory(new PropertyValueFactory("name"));
         colName.setPrefWidth(170);
 
+        TableColumn colVal = new TableColumn("% Giảm");
+        colVal.setCellValueFactory(new PropertyValueFactory("value"));
+        colVal.setPrefWidth(50);
+
+        TableColumn colStart = new TableColumn("Ngày bắt đầu");
+        colStart.setCellValueFactory(new PropertyValueFactory("timeStart"));
+        colStart.setPrefWidth(170);
+
+        TableColumn colEnd = new TableColumn("Ngày kết thúc");
+        colEnd.setCellValueFactory(new PropertyValueFactory("timeEnd"));
+        colEnd.setPrefWidth(170);
+
         TableColumn colDel = new TableColumn("Delete");
         colDel.setCellFactory(r -> {
             Button btn = new Button("Delete");
@@ -875,6 +850,9 @@ public class PrimaryController implements Initializable {
             Button btnEdit = new Button("Edit");
 
             btnEdit.setOnAction(event -> {
+                Button b = (Button) event.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                proRow = (Promotion) cell.getTableRow().getItem();
                 try {
                     Stage stage = new Stage();
                     // Tạo Scene mới
@@ -888,7 +866,7 @@ public class PrimaryController implements Initializable {
                             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     });
-                    stage.setTitle("Chỉnh sửa sản phẩm");
+                    stage.setTitle("Chỉnh sửa mã khuyến mãi");
                     stage.show();
                 } catch (IOException ex) {
                     Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
@@ -900,7 +878,7 @@ public class PrimaryController implements Initializable {
             return c;
         });
 
-        this.tbPromotions.getColumns().addAll(colId, colName, colEdit, colDel);
+        this.tbPromotions.getColumns().addAll(colId, colName, colVal, colStart, colEnd, colEdit, colDel);
     } //Page load tất cả mã khuyến mãi
 
     //Load du lieu
@@ -944,8 +922,6 @@ public class PrimaryController implements Initializable {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println(pros);
-
         this.tbPromotions.getItems().clear();
         this.tbPromotions.setItems(FXCollections.observableList(pros));
     }
@@ -963,6 +939,7 @@ public class PrimaryController implements Initializable {
     }
 
     public void savePay() throws SQLException {
+        boolean flag = false;
         Double tienTraKhach = Double.parseDouble(this.txtTienTraKhach.getText());
         Double tienKhachDua = Double.parseDouble(this.txtTienKhachDua.getText());
         if (this.cartItems.isEmpty()) {
@@ -978,9 +955,9 @@ public class PrimaryController implements Initializable {
                     String formattedDateTime = purchaseDate.format(formatter);
                     String purchaseDateSS = formattedDateTime.substring(0, 5);
                     Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
-                    cusS.updatePoint(customer, this.total);
                     if (customer != null) {
                         String customerBirthDay = customer.getNgaySinh().substring(0, 5);
+                        cusS.updatePoint(customer, this.total);
                         if (customerBirthDay.equals(purchaseDateSS) && tongTien >= 1000000) {
                             double discount = tongTien * 0.1;
                             double s = tongTien - discount;
@@ -988,38 +965,45 @@ public class PrimaryController implements Initializable {
                         } else {
                             o.setTotal(Double.parseDouble(txtTotal.getText()));
                         }
+                        flag = true;
                     } else {
+                        flag = false;
+                        o.setTotal(total);
                         MessageBox.getBox("Tìm kiếm khách hàng", "Không tồn tại khách hàng có số điện thoại này", Alert.AlertType.ERROR).show();
                     }
                 } else //Nếu txtPhone rỗng
                 {
                     o.setTotal(Double.parseDouble(txtTotal.getText()));
+                    flag = true;
                 }
                 o.setTienKhachDua(Double.parseDouble(txtTienKhachDua.getText()));
                 o.setTienTraKhach(Double.parseDouble(txtTienTraKhach.getText()));
-                oS.addOrder(o);
-                ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
-                boolean tmp = false;
-                for (OrderDetails oD : orderDetailsList) {
-                    if (oDS.saveOderDetails(oD, o)) {
-                        tmp = true;
+                if (flag == true) {
+                    oS.addOrder(o);
+                    ObservableList<OrderDetails> orderDetailsList = this.tbShowOrdersDetail.getItems();
+                    boolean tmp = false;
+                    for (OrderDetails oD : orderDetailsList) {
+                        if (oDS.saveOderDetails(oD, o)) {
+                            tmp = true;
+                        } else {
+                            tmp = false;
+                        }
+                    }
+                    if (tmp == true) {
+                        oDS.updateQuantityInStock(orderDetailsList);
+                        this.tbShowOrdersDetail.getItems().clear();
+                        loadProductsData(null);
+                        loadOrdersData();
+                        loadCustomerData();
+                        txtTienKhachDua.setText("0");
+                        txtTotal.setText("0");
+                        txtTienTraKhach.setText("0");
+                        MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
                     } else {
-                        tmp = false;
+                        MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
                     }
                 }
-                if (tmp == true) {
-                    oDS.updateQuantityInStock(orderDetailsList);
-                    this.tbShowOrdersDetail.getItems().clear();
-                    loadProductsData(null);
-                    loadOrdersData();
-                    loadCustomerData();
-                    txtTienKhachDua.setText("0");
-                    txtTotal.setText("0");
-                    txtTienTraKhach.setText("0");
-                    MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thành công ", Alert.AlertType.CONFIRMATION).show();
-                } else {
-                    MessageBox.getBox("Hóa đơn", "Thêm hóa đơn thất bại", Alert.AlertType.ERROR).show();
-                }
+
             } else {
                 MessageBox.getBox("Hóa đơn", "Vui lòng nhập tiền phù hợp", Alert.AlertType.ERROR).show();
             }

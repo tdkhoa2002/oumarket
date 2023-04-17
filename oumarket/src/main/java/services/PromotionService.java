@@ -55,6 +55,28 @@ public class PromotionService {
             return stm.executeUpdate() > 0;
         }
     }
+    
+    public boolean editPromotion(Promotion p) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
+            
+            String sql = "SELECT * FROM promotion WHERE name = ?";
+            PreparedStatement stmCheckUnique = conn.prepareCall(sql);
+            stmCheckUnique.setString(1, p.getName());
+            ResultSet resultSet = stmCheckUnique.executeQuery();
+            if (resultSet.next()) {
+                return false;
+            }
+            sql = "UPDATE promotion SET name =?, value = ?, start = ?, end = ? WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, p.getName());
+            stm.setDouble(2, p.getValue());
+            stm.setDate(3, p.getTimeStart());
+            stm.setDate(4, p.getTimeEnd());
+            stm.setInt(5, p.getId());
+            stm.executeUpdate();
+            return true;
+        }
+    }
 
     public boolean addPromotion(Promotion p) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
@@ -64,26 +86,19 @@ public class PromotionService {
             stmCheckUnique.setString(1, p.getName());
             ResultSet resultSet = stmCheckUnique.executeQuery();
             if (resultSet.next()) {
-                MessageBox.getBox("Sản phẩm", "Sản phẩm này đã tồn tại", Alert.AlertType.ERROR).show();
                 return false;
             }
             sql = "INSERT INTO promotion(name, value, start, end) VALUES(?, ?, ?, ?)"; // SQL injection
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, p.getName());
             stm.setDouble(2, p.getValue());
-            if (p.getTimeStart().before(p.getTimeEnd())) {
-                stm.setDate(3, p.getTimeStart());
-                stm.setDate(4, p.getTimeEnd());
-                stm.executeUpdate();
-                try {
-                    conn.commit();
-                    return true;
-                } catch (SQLException ex) {
-                    MessageBox.getBox("Khuyến mãi", "Thêm mã khuyến mãi thất bại", Alert.AlertType.CONFIRMATION).show();
-                    return false;
-                }
-            } else {
-                MessageBox.getBox("Khuyến mãi", "Thời gian không hợp lệ", Alert.AlertType.CONFIRMATION).show();
+            stm.setDate(3, p.getTimeStart());
+            stm.setDate(4, p.getTimeEnd());
+            stm.executeUpdate();
+            try {
+                conn.commit();
+                return true;
+            } catch (SQLException ex) {
                 return false;
             }
         }
