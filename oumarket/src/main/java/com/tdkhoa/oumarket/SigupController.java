@@ -49,20 +49,26 @@ public class SigupController implements Initializable {
             String password = passwordField.getText();
             String password2 = passwordField2.getText();
             String branch = (String) ComboBox.getValue();
-            if (password.equals(password2)) {
-
-                if (aS.registerUser(username, password, branch)) {
-                    btnSigup.getScene().getWindow().hide();
-                } else{
-                    actiontarget.setFill(Color.RED);
-                    actiontarget.setText("Tên tài khoản đã tồn tại.");
-                }
-
-            } else {
-                // hiển thị thông báo lỗi
+            if (username.isEmpty() || password.isEmpty() || password2.isEmpty() || branch == null) {
                 actiontarget.setFill(Color.RED);
-                actiontarget.setText("Mật khẩu xác nhận không trùng khớp.");
+                actiontarget.setText("VUI LÒNG NHẬP ĐẦY ĐỦ THÔNG TIN.");
+            } else {
+                if (password.equals(password2)) {
+
+                    if (aS.registerUser(username, password, branch)) {
+                        btnSigup.getScene().getWindow().hide();
+                    } else {
+                        actiontarget.setFill(Color.RED);
+                        actiontarget.setText("Tên tài khoản đã tồn tại.");
+                    }
+
+                } else {
+                    // hiển thị thông báo lỗi
+                    actiontarget.setFill(Color.RED);
+                    actiontarget.setText("Mật khẩu xác nhận không trùng khớp.");
+                }
             }
+
         });
     }
     public void closeView(ActionEvent evt) {

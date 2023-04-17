@@ -23,7 +23,7 @@ import pojo.Employee;
  */
 public class EmployeeService {
 
-     public List<Employee> getEmployees(String kw) throws SQLException {
+    public List<Employee> getEmployees(String kw) throws SQLException {
         List<Employee> employeeList = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
             Statement stm = conn.createStatement();
@@ -47,49 +47,7 @@ public class EmployeeService {
             return stm.executeUpdate() > 0;
         }
     }
-    
-    
-//    public static List<Employee> findAll() {
-//        List<Employee> employeeList = new ArrayList<>();
-//        Connection con = null;
-//        Statement statement = null;
-//        try {
-//            //lay tat ca danh sach nhan vien
-//            con = JdbcUtils.getConn();
-//            
-//            //query
-//            String sql = "select * from employee";
-//            statement = con.createStatement();
-//            
-//            ResultSet resultSet = statement.executeQuery(sql);
-//            while (resultSet.next()){
-//                Employee std = new Employee(resultSet.getInt("id")
-//                        ,resultSet.getString("fullname"));
-//                employeeList.add(std);
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//        } finally {
-//            if (statement != null) {
-//                try {
-//                    statement.close();
-//                } catch (SQLException ex) {
-//                    Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//
-//        }
-//        if (con != null) {
-//            try {
-//                con.close();
-//            } catch (SQLException ex) {
-//                Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//    
-//      //ket thuc
-//        return employeeList ;  
-//    }   
+   
     public void insert(Employee std){
         
         Connection con = null;
@@ -133,75 +91,4 @@ public class EmployeeService {
             return stm.executeUpdate() > 0;
         }
     }
-//    public static void update(Employee std){
-//        
-//        Connection con = null;
-//        PreparedStatement statement = null;
-//        try {
-//            
-//            con = JdbcUtils.getConn();
-//            
-//            String sql = "UPDATE employee SET name =? WHERE id=?";
-//            statement = con.prepareCall(sql);
-//            
-//            statement.setString(1, std.getName());
-//            statement.setInt(2, std.getId());
-//            
-//            statement.execute();
-//        } catch (SQLException ex) {
-//            Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//        } finally {
-//            if (statement != null) {
-//                try {
-//                    statement.close();
-//                } catch (SQLException ex) {
-//                    Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//
-//        }
-//        if (con != null) {
-//            try {
-//                con.close();
-//            } catch (SQLException ex) {
-//                Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//        
-//    }
-//    public static void delete(int id){
-//        
-//        Connection con = null;
-//        PreparedStatement statement = null;
-//        try {
-//          
-//            con = JdbcUtils.getConn();
-//            
-//            String sql = "delete from employee where id = ?";
-//            statement = con.prepareCall(sql);
-//            
-//            statement.setInt(1, id);
-//            
-//            statement.execute();
-//        } catch (SQLException ex) {
-//            Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//        } finally {
-//            if (statement != null) {
-//                try {
-//                    statement.close();
-//                } catch (SQLException ex) {
-//                    Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            }
-//
-//        }
-//        if (con != null) {
-//            try {
-//                con.close();
-//            } catch (SQLException ex) {
-//                Logger.getLogger(EmployeeService.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-//        
-//    }
 }

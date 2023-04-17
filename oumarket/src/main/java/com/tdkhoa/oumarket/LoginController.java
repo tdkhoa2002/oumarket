@@ -29,89 +29,128 @@ import services.AccountSevrice;
  * @author ASUS
  */
 public class LoginController {
+
     static AccountSevrice aS = new AccountSevrice();
-    
-    @FXML private TextField usernameField;
-    @FXML private PasswordField passwordField;
-    @FXML private Button btnSigup;
-    @FXML private Button btnLogin;
-    @FXML private Text actiontarget;
-    @FXML private AnchorPane AnchorPane;
-    
+
+    @FXML
+    private TextField usernameField;
+    @FXML
+    private PasswordField passwordField;
+    @FXML
+    private Button btnSigup;
+    @FXML
+    private Button btnLogin;
+    @FXML
+    private Text actiontarget;
+    @FXML
+    private AnchorPane AnchorPane;
+    public String savedUsername;
+
     public void handleLoginButtonAction(ActionEvent eve) {
         this.btnLogin.setOnAction(event -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
-            if (username.isEmpty()) {
-                actiontarget.setText("Vui lòng Nhập tên đăng nhập");
+            if (username.isEmpty() && password.isEmpty()) {
+                actiontarget.setFill(Color.RED);
+                actiontarget.setText("VUI LÒNG NHẬP TÊN ĐĂNG NHẬP VÀ MẬT KHẨU");
             } else {
-                if (aS.authenticateUser(username, password)) {
-                   
-                    // ẩn form login
-                    btnLogin.getScene().getWindow().hide();
-                    // chuyển hướng đến ứng dụng
-                    this.viewApp(eve);
-                } else {
-                    // hiển thị thông báo lỗi
+                if (username.isEmpty()) {
                     actiontarget.setFill(Color.RED);
-                    actiontarget.setText("Incorrect username or password.");
+                    actiontarget.setText("VUI LÒNG NHẬP TÊN ĐĂNG NHẬP");
+                } else {
+                    if (password.isEmpty()) {
+                        actiontarget.setFill(Color.RED);
+                        actiontarget.setText("VUI LÒNG NHẬP MẬT KHẨU");
+                    } else {
+                        if (aS.authenticateUser(username, password)) {
+                            savedUsername = username;
+                            // ẩn form login
+                            btnLogin.getScene().getWindow().hide();
+                            // chuyển hướng đến ứng dụng
+                            this.viewApp(eve);
+                        } else {
+
+                            // hiển thị thông báo lỗi
+                            actiontarget.setFill(Color.RED);
+                            actiontarget.setText("KHÔNG ĐÚNG TÊN ĐĂNG NHẬP HOẶC MẬT KHẨU.");
+                        }
+                    }
                 }
+
             }
-              
+
+        });
+    }
+
+    public void handleSigupButtonAction(ActionEvent eve) {
+        this.btnSigup.setOnAction(event -> {
+            String username = usernameField.getText();
+            String password = passwordField.getText();
+            if (username.isEmpty() && password.isEmpty()) {
+                actiontarget.setFill(Color.RED);
+                actiontarget.setText("VUI LÒNG NHẬP TÊN ĐĂNG NHẬP VÀ MẬT KHẨU");
+            } else {
+                if (username.isEmpty()) {
+                    actiontarget.setFill(Color.RED);
+                    actiontarget.setText("VUI LÒNG NHẬP TÊN ĐĂNG NHẬP");
+                } else {
+                    if (password.isEmpty()) {
+                        actiontarget.setFill(Color.RED);
+                        actiontarget.setText("VUI LÒNG NHẬP MẬT KHẨU");
+                    } else {
+                        if (aS.authenticateUser(username, password)) {
+
+                            List<String> userRoles = aS.getUserRoles(username);
+
+                            // kiểm tra vài trò của người dùng
+                            if (userRoles.contains("admin")) {
+                                // chuyển hướng đén 
+                                viewSigup(eve);
+                            } else {
+                                // hiển thị thông báo lỗi
+                                actiontarget.setFill(Color.RED);
+                                actiontarget.setText("NGƯỜI DÙNG KHÔNG PHẢI ADMIN.");
+                            }
+                        } else {
+                            // hiển thị thông báo lỗi
+                            actiontarget.setFill(Color.RED);
+                            actiontarget.setText("KHÔNG ĐÚNG TÀI KHOẢN HOẶC MẬT KHẨU.");
+                        }
+                    }
+                }
+
+            }
             
         });
     }
-    public void handleSigupButtonAction(ActionEvent eve) {
-        this.btnSigup.setOnAction(event -> {
-                String username = usernameField.getText();
-                String password = passwordField.getText();
 
-                if (aS.authenticateUser(username, password)) {
-                  
-                    List<String> userRoles = aS.getUserRoles(username);
-
-                    // kiểm tra vài trò của người dùng
-                    if (userRoles.contains("admin")) {
-                        // chuyển hướng đén 
-                        viewSigup(eve);
-                    } else {
-                        // hiển thị thông báo lỗi
-                        actiontarget.setFill(Color.RED);
-                        actiontarget.setText("Người dùng không phải admin.");
-                    }
-                } else {
-                    // hiển thị thông báo lỗi
-                    actiontarget.setFill(Color.RED);
-                    actiontarget.setText("Incorrect username or password.");
-                }
-            });
-    }
     public void viewApp(ActionEvent evt) {
-        
-            try {
-                Stage stage = new Stage();
-                
-                Parent root = FXMLLoader.load(getClass().getResource("/com/tdkhoa/oumarket/primary.fxml"));
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.setTitle(" ");
+
+        try {
+            Stage stage = new Stage();
+
+            Parent root = FXMLLoader.load(getClass().getResource("/com/tdkhoa/oumarket/primary.fxml"));
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle(" ");
 //                
-                stage.show();
-                
-            } catch (IOException ex) {
-                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
+            stage.show();
+
+        } catch (IOException ex) {
+            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
+
     public void viewSigup(ActionEvent evt) {
-        
-            try {
-                Stage stage = new Stage();
-                
-                Parent root = FXMLLoader.load(getClass().getResource("/fxml/Sigup.fxml"));
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.setTitle(" ");
+
+        try {
+            Stage stage = new Stage();
+
+            Parent root = FXMLLoader.load(getClass().getResource("/fxml/Sigup.fxml"));
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.setTitle(" ");
 //                stage.setOnHidden(e -> {  
 //                    try {
 //                        loadProductsData(null);
@@ -119,17 +158,12 @@ public class LoginController {
 //                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
 //                    }
 //                  });
-                stage.show();
-                
-            } catch (IOException ex) {
-                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        
-    }
-    
-    
+            stage.show();
 
+        } catch (IOException ex) {
+            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
 
 }
-
-
