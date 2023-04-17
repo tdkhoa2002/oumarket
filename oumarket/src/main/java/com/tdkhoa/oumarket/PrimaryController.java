@@ -121,6 +121,7 @@ public class PrimaryController implements Initializable {
     @FXML
     private VBox sceneVBox;
 
+
     @FXML
     List<Customer> customers;
 
@@ -168,6 +169,7 @@ public class PrimaryController implements Initializable {
             this.loadProductsData(null);
             this.loadCategoriesData(null);
             this.loadEmployeesData(null);
+
 
             this.loadCustomerData();
 
