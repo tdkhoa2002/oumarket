@@ -61,11 +61,11 @@
       <HBox prefHeight="35.0" prefWidth="600.0">
          <children>
             <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Đơn vị: " />
-            <TextField fx:id="txtUnit" prefHeight="25.0" prefWidth="274.0">
+            <ComboBox fx:id="cbUnit" prefWidth="150.0">
                <HBox.margin>
-                  <Insets left="40.0" />
+                  <Insets left="42.0" />
                </HBox.margin>
-            </TextField>
+            </ComboBox>
          </children>
          <VBox.margin>
             <Insets left="30.0" />
@@ -85,11 +85,6 @@
       </HBox>
       <HBox prefHeight="100.0" prefWidth="200.0">
          <children>
-            <Button mnemonicParsing="false" prefHeight="58.0" prefWidth="94.0" styleClass="h3" text="HỦY ">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
             <Button mnemonicParsing="false" onAction="#addProductHandler" prefHeight="57.0" prefWidth="135.0" styleClass="h4" text="XÁC NHẬN " />
          </children>
          <VBox.margin>

@@ -19,6 +19,7 @@ services\AccountSevrice.class
 com\tdkhoa\oumarket\LoginController.class
 module-info.class
 services\OrderDetailsService.class
+com\tdkhoa\oumarket\EditCategoryController.class
 com\tdkhoa\oumarket\PrimaryController.class
 services\CategoryService.class
 utils\MessageBox.class

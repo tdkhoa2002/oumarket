@@ -4,6 +4,7 @@
  */
 package pojo;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,20 +17,26 @@ public class Promotion {
     private int id;
     private String name;
     private double value;
-    private LocalDate timeStart;
-    private LocalDate timeEnd;
+    private Date timeStart;
+    private Date timeEnd;
     
     public Promotion () {
         
     }
     
-    public Promotion (int id, String name, double value) {
-        this.id = id;
+    public Promotion (String name, double value) {
         this.value = value;
         this.name = name;
     }
     
-    public Promotion (int id, String name, double value, LocalDate start, LocalDate end) {
+    public Promotion (String name, double value, Date start, Date end) {
+        this.timeStart = start;
+        this.timeEnd = end;
+        this.name = name;
+        this.value = value;
+    }
+    
+    public Promotion (int id, String name, double value, Date start, Date end) {
         this.id = id;
         this.timeStart = start;
         this.timeEnd = end;
@@ -82,28 +89,28 @@ public class Promotion {
     /**
      * @return the timeStart
      */
-    public LocalDate getTimeStart() {
+    public Date getTimeStart() {
         return timeStart;
     }
 
     /**
      * @param timeStart the timeStart to set
      */
-    public void setTimeStart(LocalDate timeStart) {
+    public void setTimeStart(Date timeStart) {
         this.timeStart = timeStart;
     }
 
     /**
      * @return the timeEnd
      */
-    public LocalDate getTimeEnd() {
+    public Date getTimeEnd() {
         return timeEnd;
     }
 
     /**
      * @param timeEnd the timeEnd to set
      */
-    public void setTimeEnd(LocalDate timeEnd) {
+    public void setTimeEnd(Date timeEnd) {
         this.timeEnd = timeEnd;
     }
 
