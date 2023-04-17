@@ -50,7 +50,8 @@ public class CategoryService {
             String sql3 = "DELETE FROM categories WHERE id=?";
             PreparedStatement stmDeleteCategory = conn.prepareCall(sql3);
             stmDeleteCategory.setInt(1, id);
-            return stmDeleteCategory.executeUpdate() > 0;
+            stmDeleteCategory.executeUpdate();
+            return true;
         }
     }
     
@@ -86,14 +87,14 @@ public class CategoryService {
             stmCheckUnique.setString(1, c.getName());
             ResultSet resultSet = stmCheckUnique.executeQuery();
             if (resultSet.next()) {
-                MessageBox.getBox("Danh mục", "Danh mục đã tồn tại", Alert.AlertType.ERROR).show();
                 return false;
             }
             sql = "UPDATE categories SET name =? WHERE id=?";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, c.getName());
             stm.setInt(2, c.getId());
-            return stm.executeUpdate() > 0;
+            stm.executeUpdate();
+            return true;
         }
     }
 }

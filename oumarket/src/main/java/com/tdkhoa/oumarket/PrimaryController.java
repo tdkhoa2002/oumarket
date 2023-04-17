@@ -62,51 +62,64 @@ public class PrimaryController implements Initializable {
     static Employee eRow = new Employee();
     static LoginController lC = new LoginController();
 
-    
-
     static Category cRow = new Category();
     static Promotion proRow = new Promotion();
-
 
     static OrderDetailsService oDS = new OrderDetailsService();
     static OrderService oS = new OrderService();
     static CustomerService cusS = new CustomerService();
     static PromotionService promoService = new PromotionService();
 
+    @FXML
+    TableView<Product> tbProducts;
+    @FXML
+    TableView<Product> tbShowProducts;
 
-    
-    @FXML TableView<Product> tbProducts;
-    @FXML TableView<Product> tbShowProducts;
-    
-    @FXML TableView<OrderDetails> tbShowOrdersDetail;
+    @FXML
+    TableView<OrderDetails> tbShowOrdersDetail;
     ObservableList<OrderDetails> cartItems = FXCollections.observableArrayList();
     double total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
-    
-    @FXML TableView<Category> tbCategories;
-    @FXML TableView<Employee> tbEmployees;
-    @FXML TableView<Order> tbOrders;
-    @FXML TableView<Customer> tbCustomers;
-    @FXML TableView<Promotion> tbPromotions;
-    @FXML ComboBox<Category> cbCategories;
-    @FXML TextField txtTotal;
-    @FXML private Button btnAddEmp;
-    @FXML TextField txtPhone;
-    @FXML TextField txtTienKhachDua;
-    @FXML TextField txtTienTraKhach;
-    @FXML private Button btnAddSP;
-    @FXML private Button btnAddCate;
 
-    @FXML private Spinner spinner;
-   
+    @FXML
+    TableView<Category> tbCategories;
+    @FXML
+    TableView<Employee> tbEmployees;
+    @FXML
+    TableView<Order> tbOrders;
+    @FXML
+    TableView<Customer> tbCustomers;
+    @FXML
+    TableView<Promotion> tbPromotions;
+    @FXML
+    ComboBox<Category> cbCategories;
+    @FXML
+    TextField txtTotal;
+    @FXML
+    private Button btnAddEmp;
+    @FXML
+    TextField txtPhone;
+    @FXML
+    TextField txtTienKhachDua;
+    @FXML
+    TextField txtTienTraKhach;
+    @FXML
+    private Button btnAddSP;
+    @FXML
+    private Button btnAddCate;
+
+    @FXML
+    private Spinner spinner;
+
 //    @FXML private TextField txtSearch;
+    @FXML
+    private Button btnAddCustomer;
+    @FXML
+    private Button btnAddPromotion;
+    @FXML
+    private TextField txtSearch;
 
-    @FXML private Button btnAddCustomer;
-    @FXML private Button btnAddPromotion;
-    @FXML private TextField txtSearch;
-
-    @FXML private VBox sceneVBox;
-
-    
+    @FXML
+    private VBox sceneVBox;
 
     @FXML
     List<Customer> customers;
@@ -779,6 +792,18 @@ public class PrimaryController implements Initializable {
         TableColumn colName = new TableColumn("Tên mã khuyến mãi");
         colName.setCellValueFactory(new PropertyValueFactory("name"));
         colName.setPrefWidth(170);
+        
+        TableColumn colVal = new TableColumn("% Giảm");
+        colVal.setCellValueFactory(new PropertyValueFactory("value"));
+        colVal.setPrefWidth(50);
+        
+        TableColumn colStart = new TableColumn("Ngày bắt đầu");
+        colStart.setCellValueFactory(new PropertyValueFactory("timeStart"));
+        colStart.setPrefWidth(170);
+        
+        TableColumn colEnd = new TableColumn("Ngày kết thúc");
+        colEnd.setCellValueFactory(new PropertyValueFactory("timeEnd"));
+        colEnd.setPrefWidth(170);
 
         TableColumn colDel = new TableColumn("Delete");
         colDel.setCellFactory(r -> {
@@ -817,24 +842,27 @@ public class PrimaryController implements Initializable {
             Button btnEdit = new Button("Edit");
 
             btnEdit.setOnAction(event -> {
-            try {
-                Stage stage = new Stage();
-                // Tạo Scene mới
-                Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixVoucher.fxml"));
-                Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
-                stage.setScene(scene);
-                stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
+                Button b = (Button) event.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                proRow = (Promotion) cell.getTableRow().getItem();
+                try {
+                    Stage stage = new Stage();
+                    // Tạo Scene mới
+                    Parent root = FXMLLoader.load(getClass().getResource("/fxml/fixVoucher.fxml"));
+                    Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                    stage.setScene(scene);
+                    stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
                         try {
                             loadPromotionData(null);
                         } catch (SQLException ex) {
                             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     });
-                stage.setTitle("Chỉnh sửa sản phẩm");
-                stage.show();
-            } catch (IOException ex) {
-                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                    stage.setTitle("Chỉnh sửa mã khuyến mãi");
+                    stage.show();
+                } catch (IOException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             });
 
             TableCell c = new TableCell();
@@ -842,7 +870,7 @@ public class PrimaryController implements Initializable {
             return c;
         });
 
-        this.tbPromotions.getColumns().addAll(colId, colName, colEdit, colDel);
+        this.tbPromotions.getColumns().addAll(colId, colName, colVal, colStart, colEnd, colEdit, colDel);
     } //Page load tất cả mã khuyến mãi
 
     //Load du lieu
@@ -886,12 +914,9 @@ public class PrimaryController implements Initializable {
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        System.out.println(pros);
-
         this.tbPromotions.getItems().clear();
         this.tbPromotions.setItems(FXCollections.observableList(pros));
     }
-
 
 //    public void closeView(ActionEvent evt) {
 //        stageOut = (Stage) sceneVBox.getScene().getWindow();
@@ -904,7 +929,6 @@ public class PrimaryController implements Initializable {
         this.txtTienTraKhach.setText(Double.toString(priceRefresh));
         this.txtTotal.setText(Double.toString(priceRefresh));
     }
-
 
     public void savePay() throws SQLException {
         Double tienTraKhach = Double.parseDouble(this.txtTienTraKhach.getText());

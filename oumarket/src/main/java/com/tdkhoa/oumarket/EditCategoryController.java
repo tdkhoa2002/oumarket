@@ -41,6 +41,9 @@ public class EditCategoryController {
                     }
                 });
             }
+            else {
+                MessageBox.getBox("Danh mục", "Danh mục đã tồn tại", Alert.AlertType.ERROR).show();
+            }
         } catch (SQLException ex) {
             MessageBox.getBox("Sản phẩm", "Thêm sản phẩm thất bại", Alert.AlertType.ERROR).show();
             Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);

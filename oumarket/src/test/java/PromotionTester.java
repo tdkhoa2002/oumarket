@@ -1,27 +1,39 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pojo.Category;
-import services.CategoryService;
+import pojo.Promotion;
+import services.PromotionService;
 import services.JdbcUtils;
+
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
 /**
  *
  * @author Khoa Tran
  */
-public class CategoryTester {
+public class PromotionTester {
     private static Connection conn;
-    private static CategoryService cateService;
+    private static PromotionService proService;
     
     @BeforeAll
     public static void beforeAll() {
@@ -32,24 +44,25 @@ public class CategoryTester {
     }
     
 //    @Test
-//    public void testNotNull() {
-//        CategoryService s = new CategoryService();
+//    public void testNotNull() throws ParseException {
+//        proService = new PromotionService();
 //        try {
-//            List<Category> cates =  s.getCategories(null);
+//            List<Promotion> pros =  proService.getPromotions(null);
 //            
-//            long t = cates.stream().filter(c -> c.getName() == null).count();
+//            long t = pros.stream().filter(c -> c.getName() == null).count();
 //            Assertions.assertTrue(t == 0);
 //        } catch (SQLException ex) {
 //            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
-    
+//    
 //    @Test
-//    public void testUniqueName() {
+//    public void testUniqueName() throws ParseException {
+//        proService = new PromotionService();
 //        try {
-//            List<Category> cates =  cateService.getCategories(null);
+//            List<Promotion> pros =  proService.getPromotions(null);
 //            
-//            List<String> names = cates.stream().flatMap(c -> Stream.of(c.getName())).collect(Collectors.toList());
+//            List<String> names = pros.stream().flatMap(c -> Stream.of(c.getName())).collect(Collectors.toList());
 //            Set<String> testNames = new HashSet<>(names);
 //            Assertions.assertEquals(names.size(), testNames.size());
 //        } catch (SQLException ex) {
@@ -58,41 +71,45 @@ public class CategoryTester {
 //    }
     
 //    @Test
-//    public void testAddCategory() throws SQLException {
+//    public void testAddPromotion() throws SQLException, ParseException {
+//        Date start = new Date(2023, 04, 15);
+//        Date end = new Date(2023, 04, 20);
 //        try {
-//            cateService = new CategoryService();
-//            Category cate = new Category("Ve sinh nha cua 6");
-//            boolean actual = cateService.addCategory(cate);
+//            proService = new PromotionService();
+//            Promotion pro = new Promotion("Khuyen mai moi", 10, start, end);
+//            boolean actual = proService.addPromotion(pro);
 //            Assertions.assertTrue(actual);
 //
-//            String sql = "SELECT * FROM categories where name = ?";
+//            String sql = "SELECT * FROM promotion where name = ?";
 //            PreparedStatement stm = JdbcUtils.getConn().prepareCall(sql);
-//            stm.setString(1, cate.getName());
+//            stm.setString(1, pro.getName());
 //
 //            ResultSet rs = stm.executeQuery();
 //            Assertions.assertNotNull(rs.next());
-//            Assertions.assertEquals(cate.getName(), rs.getString("name")); //kiem tra da them vao hay chua
+//            Assertions.assertEquals(pro.getName(), rs.getString("name")); //kiem tra da them vao hay chua
 //        }
 //        catch (SQLException ex) {
 //            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
     
-//    @Test
-//    public void testAddCategory() throws SQLException {
+//        @Test
+//    public void testAddPromotion() throws SQLException, ParseException {
+//        Date end = new Date(2023, 04, 15);
+//        Date start = new Date(2023, 04, 20);
 //        try {
-//            cateService = new CategoryService();
-//            Category cate = new Category("Ve sinh nha cua 4");
-//            boolean actual = cateService.addCategory(cate);
+//            proService = new PromotionService();
+//            Promotion pro = new Promotion("Khuyen mai moi", 10, start, end);
+//            boolean actual = proService.addPromotion(pro);
 //            Assertions.assertTrue(actual);
 //
-//            String sql = "SELECT * FROM categories where name = ?";
+//            String sql = "SELECT * FROM promotion where name = ?";
 //            PreparedStatement stm = JdbcUtils.getConn().prepareCall(sql);
-//            stm.setString(1, cate.getName());
+//            stm.setString(1, pro.getName());
 //
 //            ResultSet rs = stm.executeQuery();
 //            Assertions.assertNotNull(rs.next());
-//            Assertions.assertEquals(cate.getName(), rs.getString("name")); //kiem tra da them vao hay chua
+//            Assertions.assertEquals(pro.getName(), rs.getString("name")); //kiem tra da them vao hay chua
 //        }
 //        catch (SQLException ex) {
 //            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
@@ -100,20 +117,18 @@ public class CategoryTester {
 //    }
     
     @Test
-    public void testEditCategory() {
-        String nameUpdate = "khoa danh muc 1";
-        int id = 28;
-        cateService = new CategoryService();
-        try {
-            Category c = new Category(id,nameUpdate);
-            
-            boolean actual = cateService.editCategory(c);
-            Assertions.assertTrue(actual);
-            if (actual == true) {
-                Assertions.assertEquals(c.getName(), nameUpdate);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+    public void testEditPromotion() throws SQLException {
+        String nameUpdate = "khoa ma khuyen mai";
+        int id = 4;
+        Date start = new Date(2023, 04, 15);
+        Date end = new Date(2023, 04, 20);
+        
+        proService = new PromotionService();
+        Promotion pro = new Promotion(id,nameUpdate, 10, start, end);
+        boolean actual = proService.editPromotion(pro);
+        Assertions.assertTrue(actual);
+        if (actual == true) {
+            Assertions.assertEquals(pro.getName(), nameUpdate);
         }
     }
     
