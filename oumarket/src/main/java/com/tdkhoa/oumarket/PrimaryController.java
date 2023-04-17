@@ -452,44 +452,46 @@ public class PrimaryController implements Initializable {
                 saveButton.setOnAction(event -> {
                     try {
                         Double quantity = Double.parseDouble(quantityTextField.getText().trim());
-                        System.out.println(quantity);
                         boolean check = true;
                         double sumQuantityProduct = 0;
-                        if (!p.getUnit().equals("Kg")) {
-                            try {
-                                int q = Integer.parseInt(quantityTextField.getText().trim());
-                                if (p.getQuantity() >= quantity && quantity >= 0) {
-                                    //Kiem tra xem san pham do da co trong gio hang hay chua
-                                    if (!cartItems.isEmpty()) { //Nếu mảng đó co sản phẩm
-                                        for (OrderDetails cartItem : cartItems) { //Chạy vòng lặp từng sản phẩm
-                                            if (cartItem.getProduct().getId().equals(p.getId())) { //Nếu sản phẩm vừa thêm vào trùng với sản phẩm đã có
-                                                sumQuantityProduct = cartItem.getQuantity() + quantity;
-                                                if (sumQuantityProduct <= p.getQuantity()) {
-                                                    cartItem.setQuantity((int) (sumQuantityProduct)); //Set lại số lượng tăng lên
-                                                } else {
-                                                    MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập không hợp lệ", Alert.AlertType.WARNING).show();
+                        if (quantity > 0) {
+                            if (!p.getUnit().equals("Kg")) {
+                                try {
+                                    int q = Integer.parseInt(quantityTextField.getText().trim());
+                                    if (p.getQuantity() >= quantity) {
+                                        //Kiem tra xem san pham do da co trong gio hang hay chua
+                                        if (!cartItems.isEmpty()) { //Nếu mảng đó co sản phẩm
+                                            for (OrderDetails cartItem : cartItems) { //Chạy vòng lặp từng sản phẩm
+                                                if (cartItem.getProduct().getId().equals(p.getId())) { //Nếu sản phẩm vừa thêm vào trùng với sản phẩm đã có
+                                                    sumQuantityProduct = cartItem.getQuantity() + quantity;
+                                                    if (sumQuantityProduct <= p.getQuantity()) {
+                                                        cartItem.setQuantity((int) (sumQuantityProduct)); //Set lại số lượng tăng lên
+                                                    } else {
+                                                        MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập không hợp lệ", Alert.AlertType.WARNING).show();
+                                                    }
+                                                    check = false;
                                                 }
-                                                check = false;
                                             }
-                                        }
-                                        if (check) {
-                                            cartItems.add(new OrderDetails(p, quantity));
+                                            if (check) {
+                                                cartItems.add(new OrderDetails(p, quantity));
+                                            }
+                                        } else {
+                                            // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
+                                            OrderDetails cartItem = new OrderDetails(p, quantity);
+                                            cartItems.add(cartItem);
                                         }
                                     } else {
-                                        // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
-                                        OrderDetails cartItem = new OrderDetails(p, quantity);
-                                        cartItems.add(cartItem);
+                                        MessageBox.getBox("Số lượng", "Số lượng nhập không hợp lệ", Alert.AlertType.ERROR).show();
                                     }
-                                } else {
-                                    MessageBox.getBox("Số lượng", "Số lượng nhập không hợp lệ", Alert.AlertType.ERROR).show();
+                                } catch (NumberFormatException ex) {
+                                    MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
                                 }
-                            } catch (NumberFormatException ex) {
-                                MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
+                            } else {
+                                OrderDetails cartItem = new OrderDetails(p, quantity);
+                                cartItems.add(cartItem);
                             }
-                        } else {
-                            OrderDetails cartItem = new OrderDetails(p, quantity);
-                            cartItems.add(cartItem);
                         }
+
                     } catch (NumberFormatException ex) {
                         MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
                     }
