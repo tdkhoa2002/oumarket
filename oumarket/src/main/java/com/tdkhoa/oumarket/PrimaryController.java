@@ -52,9 +52,10 @@ import services.OrderService;
 import services.ProductService;
 import utils.MessageBox;
 import pojo.Data;
+import com.tdkhoa.oumarket.LoginController;
 
 public class PrimaryController implements Initializable {
-
+    
     static ProductService pS = new ProductService();
     static CategoryService cS = new CategoryService();
     static EmployeeService eS = new EmployeeService();
@@ -120,6 +121,10 @@ public class PrimaryController implements Initializable {
 
     @FXML
     private VBox sceneVBox;
+    
+    @FXML
+    private TextField viewUser;
+//    
 
     @FXML
     List<Customer> customers;
@@ -150,7 +155,7 @@ public class PrimaryController implements Initializable {
                     Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-
+            this.viewUser.setText(lC.savedUsername);
             this.txtTotal.setText("0");
             this.txtTienKhachDua.setText("0");
             this.txtTienTraKhach.setText("0");
