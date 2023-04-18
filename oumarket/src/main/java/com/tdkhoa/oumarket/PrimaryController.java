@@ -607,14 +607,40 @@ public class PrimaryController implements Initializable {
                     Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-
             TableCell c = new TableCell();
             c.setGraphic(btnEdit);
             return c;
         });
 
-        this.tbProducts.getColumns().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colEdit, colDel);
-    } //Page load tất cả các sản phẩm
+            TableColumn colKM = new TableColumn("Add KM");
+            colKM.setCellFactory(r -> {
+                Button btnKM = new Button("Add KM");
+
+                btnKM.setOnAction(event -> {
+                    Button b = (Button) event.getSource();
+                    TableCell cell = (TableCell) b.getParent();
+                    pRow = (Product) cell.getTableRow().getItem();
+                    try {
+                        Stage stage = new Stage();
+                        // Tạo Scene mới
+                        Parent root = FXMLLoader.load(getClass().getResource("/fxml/changePromotion.fxml"));
+                        Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                        stage.setScene(scene);
+                        stage.setTitle("Thay đổi mã khuyến mãi");
+                        stage.show();
+                    } catch (IOException ex) {
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                });
+
+                TableCell c = new TableCell();
+                c.setGraphic(btnKM);
+                return c;
+            });
+
+            this.tbProducts.getColumns().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colEdit, colDel, colKM);
+         //Page load tất cả các sản phẩm
+    }
 
     private void loadTableEmployeesColumns() {
         TableColumn colId = new TableColumn("Mã nhân viên");

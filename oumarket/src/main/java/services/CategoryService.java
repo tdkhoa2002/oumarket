@@ -73,7 +73,6 @@ public class CategoryService {
                 conn.commit();
                 return true;
             }catch(SQLException ex) {
-                System.err.println(ex.getMessage());
                 return false;
             }
         }

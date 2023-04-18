@@ -24,29 +24,36 @@ import utils.MessageBox;
  * @author Khoa Tran
  */
 public class EditCategoryController {
-    @FXML private TextField nameCategory;
+
+    @FXML
+    private TextField nameCategory;
     Stage stageOut;
-    @FXML private VBox sceneVBox;
+    @FXML
+    private VBox sceneVBox;
     static CategoryService cS = new CategoryService();
-    
-    public void editCategoryHandler (ActionEvent evt) {
-        cRow.setName(this.nameCategory.getText());
-        try {
-            if (cS.editCategory(cRow)) {
-                Alert a = MessageBox.getBox("Danh mục", "Sửa danh mục thành công", Alert.AlertType.INFORMATION);
-                a.showAndWait().ifPresent(res -> {
-                    if (res == ButtonType.OK) {
-                        stageOut = (Stage) sceneVBox.getScene().getWindow();
-                        stageOut.close();
-                    }
-                });
+
+    public void editCategoryHandler(ActionEvent evt) {
+        if (!this.nameCategory.getText().trim().isEmpty()) {
+            cRow.setName(this.nameCategory.getText());
+            try {
+                if (cS.editCategory(cRow)) {
+                    Alert a = MessageBox.getBox("Danh mục", "Sửa danh mục thành công", Alert.AlertType.INFORMATION);
+                    a.showAndWait().ifPresent(res -> {
+                        if (res == ButtonType.OK) {
+                            stageOut = (Stage) sceneVBox.getScene().getWindow();
+                            stageOut.close();
+                        }
+                    });
+                } else {
+                    MessageBox.getBox("Danh mục", "Danh mục đã tồn tại", Alert.AlertType.ERROR).show();
+                }
+            } catch (SQLException ex) {
+                MessageBox.getBox("Danh mục", "Sửa danh mục thất bại", Alert.AlertType.ERROR).show();
+                Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
-            else {
-                MessageBox.getBox("Danh mục", "Danh mục đã tồn tại", Alert.AlertType.ERROR).show();
-            }
-        } catch (SQLException ex) {
-            MessageBox.getBox("Sản phẩm", "Thêm sản phẩm thất bại", Alert.AlertType.ERROR).show();
-            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        else {
+            MessageBox.getBox("Danh mục", "Tên danh mục không được để trống", Alert.AlertType.ERROR).show();
         }
     }
 }
