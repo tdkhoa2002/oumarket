@@ -52,9 +52,10 @@ import services.OrderService;
 import services.ProductService;
 import utils.MessageBox;
 import pojo.Data;
+import com.tdkhoa.oumarket.LoginController;
 
 public class PrimaryController implements Initializable {
-
+    
     static ProductService pS = new ProductService();
     static CategoryService cS = new CategoryService();
     static EmployeeService eS = new EmployeeService();
@@ -120,51 +121,10 @@ public class PrimaryController implements Initializable {
 
     @FXML
     private VBox sceneVBox;
-
-//    @FXML
-//    TableView<Product> tbProducts;
-//    @FXML
-//    TableView<Product> tbShowProducts;
-//
-//    @FXML
-//    TableView<OrderDetails> tbShowOrdersDetail;
-//    ObservableList<OrderDetails> cartItems = FXCollections.observableArrayList();
-//    double total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
-//
-//    @FXML
-//    TableView<Category> tbCategories;
-//    @FXML
-//    TableView<Employee> tbEmployees;
-//    @FXML
-//    TableView<Order> tbOrders;
-//    @FXML
-//    TableView<Customer> tbCustomers;
-//    @FXML
-//    TableView<Promotion> tbPromotions;
-//    @FXML
-//    ComboBox<Category> cbCategories;
-//    @FXML
-//    TextField txtTotal;
-//    @FXML
-//    private Button btnAddEmp;
-//    @FXML
-//    TextField txtPhone;
-//    @FXML
-//    TextField txtTienKhachDua;
-//    @FXML
-//    TextField txtTienTraKhach;
-//    @FXML
-//    private Button btnAddSP;
-//    @FXML
-//    private Button btnAddCate;
-//    @FXML
-//    private Button btnAddCustomer;
-//    @FXML
-//    private Button btnAddPromotion;
-//    @FXML
-//    private TextField txtSearch;
-//    @FXML
-//    private VBox sceneVBox;
+    
+    @FXML
+    private TextField viewUser;
+//    
     List<Customer> customers;
 
     Stage stageOut;
@@ -193,7 +153,7 @@ public class PrimaryController implements Initializable {
                     Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                 }
             });
-
+            this.viewUser.setText(lC.savedUsername);
             this.txtTotal.setText("0");
             this.txtTienKhachDua.setText("0");
             this.txtTienTraKhach.setText("0");
