@@ -7,6 +7,7 @@ package com.tdkhoa.oumarket;
 import static com.tdkhoa.oumarket.EditProductController.itemsUnit;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -72,20 +73,27 @@ public class AddCustomerController implements Initializable {
 
                     cus.setNgaySinh(formattedDateTime);
                     cus.setPhone(phone.getText());
-                    Alert a = MessageBox.getBox("Thêm khách hàng", "Bạn có chắc muốn thêm khách hàng không? ", Alert.AlertType.CONFIRMATION);
-                    a.showAndWait().ifPresent(res -> {
-                        if (res == ButtonType.OK) {
-                            try {
-                                cusService.addCustomer(cus);
-                            } catch (SQLException ex) {
-                                Logger.getLogger(AddCustomerController.class.getName()).log(Level.SEVERE, null, ex);
+                    LocalDate now = LocalDate.now();
+                    int yearOfNow = now.getYear();
+
+                    int yearOfBirthDay = Integer.parseInt(cus.getNgaySinh().substring(6, 10));
+                    if (yearOfNow - yearOfBirthDay < 16) {
+                        MessageBox.getBox("Khách hàng", "Khách hàng phải trên 16 tuổi", Alert.AlertType.ERROR).show();
+                    } else {
+                        Alert a = MessageBox.getBox("Thêm khách hàng", "Bạn có chắc muốn thêm khách hàng không? ", Alert.AlertType.CONFIRMATION);
+                        a.showAndWait().ifPresent(res -> {
+                            if (res == ButtonType.OK) {
+                                try {
+                                    cusService.addCustomer(cus);
+                                } catch (SQLException ex) {
+                                    Logger.getLogger(AddCustomerController.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+                                stageOut = (Stage) sceneVBox.getScene().getWindow();
+                                stageOut.close();
                             }
-                            stageOut = (Stage) sceneVBox.getScene().getWindow();
-                            stageOut.close();
-                        }
-                    });
-                }
-                else {
+                        });
+                    }
+                } else {
                     MessageBox.getBox("Khách hàng", "Số điện thoại phải đủ 10 ký tự", Alert.AlertType.WARNING).show();
                 }
             } catch (NumberFormatException ex) {

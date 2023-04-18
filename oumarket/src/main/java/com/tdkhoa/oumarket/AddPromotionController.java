@@ -49,26 +49,34 @@ public class AddPromotionController {
     public void addPromotion(ActionEvent evt) throws SQLException, ParseException {
         if (this.name.getText().isEmpty() || this.value.getText().isEmpty() || this.startTime.getValue() == null || this.endTime.getValue() == null) {
             MessageBox.getBox("Mã khuyến mãi", "Dữ liệu không được để trống", Alert.AlertType.WARNING).show();
-        } 
-        else {
+        } else {
             if (Integer.parseInt(this.value.getText()) < 0) {
                 MessageBox.getBox("Mã khuyến mãi", "Giá trị của mã khuyến mãi phải lớn hơn 0", Alert.AlertType.WARNING).show();
             } else {
                 Date startTime = Date.valueOf(this.startTime.getValue());
                 Date endTime = Date.valueOf(this.endTime.getValue());
-                Promotion p = new Promotion(this.name.getText(), Double.parseDouble(value.getText()), startTime, endTime);
-                Alert a = MessageBox.getBox("Mã khuyến mãi", "Bạn có chắc muốn thêm mã khuyến mãi này không? ", Alert.AlertType.CONFIRMATION);
-                a.showAndWait().ifPresent(res -> {
-                    if (res == ButtonType.OK) {
-                        try {
-                            proService.addPromotion(p);
-                        } catch (SQLException ex) {
-                            Logger.getLogger(AddPromotionController.class.getName()).log(Level.SEVERE, null, ex);
+                if (startTime.before(endTime)) {
+                    Promotion p = new Promotion(this.name.getText(), Double.parseDouble(value.getText()), startTime, endTime);
+                    Alert a = MessageBox.getBox("Mã khuyến mãi", "Bạn có chắc muốn thêm mã khuyến mãi này không? ", Alert.AlertType.CONFIRMATION);
+                    a.showAndWait().ifPresent(res -> {
+                        if (res == ButtonType.OK) {
+                            try {
+                                if (proService.addPromotion(p)) {
+                                    MessageBox.getBox("Mã khuyến mãi", "Thêm mã khuyến mãi thành công ", Alert.AlertType.CONFIRMATION).show();
+                                } else {
+                                    MessageBox.getBox("Mã khuyến mãi", "Thêm mã khuyến mãi thất bại", Alert.AlertType.ERROR).show();
+                                }
+                            } catch (SQLException ex) {
+                                Logger.getLogger(AddPromotionController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            stageOut = (Stage) sceneVBox.getScene().getWindow();
+                            stageOut.close();
                         }
-                        stageOut = (Stage) sceneVBox.getScene().getWindow();
-                        stageOut.close();
-                    }
-                });
+                    });
+                }
+                else {
+                    MessageBox.getBox("Khuyến mãi", "Thời gian không hợp lệ", Alert.AlertType.CONFIRMATION).show();
+                }
             }
         }
     }

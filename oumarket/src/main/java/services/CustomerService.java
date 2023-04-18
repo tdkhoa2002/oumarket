@@ -66,23 +66,12 @@ public class CustomerService {
             stm.setString(2, cus.getNgaySinh());
             stm.setString(3, cus.getPhone());
             stm.setInt(4, 0);
-
-            LocalDate now = LocalDate.now();
-            int yearOfNow = now.getYear();
-
-            int yearOfBirthDay = Integer.parseInt(cus.getNgaySinh().substring(6, 10));
-
             stm.executeUpdate();
-            if (yearOfNow - yearOfBirthDay < 16) {
-                MessageBox.getBox("Khách hàng", "Khách hàng phải trên 16 tuổi", Alert.AlertType.ERROR).show();
+            try {
+                conn.commit();
+                return true;
+            } catch (SQLException ex) {
                 return false;
-            } else {
-                try {
-                    conn.commit();
-                    return true;
-                } catch (SQLException ex) {
-                    return false;
-                }
             }
         }
     }

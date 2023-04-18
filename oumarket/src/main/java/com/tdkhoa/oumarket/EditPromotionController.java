@@ -51,23 +51,28 @@ public class EditPromotionController {
             } else {
                 Date startTime = Date.valueOf(this.startTime.getValue());
                 Date endTime = Date.valueOf(this.endTime.getValue());
-                proRow.setName(this.name.getText());
-                proRow.setValue(Double.parseDouble(this.value.getText()));
-                proRow.setTimeEnd(endTime);
-                proRow.setTimeStart(startTime);
-                try {
-                    if (cS.editCategory(cRow)) {
-                        Alert a = MessageBox.getBox("Danh mục", "Sửa danh mục thành công", Alert.AlertType.INFORMATION);
-                        a.showAndWait().ifPresent(res -> {
-                            if (res == ButtonType.OK) {
-                                stageOut = (Stage) sceneVBox.getScene().getWindow();
-                                stageOut.close();
-                            }
-                        });
+                if (startTime.before(endTime)) {
+                    proRow.setName(this.name.getText());
+                    proRow.setValue(Double.parseDouble(this.value.getText()));
+                    proRow.setTimeEnd(endTime);
+                    proRow.setTimeStart(startTime);
+                    try {
+                        if (proService.editPromotion(proRow)) {
+                            System.out.println(proRow.getId());
+                            Alert a = MessageBox.getBox("Mã khuyến mãi", "Sửa mã khuyến mãi thành công", Alert.AlertType.INFORMATION);
+                            a.showAndWait().ifPresent(res -> {
+                                if (res == ButtonType.OK) {
+                                    stageOut = (Stage) sceneVBox.getScene().getWindow();
+                                    stageOut.close();
+                                }
+                            });
+                        }
+                    } catch (SQLException ex) {
+                        MessageBox.getBox("Mã khuyến mãi", "Thêm sản phẩm thất bại", Alert.AlertType.ERROR).show();
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                } catch (SQLException ex) {
-                    MessageBox.getBox("Mã khuyến mãi", "Thêm sản phẩm thất bại", Alert.AlertType.ERROR).show();
-                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                } else {
+                    MessageBox.getBox("Mã Khuyến mãi", "Thời gian không hợp lệ", Alert.AlertType.CONFIRMATION).show();
                 }
             }
         }
