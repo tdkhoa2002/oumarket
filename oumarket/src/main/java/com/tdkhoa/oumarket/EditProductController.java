@@ -57,23 +57,16 @@ public class EditProductController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         CategoryService s = new CategoryService();
-        PromotionService promotionService = new PromotionService();
         txtName.setText(pRow.getName());
         txtPrice.setText(Double.toString(pRow.getPrice()));
         txtQuantity.setText(Integer.toString(pRow.getQuantity()));
         cbUnit.setValue(pRow.getUnit());
         cbCategories.setPromptText(pRow.getCategoryName());
-        cbPromotions.setPromptText(pRow.getPromotion_name());
-        System.out.println(pRow.getPromotion_name());
         this.cbUnit.setItems(FXCollections.observableArrayList(itemsUnit));
         try {
             List<Category> cates = s.getCategories(null);
-            List<Promotion> promotions = promotionService.getPromotions(null);
             this.cbCategories.setItems(FXCollections.observableList(cates));
-            this.cbPromotions.setItems(FXCollections.observableList(promotions));
         } catch (SQLException ex) {
-            Logger.getLogger(EditProductController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (ParseException ex) {
             Logger.getLogger(EditProductController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -82,31 +75,35 @@ public class EditProductController implements Initializable {
         try {
             double p = Double.parseDouble(this.txtPrice.getText());
             double b = Double.parseDouble(this.txtQuantity.getText());
-            if (Double.parseDouble(this.txtPrice.getText()) > 0 && !this.txtName.getText().isEmpty() && this.cbCategories.getValue() != null && this.cbPromotions.getValue() != null && this.cbUnit.getValue() != null) {
-                pRow.setName(this.txtName.getText());
-                pRow.setCategoryId(this.cbCategories.getSelectionModel().getSelectedItem().getId());
-                pRow.setQuantity(Integer.parseInt(this.txtQuantity.getText()));
-                pRow.setPrice(Double.parseDouble(this.txtPrice.getText()));
-                pRow.setUnit(this.cbUnit.getValue());
-                pRow.setPromotion_id(this.cbPromotions.getSelectionModel().getSelectedItem().getId());
-                pRow.setPromotion_name(this.cbPromotions.getSelectionModel().getSelectedItem().getName());
-
-                try {
-                    if (pS.editProduct(pRow)) {
-                        Alert a = MessageBox.getBox("Sản phẩm", "Sửa sản phẩm thành công ", Alert.AlertType.INFORMATION);
-                        a.showAndWait().ifPresent(res -> {
-                            if (res == ButtonType.OK) {
-                                stageOut = (Stage) sceneVBox.getScene().getWindow();
-                                stageOut.close();
-                            }
-                        });
-                    }
-                } catch (SQLException ex) {
-                    MessageBox.getBox("Product", "Sửa sản phẩm thất bại", Alert.AlertType.ERROR).show();
-                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            if (p < 0 || b < 0) {
+                MessageBox.getBox("Sản phẩm", "Dữ liệu không hợp lệ", Alert.AlertType.WARNING).show();
             } else {
-                MessageBox.getBox("Sản phẩm", "Vui lòng điền đủ cái trường thông tin", Alert.AlertType.WARNING).show();
+                if (!this.txtPrice.getText().isEmpty() && !this.txtName.getText().isEmpty() && this.cbCategories.getValue() != null  && this.cbUnit.getValue() != null) {
+                    pRow.setName(this.txtName.getText());
+                    pRow.setCategoryId(this.cbCategories.getSelectionModel().getSelectedItem().getId());
+                    pRow.setQuantity(Integer.parseInt(this.txtQuantity.getText()));
+                    pRow.setPrice(Double.parseDouble(this.txtPrice.getText()));
+                    pRow.setUnit(this.cbUnit.getValue());
+                    try {
+                        if (pS.editProduct(pRow)) {
+                            Alert a = MessageBox.getBox("Sản phẩm", "Sửa sản phẩm thành công ", Alert.AlertType.INFORMATION);
+                            a.showAndWait().ifPresent(res -> {
+                                if (res == ButtonType.OK) {
+                                    stageOut = (Stage) sceneVBox.getScene().getWindow();
+                                    stageOut.close();
+                                }
+                            });
+                        } else {
+                            MessageBox.getBox("Sản phẩm", "Sản phẩm đã tồn tại", Alert.AlertType.WARNING).show();
+                        }
+                    } catch (SQLException ex) {
+                        System.out.println("Catch");
+                        MessageBox.getBox("Sản phẩm", "Sửa sản phẩm thất bại", Alert.AlertType.ERROR).show();
+                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    MessageBox.getBox("Sản phẩm", "Vui lòng điền đủ cái trường thông tin", Alert.AlertType.WARNING).show();
+                }
             }
         } catch (NumberFormatException ex) {
             MessageBox.getBox("Sản phẩm", "Dữ liệu không hợp lệ", Alert.AlertType.WARNING).show();

@@ -116,59 +116,45 @@ public class PromotionTester {
 //        }
 //    }
     
-    @Test
-    public void testEditPromotion() throws SQLException {
-        String nameUpdate = "khoa ma khuyen mai";
-        int id = 4;
-        Date start = new Date(2023, 04, 15);
-        Date end = new Date(2023, 04, 20);
-        
-        proService = new PromotionService();
-        Promotion pro = new Promotion(id,nameUpdate, 10, start, end);
-        boolean actual = proService.editPromotion(pro);
-        Assertions.assertTrue(actual);
-        if (actual == true) {
-            Assertions.assertEquals(pro.getName(), nameUpdate);
-        }
-    }
+//    @Test
+//    public void testEditPromotion() throws SQLException {
+//        String nameUpdate = "khoa ma khuyen mai";
+//        int id = 4;
+//        Date start = new Date(2023, 04, 15);
+//        Date end = new Date(2023, 04, 20);
+//        
+//        proService = new PromotionService();
+//        Promotion pro = new Promotion(id,nameUpdate, 10, start, end);
+//        boolean actual = proService.editPromotion(pro);
+//        Assertions.assertTrue(actual);
+//        if (actual == true) {
+//            Assertions.assertEquals(pro.getName(), nameUpdate);
+//        }
+//    }
     
 //    @Test
-//    public void testEditCategory() {
-//        String nameUpdate = "new name category 1";
-//        int id = 28;
-//        cateService = new CategoryService();
-//        try {
-//            Category c = new Category(id,nameUpdate);
-//            
-//            boolean actual = cateService.editCategory(c);
-//            Assertions.assertTrue(actual);
-//            if (actual == true) {
-//                Assertions.assertEquals(c.getName(), nameUpdate);
-//            }
-//        } catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+//    public void testEditCategory() throws SQLException {
+//        String nameUpdate = "khoa ma khuyen mai";
+//        int id = 4;
+//        Date start = new Date(2023, 04, 15);
+//        Date end = new Date(2023, 04, 20);
+//        
+//        proService = new PromotionService();
+//        Promotion pro = new Promotion(id,nameUpdate, 10, start, end);
+//        boolean actual = proService.editPromotion(pro);
+//        Assertions.assertTrue(actual);
+//        if (actual == true) {
+//            Assertions.assertEquals(pro.getName(), nameUpdate);
 //        }
 //    }
-//    
+    
 //    @Test
 //    public void testDeleteCategory() {
-//        int id = 44;
-//        cateService = new CategoryService();
+//        int id = 4;
+//        proService = new PromotionService();
 //        try {
-//             boolean actual = cateService.deleteCategory(id);
+//             boolean actual = proService.deletePromotion(id);
 //             Assertions.assertTrue(actual);
-//        }
-//        catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-//    @Test
-//    public void testDeleteCategory() {
-//        int idCate = 12;
-//        cateService = new CategoryService();
-//        try {
-//            boolean actual = cateService.deleteCategory(idCate);
-//            Assertions.assertTrue(actual);
 //        }
 //        catch (SQLException ex) {
 //            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);

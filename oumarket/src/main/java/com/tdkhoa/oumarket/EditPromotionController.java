@@ -46,34 +46,41 @@ public class EditPromotionController {
         if (this.name.getText().isEmpty() || this.value.getText().isEmpty() || this.startTime.getValue() == null || this.endTime.getValue() == null) {
             MessageBox.getBox("Mã khuyến mãi", "Dữ liệu không được để trống", Alert.AlertType.WARNING).show();
         } else {
-            if (Integer.parseInt(this.value.getText()) < 0) {
-                MessageBox.getBox("Mã khuyến mãi", "Giá trị của mã khuyến mãi phải lớn hơn 0", Alert.AlertType.WARNING).show();
-            } else {
-                Date startTime = Date.valueOf(this.startTime.getValue());
-                Date endTime = Date.valueOf(this.endTime.getValue());
-                if (startTime.before(endTime)) {
-                    proRow.setName(this.name.getText());
-                    proRow.setValue(Double.parseDouble(this.value.getText()));
-                    proRow.setTimeEnd(endTime);
-                    proRow.setTimeStart(startTime);
-                    try {
-                        if (proService.editPromotion(proRow)) {
-                            System.out.println(proRow.getId());
-                            Alert a = MessageBox.getBox("Mã khuyến mãi", "Sửa mã khuyến mãi thành công", Alert.AlertType.INFORMATION);
-                            a.showAndWait().ifPresent(res -> {
-                                if (res == ButtonType.OK) {
-                                    stageOut = (Stage) sceneVBox.getScene().getWindow();
-                                    stageOut.close();
-                                }
-                            });
-                        }
-                    } catch (SQLException ex) {
-                        MessageBox.getBox("Mã khuyến mãi", "Thêm sản phẩm thất bại", Alert.AlertType.ERROR).show();
-                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+            try {
+                int value = Integer.parseInt(this.value.getText());
+                if (Integer.parseInt(this.value.getText()) < 0) {
+                    MessageBox.getBox("Mã khuyến mãi", "Giá trị của mã khuyến mãi phải lớn hơn 0", Alert.AlertType.WARNING).show();
                 } else {
-                    MessageBox.getBox("Mã Khuyến mãi", "Thời gian không hợp lệ", Alert.AlertType.CONFIRMATION).show();
+                    Date startTime = Date.valueOf(this.startTime.getValue());
+                    Date endTime = Date.valueOf(this.endTime.getValue());
+                    if (startTime.before(endTime)) {
+                        proRow.setName(this.name.getText());
+                        proRow.setValue(Double.parseDouble(this.value.getText()));
+                        proRow.setTimeEnd(endTime);
+                        proRow.setTimeStart(startTime);
+                        try {
+                            if (proService.editPromotion(proRow)) {
+                                System.out.println(proRow.getId());
+                                Alert a = MessageBox.getBox("Mã khuyến mãi", "Sửa mã khuyến mãi thành công", Alert.AlertType.INFORMATION);
+                                a.showAndWait().ifPresent(res -> {
+                                    if (res == ButtonType.OK) {
+                                        stageOut = (Stage) sceneVBox.getScene().getWindow();
+                                        stageOut.close();
+                                    }
+                                });
+                            } else {
+                                MessageBox.getBox("Mã khuyến mãi", "Đã tồn tại mã khuyến mãi này", Alert.AlertType.ERROR).show();
+                            }
+                        } catch (SQLException ex) {
+                            MessageBox.getBox("Mã khuyến mãi", "Thêm mã khuyến mãi thất bại", Alert.AlertType.ERROR).show();
+                            Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    } else {
+                        MessageBox.getBox("Mã Khuyến mãi", "Thời gian không hợp lệ", Alert.AlertType.CONFIRMATION).show();
+                    }
                 }
+            } catch (NumberFormatException ex) {
+                MessageBox.getBox("Mã khuyến mãi", "Dữ liệu không hợp lệ", Alert.AlertType.ERROR).show();
             }
         }
     }

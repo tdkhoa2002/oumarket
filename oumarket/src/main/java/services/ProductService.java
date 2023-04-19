@@ -30,7 +30,6 @@ public class ProductService {
             stmCheckUnique.setString(1, p.getName());
             ResultSet resultSet = stmCheckUnique.executeQuery();
             if (resultSet.next()) {
-                MessageBox.getBox("Sản phẩm", "Sản phẩm này đã tồn tại", Alert.AlertType.ERROR).show();
                 return false;
             }
             sql = "INSERT INTO products(id, name, category_id, price, unit, quantity) VALUES(?, ?, ?, ?, ?, ?)"; // SQL injection
@@ -116,6 +115,29 @@ public class ProductService {
 
     public boolean editProduct(Product p) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
+            String sql = "SELECT * FROM products WHERE name = ?";
+            PreparedStatement stmCheckUnique = conn.prepareCall(sql);
+            stmCheckUnique.setString(1, p.getName());
+            ResultSet resultSet = stmCheckUnique.executeQuery();
+            if (resultSet.next()) {
+                return false;
+            }
+            sql = "UPDATE products SET name =?, category_id =?, price =?, unit =?, quantity=?, promotion_id = ? WHERE id=?";
+            PreparedStatement stm = conn.prepareCall(sql);
+            stm.setString(1, p.getName());
+            stm.setInt(2, p.getCategoryId());
+            stm.setDouble(3, p.getPrice());
+            stm.setString(4, p.getUnit());
+            stm.setInt(5, p.getQuantity());
+            stm.setInt(6, p.getPromotion_id());
+            stm.setString(7, p.getId());
+            stm.executeUpdate();
+            return true;
+        }
+    }
+
+    public boolean updatePromotion(Product p) throws SQLException {
+        try (Connection conn = JdbcUtils.getConn()) {
             String sql = "UPDATE products SET name =?, category_id =?, price =?, unit =?, quantity=?, promotion_id = ? WHERE id=?";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, p.getName());
@@ -125,8 +147,8 @@ public class ProductService {
             stm.setInt(5, p.getQuantity());
             stm.setInt(6, p.getPromotion_id());
             stm.setString(7, p.getId());
-            
-            return stm.executeUpdate() > 0;
+            stm.executeUpdate();
+            return true;
         }
     }
 }

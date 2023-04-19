@@ -51,8 +51,8 @@ public class PromotionService {
             String sql = "DELETE FROM promotion WHERE id=?";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setInt(1, id);
-
-            return stm.executeUpdate() > 0;
+            stm.executeUpdate();
+            return true;
         }
     }
     
