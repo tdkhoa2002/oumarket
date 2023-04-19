@@ -39,13 +39,12 @@ public class OrderDetailsService {
                 conn.commit();
                 return true;
             } catch (SQLException ex) {
-                System.err.println(ex.getMessage());
                 return false;
             }
         }
     }
     
-    public void updateQuantityInStock(ObservableList<OrderDetails> orderDetailsList) throws SQLException {
+    public boolean updateQuantityInStock(ObservableList<OrderDetails> orderDetailsList) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "UPDATE products SET quantity = quantity-? WHERE id =?";
             PreparedStatement prepare = conn.prepareStatement(sql);
@@ -54,6 +53,7 @@ public class OrderDetailsService {
                 prepare.setString(2, oD.getProduct().getId());
                 prepare.executeUpdate();
             }
+            return true;
         }
     }
     

@@ -20,11 +20,11 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         this.Stage = stage;
-//        scene = new Scene(loadFXML("login"), 600, 400);
-//        stage.setScene(scene);
-//        stage.setTitle("Đăng Nhập");
-        scene = new Scene(loadFXML("primary"));
+        scene = new Scene(loadFXML("login"), 600, 400);
         stage.setScene(scene);
+        stage.setTitle("Đăng Nhập");
+//        scene = new Scene(loadFXML("primary"));
+//        stage.setScene(scene);
         stage.show();
     }
 

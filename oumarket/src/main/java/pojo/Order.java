@@ -15,29 +15,30 @@ import java.util.UUID;
  * @author Khoa Tran
  */
 public class Order {
+
     private String id;
     private String orderDate;
     private Double total;
     private Double tienKhachDua;
     private Double tienTraKhach;
-    
+
     {
         setId(UUID.randomUUID().toString());
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         setOrderDate(currentDate.format(formatter));
     }
-    public Order () {
-        
+
+    public Order() {
+
     }
-    
-    public Order (String orderDate, double total, double tienKhachDua, double tienTraKhach) {
-        
+
+    public Order(String orderDate, double total, double tienKhachDua, double tienTraKhach) {
         this.total = total;
         this.tienKhachDua = tienKhachDua;
         this.tienTraKhach = tienTraKhach;
     }
-    
+
     public Order(String id, String orderDate, double total) {
         this.id = id;
         this.total = total;
@@ -113,5 +114,5 @@ public class Order {
     public void setTienTraKhach(Double tienTraKhach) {
         this.tienTraKhach = tienTraKhach;
     }
-    
+
 }

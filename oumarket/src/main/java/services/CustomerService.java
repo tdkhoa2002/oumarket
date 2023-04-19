@@ -53,11 +53,6 @@ public class CustomerService {
             stmCheckUnique.setString(1, cus.getPhone());
             ResultSet resultSet = stmCheckUnique.executeQuery();
             if (resultSet.next()) {
-                MessageBox.getBox("Khách hàng", "Khách hàng này đã tồn tại", Alert.AlertType.ERROR).show();
-                return false;
-            }
-            if (cus.getNgaySinh().length() != 10) {
-                MessageBox.getBox("Khách hàng", "Số điện thoại phải 10 ký tự", Alert.AlertType.ERROR).show();
                 return false;
             }
             sql = "INSERT INTO customer(name,ngay_sinh, phone, point) VALUES(?,?,?,?)"; // SQL injection
@@ -92,8 +87,8 @@ public class CustomerService {
             double p = c.getPoint() + total * 0.00001;
             stm.setDouble(1, p);
             stm.setString(2, c.getName());
-
-            return stm.executeUpdate() > 0;
+            stm.executeUpdate();
+            return true;
         }
     }
 }

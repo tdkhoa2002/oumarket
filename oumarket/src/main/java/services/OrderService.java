@@ -18,9 +18,11 @@ import pojo.Order;
  * @author Khoa Tran
  */
 public class OrderService {
+
     public static Order order;
+
     public boolean addOrder(Order o) throws SQLException {
-        try ( Connection conn = JdbcUtils.getConn()) {
+        try (Connection conn = JdbcUtils.getConn()) {
             conn.setAutoCommit(false);
             String sql = "INSERT INTO orders(id, total, orderDate, tienKhachDua, tienTraLai) VALUES(?,?,?, ?, ?)"; // SQL injection
             PreparedStatement stm = conn.prepareCall(sql);
@@ -29,35 +31,34 @@ public class OrderService {
             stm.setString(3, o.getOrderDate());
             stm.setDouble(4, o.getTienKhachDua());
             stm.setDouble(5, o.getTienTraKhach());
-            
+
             stm.executeUpdate();
             try {
                 conn.commit();
                 return true;
             } catch (SQLException ex) {
-                System.err.println(ex.getMessage());
                 return false;
             }
         }
     }
-    
+
     public Order findOrder(String id) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
             String sql = "SELECT * FROM orders WHERE id = ?";
             PreparedStatement stm = conn.prepareCall(sql);
             stm.setString(1, id);
             ResultSet rs = stm.executeQuery();
-            while(rs.next()){
-                Order o = new Order(rs.getString("orderDate"), rs.getDouble("total"),rs.getDouble("tienKhachDua"), rs.getDouble("tienTraLai"));
+            while (rs.next()) {
+                Order o = new Order(rs.getString("orderDate"), rs.getDouble("total"), rs.getDouble("tienKhachDua"), rs.getDouble("tienTraLai"));
                 return o;
             }
         }
         return null;
     }
-    
+
     public List<Order> getOrders() throws SQLException {
         List<Order> ordersList = new ArrayList<>();
-        try ( Connection conn = JdbcUtils.getConn() ) {
+        try (Connection conn = JdbcUtils.getConn()) {
             String sql = "SELECT * FROM orders";
             PreparedStatement stm = conn.prepareCall(sql);
             ResultSet rs = stm.executeQuery();
@@ -68,23 +69,6 @@ public class OrderService {
                 ordersList.add(new Order(id, time, total));
             }
         }
-          return ordersList;
+        return ordersList;
     }
-
-    /**
-     * @return the order
-     */
-    public static Order getOrder() {
-        return order;
-    }
-
-    /**
-     * @param aOrder the order to set
-     */
-    public static void setOrder(Order aOrder) {
-        order = aOrder;
-    }
-    
-    
-    
 }

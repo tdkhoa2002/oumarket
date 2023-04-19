@@ -84,7 +84,12 @@ public class AddCustomerController implements Initializable {
                         a.showAndWait().ifPresent(res -> {
                             if (res == ButtonType.OK) {
                                 try {
-                                    cusService.addCustomer(cus);
+                                    if(cusService.addCustomer(cus)) {
+                                        MessageBox.getBox("Khách hàng", "Thêm khách hàng thành công", Alert.AlertType.INFORMATION).show();
+                                    }
+                                    else {
+                                        MessageBox.getBox("Khách hàng", "Khách hàng này đã tồn tại", Alert.AlertType.ERROR).show();
+                                    }
                                 } catch (SQLException ex) {
                                     Logger.getLogger(AddCustomerController.class.getName()).log(Level.SEVERE, null, ex);
                                 }
