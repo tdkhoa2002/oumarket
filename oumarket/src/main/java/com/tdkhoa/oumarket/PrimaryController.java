@@ -967,7 +967,7 @@ public class PrimaryController implements Initializable {
         if (this.cartItems.isEmpty()) {
             MessageBox.getBox("Hóa đơn", "Không có sản phẩm trong giỏ hàng", Alert.AlertType.WARNING).show();
         } else {
-            if (tienTraKhach >= 0 && tienKhachDua >= total) {
+            if (tienTraKhach >= 0 && tienKhachDua >= Double.parseDouble(this.txtTotal.getText())) {
                 Order o = new Order();
                 String phone = txtPhone.getText();
                 System.out.println(phone);
