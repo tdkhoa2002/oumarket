@@ -38,6 +38,13 @@ public class Order {
         this.tienKhachDua = tienKhachDua;
         this.tienTraKhach = tienTraKhach;
     }
+    public Order(String id, String orderDate, double total, double tienKhachDua, double tienTraKhach) {
+        this.id = id;
+        this.orderDate = orderDate;
+        this.total = total;
+        this.tienKhachDua = tienKhachDua;
+        this.tienTraKhach = tienTraKhach;
+    }
 
     public Order(String id, String orderDate, double total) {
         this.id = id;

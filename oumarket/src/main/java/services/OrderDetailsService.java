@@ -46,11 +46,11 @@ public class OrderDetailsService {
     
     public boolean updateQuantityInStock(ObservableList<OrderDetails> orderDetailsList) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "UPDATE products SET quantity = quantity-? WHERE id =?";
+            String sql = "UPDATE products SET quantity = quantity-? WHERE name =?";
             PreparedStatement prepare = conn.prepareStatement(sql);
             for (OrderDetails oD : orderDetailsList) {
                 prepare.setDouble(1, oD.getQuantity());
-                prepare.setString(2, oD.getProduct().getId());
+                prepare.setString(2, oD.getProduct().getName());
                 prepare.executeUpdate();
             }
             return true;

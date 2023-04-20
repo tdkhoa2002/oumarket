@@ -94,47 +94,47 @@ public class CustomerTester {
         }
     }
     
-//    @Test
-//    public void testAddCustomerSuccessfull() throws SQLException, ParseException {
-//        try {
-//            cusS = new CustomerService();
-//            Customer cus = new Customer("Pham Thu Trang", "15/09/2002", "0905953328", 0);
-//            boolean actual = cusS.addCustomer(cus);
-//            Assertions.assertTrue(actual);
-//
-//            String sql = "SELECT * FROM customer where phone = ?";
-//            PreparedStatement stm = JdbcUtils.getConn().prepareCall(sql);
-//            stm.setString(1, cus.getPhone());
-//
-//            ResultSet rs = stm.executeQuery();
-//            Assertions.assertNotNull(rs.next());
-//            Assertions.assertEquals(cus.getPhone(), rs.getString("phone")); //kiem tra da them vao hay chua
-//        }
-//        catch (SQLException ex) {
-//            Logger.getLogger(CustomerTester.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+    @Test
+    public void testAddCustomerSuccessfull() throws SQLException, ParseException {
+        try {
+            cusS = new CustomerService();
+            Customer cus = new Customer("Nguyen Van Phuoc", "01/01/2002", "0905953329", 0);
+            boolean actual = cusS.addCustomer(cus);
+            Assertions.assertTrue(actual);
+
+            String sql = "SELECT * FROM customer where phone = ?";
+            PreparedStatement stm = JdbcUtils.getConn().prepareCall(sql);
+            stm.setString(1, cus.getPhone());
+
+            ResultSet rs = stm.executeQuery();
+            Assertions.assertNotNull(rs.next());
+            Assertions.assertEquals(cus.getPhone(), rs.getString("phone")); //kiem tra da them vao hay chua
+        }
+        catch (SQLException ex) {
+            Logger.getLogger(CustomerTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
-//    @Test
-//    public void testAddCustomerFail() throws SQLException, ParseException {   //Lỗi tồn tại khách hàng
-//        try {
-//            cusS = new CustomerService();
-//            Customer cus = new Customer("Pham Thu Trang", "19/05/2002", "0905953328", 0);
-//            boolean actual = cusS.addCustomer(cus);
-//            Assertions.assertTrue(actual);
-//
-//            String sql = "SELECT * FROM customer where phone = ?";
-//            PreparedStatement stm = JdbcUtils.getConn().prepareCall(sql);
-//            stm.setString(1, cus.getPhone());
-//
-//            ResultSet rs = stm.executeQuery();
-//            Assertions.assertNotNull(rs.next());
-//            Assertions.assertEquals(cus.getPhone(), rs.getString("phone")); //kiem tra da them vao hay chua
-//        }
-//        catch (SQLException ex) {
-//            Logger.getLogger(CustomerTester.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+    @Test
+    public void testAddCustomerFail() throws SQLException, ParseException {   //Lỗi tồn tại khách hàng
+        try {
+            cusS = new CustomerService();
+            Customer cus = new Customer("Nguyen Van Phuoc", "01/01/2002", "0905953328", 0);
+            boolean actual = cusS.addCustomer(cus);
+            Assertions.assertTrue(actual);
+
+            String sql = "SELECT * FROM customer where phone = ?";
+            PreparedStatement stm = JdbcUtils.getConn().prepareCall(sql);
+            stm.setString(1, cus.getPhone());
+
+            ResultSet rs = stm.executeQuery();
+            Assertions.assertNotNull(rs.next());
+            Assertions.assertEquals(cus.getPhone(), rs.getString("phone")); //kiem tra da them vao hay chua
+        }
+        catch (SQLException ex) {
+            Logger.getLogger(CustomerTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     @Test
     public void testPlusPoint() {

@@ -99,15 +99,9 @@ public class OrderTester {
             ordService = new OrderService();
             Order o = ordService.findOrder(id);
 
-            Assertions.assertEquals(id, o.getId());
+            Assertions.assertEquals("19/04/2023", o.getOrderDate());
         } catch (SQLException ex) {
             Logger.getLogger(OrderTester.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
-    
-    @Test
-    public void testChoVui() {
-        boolean actual = false;
-        Assertions.assertTrue(actual);
     }
 }

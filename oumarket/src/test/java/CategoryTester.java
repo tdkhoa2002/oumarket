@@ -57,26 +57,26 @@ public class CategoryTester {
 //        }
 //    }
     
-//    @Test
-//    public void testAddCategory() throws SQLException {
-//        try {
-//            cateService = new CategoryService();
-//            Category cate = new Category("Ve sinh nha cua 6");
-//            boolean actual = cateService.addCategory(cate);
-//            Assertions.assertTrue(actual);
-//
-//            String sql = "SELECT * FROM categories where name = ?";
-//            PreparedStatement stm = JdbcUtils.getConn().prepareCall(sql);
-//            stm.setString(1, cate.getName());
-//
-//            ResultSet rs = stm.executeQuery();
-//            Assertions.assertNotNull(rs.next());
-//            Assertions.assertEquals(cate.getName(), rs.getString("name")); //kiem tra da them vao hay chua
-//        }
-//        catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+    @Test
+    public void testAddCategory() throws SQLException {
+        try {
+            cateService = new CategoryService();
+            Category cate = new Category("Ve sinh nha cua");
+            boolean actual = cateService.addCategory(cate);
+            Assertions.assertTrue(actual);
+
+            String sql = "SELECT * FROM categories where name = ?";
+            PreparedStatement stm = JdbcUtils.getConn().prepareCall(sql);
+            stm.setString(1, cate.getName());
+
+            ResultSet rs = stm.executeQuery();
+            Assertions.assertNotNull(rs.next());
+            Assertions.assertEquals(cate.getName(), rs.getString("name")); //kiem tra da them vao hay chua
+        }
+        catch (SQLException ex) {
+            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
 //    @Test
 //    public void testAddCategory() throws SQLException {
@@ -99,32 +99,14 @@ public class CategoryTester {
 //        }
 //    }
     
-    @Test
-    public void testEditCategory() {
-        String nameUpdate = "khoa danh muc 1";
-        int id = 28;
-        cateService = new CategoryService();
-        try {
-            Category c = new Category(id,nameUpdate);
-            
-            boolean actual = cateService.editCategory(c);
-            Assertions.assertTrue(actual);
-            if (actual == true) {
-                Assertions.assertEquals(c.getName(), nameUpdate);
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
 //    @Test
 //    public void testEditCategory() {
-//        String nameUpdate = "new name category 1";
+//        String nameUpdate = "khoa danh muc 1";
 //        int id = 28;
 //        cateService = new CategoryService();
 //        try {
 //            Category c = new Category(id,nameUpdate);
-//            
+//
 //            boolean actual = cateService.editCategory(c);
 //            Assertions.assertTrue(actual);
 //            if (actual == true) {
@@ -134,29 +116,34 @@ public class CategoryTester {
 //            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
-//    
-//    @Test
-//    public void testDeleteCategory() {
-//        int id = 44;
-//        cateService = new CategoryService();
-//        try {
-//             boolean actual = cateService.deleteCategory(id);
-//             Assertions.assertTrue(actual);
-//        }
-//        catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
-//    @Test
-//    public void testDeleteCategory() {
-//        int idCate = 12;
-//        cateService = new CategoryService();
-//        try {
-//            boolean actual = cateService.deleteCategory(idCate);
-//            Assertions.assertTrue(actual);
-//        }
-//        catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//    }
+    
+    @Test
+    public void testEditCategory() {
+        String nameUpdate = "Trang tri noi that";
+        int id = 48;
+        cateService = new CategoryService();
+        try {
+            Category c = new Category(id,nameUpdate);
+
+            boolean actual = cateService.editCategory(c);
+            Assertions.assertTrue(actual);
+            if (actual == true) {
+                Assertions.assertEquals(c.getName(), nameUpdate);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    @Test
+    public void testDeleteCategory() {
+        int id = 41;
+        cateService = new CategoryService();
+        try {
+             boolean actual = cateService.deleteCategory(id);
+             Assertions.assertTrue(actual);
+        }
+        catch (SQLException ex) {
+            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

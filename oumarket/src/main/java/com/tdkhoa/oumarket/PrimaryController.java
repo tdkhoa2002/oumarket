@@ -53,9 +53,11 @@ import services.ProductService;
 import utils.MessageBox;
 import pojo.Data;
 import com.tdkhoa.oumarket.LoginController;
+import java.util.Collection;
+import java.util.Iterator;
 
 public class PrimaryController implements Initializable {
-    
+
     static ProductService pS = new ProductService();
     static CategoryService cS = new CategoryService();
     static EmployeeService eS = new EmployeeService();
@@ -121,7 +123,7 @@ public class PrimaryController implements Initializable {
 
     @FXML
     private VBox sceneVBox;
-    
+
     @FXML
     private TextField viewUser;
 //    
@@ -135,11 +137,13 @@ public class PrimaryController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         try {
             this.txtPhone.textProperty().addListener((observable, oldValue, newValue) -> {
+//                this.txtPhone.getText().replaceAll("\\s+", "");
                 if (newValue.length() > 10) {
                     this.txtPhone.setText(oldValue);
                 }
                 try {
                     if (newValue.length() == 10) {
+                        this.customers = cusS.getCustomers();
                         Customer c = cusS.findCustomerByPhoneNumber(customers, this.txtPhone.getText());
                         if (c != null) {
                             MessageBox.getBox("Tìm kiếm khách hàng", "Đã tìm thấy khách hàng", Alert.AlertType.CONFIRMATION).show();
@@ -185,7 +189,7 @@ public class PrimaryController implements Initializable {
 
         this.txtSearch.textProperty().addListener(e -> {
             try {
-                this.loadProductsData(this.txtSearch.getText());
+                this.loadProductsData(this.txtSearch.getText().replaceAll("\\s+", ""));
             } catch (SQLException ex) {
                 Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -455,50 +459,41 @@ public class PrimaryController implements Initializable {
                 quantityTextField.setText("0");
                 Button saveButton = new Button("Save");
                 saveButton.setOnAction(event -> {
+                    double quantity = Double.parseDouble(quantityTextField.getText().trim());
+                    double sumQuantityProduct = 0;
+                    boolean checkAdd = true;
                     try {
-                        Double quantity = Double.parseDouble(quantityTextField.getText().trim());
-                        boolean check = true;
-                        double sumQuantityProduct = 0;
                         if (quantity > 0 && p.getQuantity() >= quantity) {
-                            if (!p.getUnit().equals("Kg")) {
-                                try {
-                                    int q = Integer.parseInt(quantityTextField.getText().trim());
-                                    //Kiem tra xem san pham do da co trong gio hang hay chua
-                                    if (!cartItems.isEmpty()) { //Nếu mảng đó co sản phẩm
-                                        for (OrderDetails cartItem : cartItems) { //Chạy vòng lặp từng sản phẩm
-                                            if (cartItem.getProduct().getId().equals(p.getId())) { //Nếu sản phẩm vừa thêm vào trùng với sản phẩm đã có
-                                                sumQuantityProduct = cartItem.getQuantity() + quantity;
-                                                if (sumQuantityProduct <= p.getQuantity()) {
-                                                    cartItem.setQuantity((int) (sumQuantityProduct)); //Set lại số lượng tăng lên
-                                                } else {
-                                                    MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập không hợp lệ", Alert.AlertType.WARNING).show();
-                                                }
-                                                check = false;
-                                            }
+                            if (!p.getUnit().equals("Kg")) { ///Neu khac kg
+                                //parse ve int
+                                int parseTest = Integer.parseInt(quantityTextField.getText().trim());
+                            }
+                            if (!cartItems.isEmpty()) { //Neu trong gio hang co san pham\
+                                for (OrderDetails cartItem : cartItems) {
+                                    if (cartItem.getProduct().getId().equals(p.getId())) { //Neu san pham them vao co trong gio hang
+                                        sumQuantityProduct = cartItem.getQuantity() + quantity;
+                                        if (sumQuantityProduct <= p.getQuantity()) {
+                                            cartItem.setQuantity(sumQuantityProduct);
+                                            System.out.println("Cap nhat so luong san pham thanh cong");
+                                            System.out.println(cartItem.getProduct().getId());
+                                            System.out.println(p.getId());
+                                        } else {
+                                            MessageBox.getBox("Số lượng sản phẩm", "Quá số lượng kho", Alert.AlertType.WARNING).show();
                                         }
-                                        if (check) {
-                                            cartItems.add(new OrderDetails(p, quantity));
-                                        }
-                                    } else {
-                                        // Lưu số lượng sản phẩm vào một biến hoặc gọi một phương thức khác
-                                        OrderDetails cartItem = new OrderDetails(p, quantity);
-                                        cartItems.add(cartItem);
+                                        checkAdd = false;
+                                        break;
                                     }
-                                } catch (NumberFormatException ex) {
-                                    MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
+                                }
+                                if (checkAdd) {
+                                    cartItems.add(new OrderDetails(p, quantity));
                                 }
                             } else {
-                                OrderDetails cartItem = new OrderDetails(p, quantity);
-                                cartItems.add(cartItem);
+                                cartItems.add(new OrderDetails(p, quantity));
                             }
-                        } else {
-                            MessageBox.getBox("Số lượng", "Số lượng nhập không hợp lệ", Alert.AlertType.ERROR).show();
                         }
-
                     } catch (NumberFormatException ex) {
                         MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
                     }
-
                     total = cartItems.stream().mapToDouble(OrderDetails::getTotal).sum();
                     txtTotal.setText(Double.toString(total));
 
@@ -598,7 +593,6 @@ public class PrimaryController implements Initializable {
                     Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
                     stage.setScene(scene);
                     stage.setTitle("Chỉnh sửa sản phẩm");
-
                     stage.setOnHidden(e -> {//xử lý khi sự kiện stage đóng lại
                         try {
                             loadProductsData(null);
@@ -617,34 +611,34 @@ public class PrimaryController implements Initializable {
             return c;
         });
 
-            TableColumn colKM = new TableColumn("Add KM");
-            colKM.setCellFactory(r -> {
-                Button btnKM = new Button("Add KM");
+        TableColumn colKM = new TableColumn("Add KM");
+        colKM.setCellFactory(r -> {
+            Button btnKM = new Button("Add KM");
 
-                btnKM.setOnAction(event -> {
-                    Button b = (Button) event.getSource();
-                    TableCell cell = (TableCell) b.getParent();
-                    pRow = (Product) cell.getTableRow().getItem();
-                    try {
-                        Stage stage = new Stage();
-                        // Tạo Scene mới
-                        Parent root = FXMLLoader.load(getClass().getResource("/fxml/changePromotion.fxml"));
-                        Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
-                        stage.setScene(scene);
-                        stage.setTitle("Thay đổi mã khuyến mãi");
-                        stage.show();
-                    } catch (IOException ex) {
-                        Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                });
-
-                TableCell c = new TableCell();
-                c.setGraphic(btnKM);
-                return c;
+            btnKM.setOnAction(event -> {
+                Button b = (Button) event.getSource();
+                TableCell cell = (TableCell) b.getParent();
+                pRow = (Product) cell.getTableRow().getItem();
+                try {
+                    Stage stage = new Stage();
+                    // Tạo Scene mới
+                    Parent root = FXMLLoader.load(getClass().getResource("/fxml/changePromotion.fxml"));
+                    Scene scene = new Scene(root);// Thiết lập Scene cho Stage mới
+                    stage.setScene(scene);
+                    stage.setTitle("Thay đổi mã khuyến mãi");
+                    stage.show();
+                } catch (IOException ex) {
+                    Logger.getLogger(PrimaryController.class.getName()).log(Level.SEVERE, null, ex);
+                }
             });
 
-            this.tbProducts.getColumns().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colEdit, colDel, colKM);
-         //Page load tất cả các sản phẩm
+            TableCell c = new TableCell();
+            c.setGraphic(btnKM);
+            return c;
+        });
+
+        this.tbProducts.getColumns().addAll(colId, colName, colCate, colPrice, colQuantity, colUnit, colEdit, colDel, colKM);
+        //Page load tất cả các sản phẩm
     }
 
     private void loadTableEmployeesColumns() {
@@ -975,6 +969,7 @@ public class PrimaryController implements Initializable {
             if (tienTraKhach >= 0 && tienKhachDua >= total) {
                 Order o = new Order();
                 String phone = txtPhone.getText();
+                System.out.println(phone);
                 double tongTien = Double.parseDouble(txtTotal.getText());
                 if (!phone.isEmpty()) { //Nếu txtPhone không rỗng
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -982,6 +977,7 @@ public class PrimaryController implements Initializable {
                     String formattedDateTime = purchaseDate.format(formatter);
                     String purchaseDateSS = formattedDateTime.substring(0, 5);
                     Customer customer = cusS.findCustomerByPhoneNumber(customers, phone);
+
                     if (customer != null) {
                         String customerBirthDay = customer.getNgaySinh().substring(0, 5);
                         cusS.updatePoint(customer, this.total);

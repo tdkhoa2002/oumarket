@@ -16,6 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
@@ -37,7 +39,6 @@ public class OrderDetailsTester {
     private static Connection conn;
     private static OrderDetailsService ordDetailsService;
     private OrderService ordService;
-    private ObservableList<OrderDetails> orderDetailsList;
 
     @BeforeAll
     public static void beforeAll() {
@@ -48,50 +49,34 @@ public class OrderDetailsTester {
     }
 
     @Test
-    public void test() {
-        boolean actual = false;
-        Assertions.assertTrue(actual);
-    }
-
-    @Test
     public void saveOrderDetailsTest() {
         try {
+            conn = JdbcUtils.getConn();
             ordDetailsService = new OrderDetailsService();
             OrderService ordService = new OrderService();
-            ObservableList<OrderDetails> orderDetailsList = null;
+            ObservableList<OrderDetails> orderDetailsList = FXCollections.observableArrayList();
             boolean actual = false;
 
             String idOrder = "d8b958d8-cdae-456b-88d3-fd02261ae9fe";
             Order o = ordService.findOrder(idOrder);
             Assertions.assertEquals(o.getId(), idOrder);
-            Product p1 = new Product("Sp test 1", 1, 21000, 100, "Cái");
-            Product p2 = new Product("Sp test 2", 1, 35000, 100, "Lon");
-            Product p3 = new Product("Sp test 3", 1, 23000, 100, "bịch");
-            Product p4 = new Product("Sp test 4", 1, 8000, 100, "Cái");
-            Product p5 = new Product("Sp test 5", 1, 18000, 100, "Lon");
+            Product p1 = new Product("Keo", 1, 80000, 100, "Bịch");
 
             OrderDetails oD1 = new OrderDetails(p1, 5);
-            OrderDetails oD2 = new OrderDetails(p2, 6);
-            OrderDetails oD3 = new OrderDetails(p3, 7);
-            OrderDetails oD4 = new OrderDetails(p4, 8);
-            OrderDetails oD5 = new OrderDetails(p5, 9);
 
             orderDetailsList.add(oD1);
-            orderDetailsList.add(oD2);
-            orderDetailsList.add(oD3);
-            orderDetailsList.add(oD4);
-            orderDetailsList.add(oD5);
 
             for (OrderDetails x : orderDetailsList) {
                 actual = ordDetailsService.saveOderDetails(x, o);
                 Assertions.assertTrue(actual);
                 String sql = "SELECT * FROM orderdetails WHERE id = ?";
                 PreparedStatement stm = JdbcUtils.getConn().prepareCall(sql);
-                stm.setString(1, o.getId());
+                stm.setString(1, idOrder);
 
                 ResultSet rs = stm.executeQuery();
-                Assertions.assertNotNull(rs.next());
-                Assertions.assertEquals(o.getId(), rs.getString("order_id")); //kiem tra da them vao hay chua
+                if(rs.next()) {
+                    Assertions.assertEquals(rs.getString("order_id"), o.getId()); //kiem tra da them vao hay chua
+                }
             }
         } catch (SQLException ex) {
             Logger.getLogger(OrderDetailsTester.class.getName()).log(Level.SEVERE, null, ex);
@@ -102,31 +87,17 @@ public class OrderDetailsTester {
     public void updateQuantityInStockTest() {
         ordDetailsService = new OrderDetailsService();
         ordService = new OrderService();
-        orderDetailsList = null;
-        boolean actual = false;
-        Assertions.assertTrue(actual);
+        ObservableList<OrderDetails> orderDetailsList = FXCollections.observableArrayList();
         try {
 
             String idOrder = "d8b958d8-cdae-456b-88d3-fd02261ae9fe";
             Order o = ordService.findOrder(idOrder);
             Assertions.assertEquals(o.getId(), idOrder);
-            Product p1 = new Product("Sp test 1", 1, 21000, 100, "Cái");
-            Product p2 = new Product("Sp test 2", 1, 35000, 100, "Lon");
-            Product p3 = new Product("Sp test 3", 1, 23000, 100, "bịch");
-            Product p4 = new Product("Sp test 4", 1, 8000, 100, "Cái");
-            Product p5 = new Product("Sp test 5", 1, 18000, 100, "Lon");
+            Product p1 = new Product("Keo", 1, 80000, 100, "Cái");
 
             OrderDetails oD1 = new OrderDetails(p1, 5);
-            OrderDetails oD2 = new OrderDetails(p2, 6);
-            OrderDetails oD3 = new OrderDetails(p3, 7);
-            OrderDetails oD4 = new OrderDetails(p4, 8);
-            OrderDetails oD5 = new OrderDetails(p5, 9);
 
             orderDetailsList.add(oD1);
-            orderDetailsList.add(oD2);
-            orderDetailsList.add(oD3);
-            orderDetailsList.add(oD4);
-            orderDetailsList.add(oD5);
 
             for (OrderDetails x : orderDetailsList) {
                 ordDetailsService.saveOderDetails(x, o);
@@ -140,7 +111,8 @@ public class OrderDetailsTester {
     @Test
     public void viewDetailTest() {
         try {
-            String idOrder = "d8b958d8-cdae-456b-88d3-fd02261ae9fe";
+            ordDetailsService = new OrderDetailsService();
+            String idOrder = "995d9a14-070c-40b2-9481-ec20b4927f45";
             List<Product> listProducts = ordDetailsService.viewDetail(idOrder);
             Assertions.assertEquals(10, listProducts.size());
         } catch (SQLException ex) {

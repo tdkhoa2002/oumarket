@@ -49,7 +49,7 @@ public class OrderService {
             stm.setString(1, id);
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
-                Order o = new Order(rs.getString("orderDate"), rs.getDouble("total"), rs.getDouble("tienKhachDua"), rs.getDouble("tienTraLai"));
+                Order o = new Order(rs.getString("id"), rs.getString("orderDate"), rs.getDouble("total"), rs.getDouble("tienKhachDua"), rs.getDouble("tienTraLai"));
                 return o;
             }
         }
