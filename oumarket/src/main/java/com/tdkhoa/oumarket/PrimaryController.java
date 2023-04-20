@@ -492,6 +492,9 @@ public class PrimaryController implements Initializable {
                                 cartItems.add(new OrderDetails(p, quantity));
                             }
                         }
+                        else {
+                            MessageBox.getBox("Số lượng sản phẩm", "Quá số lượng kho", Alert.AlertType.WARNING).show();
+                        }
                     } catch (NumberFormatException ex) {
                         MessageBox.getBox("Số lượng sản phẩm", "Số lượng nhập phải là số nguyên", Alert.AlertType.WARNING).show();
                     }
