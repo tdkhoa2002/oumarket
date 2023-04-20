@@ -459,10 +459,11 @@ public class PrimaryController implements Initializable {
                 quantityTextField.setText("0");
                 Button saveButton = new Button("Save");
                 saveButton.setOnAction(event -> {
-                    double quantity = Double.parseDouble(quantityTextField.getText().trim());
+                    
                     double sumQuantityProduct = 0;
                     boolean checkAdd = true;
                     try {
+                        double quantity = Double.parseDouble(quantityTextField.getText().trim());
                         if (quantity > 0 && p.getQuantity() >= quantity) {
                             if (!p.getUnit().equals("Kg")) { ///Neu khac kg
                                 //parse ve int
