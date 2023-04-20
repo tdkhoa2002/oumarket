@@ -57,7 +57,7 @@ class EmployeeTester {
 
     @Test
     @DisplayName("Test insert method")
-    public void testInsert() {
+    public void testInsert() throws SQLException {
         // Insert a new employee
         Employee emp = new Employee(0, "New Employee");
         employeeService.insert(emp);
