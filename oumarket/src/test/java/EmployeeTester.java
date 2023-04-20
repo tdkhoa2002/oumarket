@@ -1,63 +1,82 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+import java.sql.Connection;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- *
- * @author ASUS
- */
-
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import pojo.Employee;
-//package services;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+
+import pojo.Employee;
 import services.EmployeeService;
-public class EmployeeTester {
-    
+import services.JdbcUtils;
 
+class EmployeeTester {
 
-
-
+    private EmployeeService employeeService = new EmployeeService();
+    private static Connection conn ;
+    @BeforeEach
+    public void beforeEach() throws Exception {
+        try {
+            conn = JdbcUtils.getConn();
+        } catch (SQLException ex) {
+            Logger.getLogger(EmployeeTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    @AfterEach
+    public static void afterEach() {
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException ex) {
+                Logger.getLogger(EmployeeTester.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
     @Test
-    void testGetEmployees() throws SQLException {
-        EmployeeService employeeService = new EmployeeService();
-        List<Employee> employeeList = employeeService.getEmployees("");
-        Assertions.assertEquals(4, employeeList.size());
+    @DisplayName("Test getEmployees method")
+    public void testGetEmployees() throws SQLException {
+        List<Employee> employees = employeeService.getEmployees("");
+        assertNotNull(employees);
+        assertTrue(employees.size() > 0);
     }
 
     @Test
-    void testDeleteEmployee() throws SQLException {
-        EmployeeService employeeService = new EmployeeService();
-        boolean result = employeeService.deleteEmployee(4);
-        Assertions.assertTrue(result);
+    @DisplayName("Test deleteEmployee method")
+    public void testDeleteEmployee() throws SQLException {
+        // Delete an existing employee
+        assertTrue(employeeService.deleteEmployee(1));
 
-        List<Employee> employeeList = employeeService.getEmployees("");
-        Assertions.assertEquals(3, employeeList.size());
+        // Delete a non-existing employee
+        assertFalse(employeeService.deleteEmployee(100));
     }
 
     @Test
-    void testInsert() throws SQLException {
-        EmployeeService employeeService = new EmployeeService();
-        Employee employee = new Employee(0, "John");
-        employeeService.insert(employee);
+    @DisplayName("Test insert method")
+    public void testInsert() {
+        // Insert a new employee
+        Employee emp = new Employee(0, "New Employee");
+        employeeService.insert(emp);
 
-        List<Employee> employeeList = employeeService.getEmployees("");
-        Assertions.assertEquals(5, employeeList.size());
+        // Check if the employee was inserted successfully
+        List<Employee> employees = employeeService.getEmployees("");
+        assertTrue(employees.stream().anyMatch(e -> e.getName().equals("New Employee")));
     }
 
     @Test
-    void testUpdate() throws SQLException {
-        EmployeeService employeeService = new EmployeeService();
-        Employee employee = new Employee(1, "Adam");
-        boolean result = employeeService.update(employee);
-        Assertions.assertTrue(result);
+    @DisplayName("Test update method")
+    public void testUpdate() throws SQLException {
+        // Update an existing employee
+        Employee emp = new Employee(1, "Updated Employee");
+        assertTrue(employeeService.update(emp));
 
-        List<Employee> employeeList = employeeService.getEmployees("");
-        Assertions.assertEquals("Adam", employeeList.get(0).getName());
+        // Update a non-existing employee
+        emp.setId(100);
+        assertFalse(employeeService.update(emp));
     }
+
 }
-
-

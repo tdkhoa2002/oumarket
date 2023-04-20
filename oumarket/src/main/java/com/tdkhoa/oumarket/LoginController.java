@@ -82,6 +82,7 @@ public class LoginController {
         });
     }
 
+
     public void handleSigupButtonAction(ActionEvent eve) {
         this.btnSigup.setOnAction(event -> {
             String username = usernameField.getText();
