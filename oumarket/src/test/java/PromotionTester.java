@@ -52,7 +52,7 @@ public class PromotionTester {
 //            long t = pros.stream().filter(c -> c.getName() == null).count();
 //            Assertions.assertTrue(t == 0);
 //        } catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(PromotionTester.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
 //    
@@ -66,7 +66,7 @@ public class PromotionTester {
 //            Set<String> testNames = new HashSet<>(names);
 //            Assertions.assertEquals(names.size(), testNames.size());
 //        } catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(PromotionTester.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
     
@@ -89,7 +89,7 @@ public class PromotionTester {
 //            Assertions.assertEquals(pro.getName(), rs.getString("name")); //kiem tra da them vao hay chua
 //        }
 //        catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(PromotionTester.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
     
@@ -112,7 +112,7 @@ public class PromotionTester {
 //            Assertions.assertEquals(pro.getName(), rs.getString("name")); //kiem tra da them vao hay chua
 //        }
 //        catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(PromotionTester.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
     
@@ -157,7 +157,7 @@ public class PromotionTester {
 //             Assertions.assertTrue(actual);
 //        }
 //        catch (SQLException ex) {
-//            Logger.getLogger(CategoryTester.class.getName()).log(Level.SEVERE, null, ex);
+//            Logger.getLogger(PromotionTester.class.getName()).log(Level.SEVERE, null, ex);
 //        }
 //    }
 }

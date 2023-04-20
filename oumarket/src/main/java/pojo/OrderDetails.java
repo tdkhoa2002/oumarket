@@ -41,7 +41,7 @@ public class OrderDetails {
     /**
      * @param quantity the quantity to set
      */
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 

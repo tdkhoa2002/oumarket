@@ -138,15 +138,10 @@ public class ProductService {
 
     public boolean updatePromotion(Product p) throws SQLException {
         try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "UPDATE products SET name =?, category_id =?, price =?, unit =?, quantity=?, promotion_id = ? WHERE id=?";
+            String sql = "UPDATE products SET promotion_id = ? WHERE id=?";
             PreparedStatement stm = conn.prepareCall(sql);
-            stm.setString(1, p.getName());
-            stm.setInt(2, p.getCategoryId());
-            stm.setDouble(3, p.getPrice());
-            stm.setString(4, p.getUnit());
-            stm.setInt(5, p.getQuantity());
-            stm.setInt(6, p.getPromotion_id());
-            stm.setString(7, p.getId());
+            stm.setInt(1, p.getPromotion_id());
+            stm.setString(2, p.getId());
             stm.executeUpdate();
             return true;
         }
