@@ -53,8 +53,7 @@ public class SigupController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         ComboBox.setItems(list);
     }
-
-    public void handleSigupButtonAction(ActionEvent eve) {
+public void handleSigupButtonAction(ActionEvent eve) {
         this.btnSigup.setOnAction(event -> {
             String username = usernameField.getText();
             String password = passwordField.getText();
@@ -71,7 +70,10 @@ public class SigupController implements Initializable {
                     actiontarget.setText("VUI LÒNG KHÔNG NHẬP KHOẢNG TRẮNG.");
 
                 } else {
-                    if (password.equals(password2)) {
+                    if (password.length() > 6) {
+                        actiontarget.setFill(Color.RED);
+                        actiontarget.setText("Mật khẩu phải có tối đa 6 kí tự.");
+                    } else if (password.equals(password2)) {
                         if (aS.registerUser(username, password, branch)) {
                             Alert alert = new Alert(AlertType.INFORMATION);
                             alert.setTitle("Đăng ký thành công");
@@ -94,6 +96,47 @@ public class SigupController implements Initializable {
             }
         });
     }
+
+//    public void handleSigupButtonAction(ActionEvent eve) {
+//        this.btnSigup.setOnAction(event -> {
+//            String username = usernameField.getText();
+//            String password = passwordField.getText();
+//            String password2 = passwordField2.getText();
+//            String branch = (String) ComboBox.getValue();
+//
+//            // Kiểm tra xem có khoảng trắng trong username, password và password2 không
+//            if (username.isEmpty() || password.isEmpty() || password2.isEmpty() || branch == null) {
+//                actiontarget.setFill(Color.RED);
+//                actiontarget.setText("VUI LÒNG NHẬP ĐẦY ĐỦ THÔNG TIN.");
+//            } else {
+//                if (username.contains(" ") || password.contains(" ") || password2.contains(" ")) {
+//                    actiontarget.setFill(Color.RED);
+//                    actiontarget.setText("VUI LÒNG KHÔNG NHẬP KHOẢNG TRẮNG.");
+//
+//                } else {
+//                    if (password.equals(password2)) {
+//                        if (aS.registerUser(username, password, branch)) {
+//                            Alert alert = new Alert(AlertType.INFORMATION);
+//                            alert.setTitle("Đăng ký thành công");
+//                            alert.setHeaderText(null);
+//                            alert.setContentText("Bạn đã đăng ký thành công tài khoản " + username);
+//                            alert.showAndWait();
+//                            btnSigup.getScene().getWindow().hide();
+//                        } else {
+//                            actiontarget.setFill(Color.RED);
+//                            actiontarget.setText("Tên tài khoản đã tồn tại.");
+//                        }
+//
+//                    } else {
+//                        // hiển thị thông báo lỗi
+//                        actiontarget.setFill(Color.RED);
+//                        actiontarget.setText("Mật khẩu xác nhận không trùng khớp.");
+//                    }
+//                }
+//
+//            }
+//        });
+//    }
 
 //    public void handleSigupButtonAction(ActionEvent eve) {
 //        this.btnSigup.setOnAction(event -> {

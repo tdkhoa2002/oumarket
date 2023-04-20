@@ -23,7 +23,7 @@ public class App extends Application {
 //        scene = new Scene(loadFXML("login"), 600, 400);
 //        stage.setScene(scene);
 //        stage.setTitle("Đăng Nhập");
-        scene = new Scene(loadFXML("primary"));
+        scene = new Scene(loadFXML("login"));
         stage.setScene(scene);
         stage.show();
     }
