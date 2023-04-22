@@ -54,7 +54,7 @@ public class ViewOrderDetailsController implements Initializable {
 //            System.out.println(o.getOrderDate());
             txtTotal.setText(o.getTotal().toString());
             txtDate.setText(o.getOrderDate());
-            txtTienNhan.setText(o.getTienKhachDua().toString());
+            txtTienNhan.setText(o.getTienTraKhach().toString());
             txtTienTra.setText(o.getTienKhachDua().toString());
             txtTienGiam.setText(Double.toString(sum - Double.parseDouble(txtTotal.getText())));
         } catch (SQLException ex) {
